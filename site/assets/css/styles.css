@@ -360,11 +360,62 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
   .foot-grid{ grid-template-columns:1fr 1fr; }
   .form-grid{ grid-template-columns:repeat(2,1fr); }
 }
+
+/* ---------------- MOBILE KEYBOARD (<=768px) ----------------
+   Editor stacks above the keyboard (DOM order already puts .editor-area
+   before .kb-panel, and .workspace is column-direction by default), the
+   keyboard uses the full viewport width, and every logical row stays a
+   single row — keys shrink to fit instead of wrapping into ragged
+   sub-rows. Vertical rhythm is tightened throughout so the whole keyboard,
+   down to Enter/Space/Delete, is reachable with minimal scrolling. */
+@media (max-width:899px){
+  .wrap, .wrap-narrow{ padding:0 10px; }
+  .tool-card{ border-radius:16px; margin:6px 0 14px; }
+
+  .editor-area{ padding:10px; }
+  .editor{ height:180px; min-height:110px; font-size:19px; padding:14px; }
+  .editor-meta{ font-size:11.5px; }
+
+  .kb-panel{ width:100%; max-width:none; padding:8px 8px 10px; }
+  .kb-head{ margin-bottom:4px; gap:6px; }
+  .mode-toggle button{ padding:5px 9px; font-size:11.5px; }
+  .translit-note{ font-size:11px; padding:5px 0; }
+
+  .kb-group{ margin-bottom:5px; }
+  .kb-row-divider{ margin-top:3px; padding-top:4px; }
+
+  /* The core fix: rows never wrap. Keys shrink evenly (flex-basis 0,
+     no min-width floor) so a 13- or 15-key row always renders as one
+     row at full width, instead of overflowing and breaking into an
+     awkward second line. */
+  .kb-row{ flex-wrap:nowrap; gap:3px; margin-bottom:3px; width:100%; }
+  .key{
+    flex:1 1 0; min-width:0; max-width:none; width:auto;
+    height:44px; padding:0 1px; font-size:16px;
+  }
+  .key .hint{ font-size:7.5px; }
+  .key.wide{ flex:1.4 1 0; font-size:11px; height:44px; }
+  .key.space{ flex:5 1 0; font-size:11px; height:44px; }
+  .key-diacritic .diacritic-preview{ font-size:16px; }
+  .key-diacritic .hint{ font-size:7px; }
+  .kb-group-numerals .key, .kb-group-punct .key{ max-width:none; }
+}
+
+/* Smaller phones: keys stay tappable and legible, just slightly more
+   compact — width is spent on the Arabic glyph, not on padding. */
+@media (max-width:400px){
+  .key{ height:42px; font-size:14.5px; padding:0; }
+  .key .hint{ font-size:7px; }
+  .key.wide{ font-size:10.5px; height:42px; }
+  .key.space{ font-size:10.5px; height:42px; }
+  .key-diacritic .diacritic-preview{ font-size:15px; }
+}
+
+@media (max-width:340px){
+  .key{ height:40px; font-size:13.5px; }
+  .key.wide, .key.space{ height:40px; }
+}
+
 @media (max-width:520px){
-  .key{ font-size:15px; }
-  .kb-row{ gap:4px; }
-  .editor{ font-size:20px; padding:14px; }
   .foot-grid{ grid-template-columns:1fr; }
-  .kb-group-numerals .key, .kb-group-punct .key, .key-diacritic{ max-width:42px; }
-  .key-diacritic .diacritic-preview{ font-size:18px; }
 }
