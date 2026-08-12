@@ -118,7 +118,7 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 .mobile-panel .grp-label{ font-family:var(--font-ui); font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin:16px 0 6px; }
 
 /* ---------------- BREADCRUMBS ---------------- */
-.breadcrumbs{ font-family:var(--font-ui); font-size:13px; color:var(--ink-soft); padding:16px 0; display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.breadcrumbs{ font-family:var(--font-ui); font-size:13px; color:var(--ink-soft); padding:10px 0; display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
 .breadcrumbs a{ text-decoration:none; color:var(--ink-soft); }
 .breadcrumbs a:hover{ color:var(--emerald); }
 .breadcrumbs .sep{ opacity:.5; }
@@ -126,14 +126,17 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 
 /* ---------------- HERO / PAGE HEAD ---------------- */
 .hero{ padding:44px 0 28px; text-align:center; }
-.hero.compact{ padding:34px 0 22px; }
+.hero.compact{ padding:10px 0 10px; }
 .eyebrow{
   display:inline-flex; align-items:center; gap:8px; font-family:var(--font-ui); font-size:12.5px; font-weight:600;
   letter-spacing:.04em; color:var(--emerald); background:color-mix(in srgb, var(--emerald) 12%, transparent);
   padding:6px 14px; border-radius:999px; margin-bottom:18px;
 }
 .hero h1{ font-size:clamp(32px,6vw,58px); line-height:1.15; margin-bottom:14px; }
+.hero.compact h1{ font-size:clamp(24px,4vw,34px); margin-bottom:5px; }
+.hero.compact .eyebrow{ margin-bottom:6px; }
 .hero p.lead{ font-size:16.5px; color:var(--ink-soft); max-width:640px; margin:0 auto; line-height:1.8; }
+.hero.compact p.lead{ font-size:14px; line-height:1.4; }
 
 /* ---------------- BUTTONS ---------------- */
 .btn{
@@ -151,55 +154,70 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 /* ---------------- TOOL CARD / TOOLBAR / EDITOR ---------------- */
 .tool-card{
   background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
-  box-shadow:var(--shadow); margin:24px 0 20px; overflow:hidden;
+  box-shadow:var(--shadow); margin:6px 0 16px; overflow:hidden;
 }
 .toolbar{
-  display:flex; align-items:center; gap:6px; padding:10px 14px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:4px; padding:6px 12px; border-bottom:1px solid var(--border);
   overflow-x:auto; scrollbar-width:none;
 }
 .toolbar::-webkit-scrollbar{ display:none; }
 .tb-btn{
   display:flex; align-items:center; gap:6px; white-space:nowrap; border:none; background:transparent; cursor:pointer;
-  padding:8px 10px; border-radius:8px; font-size:13.5px; font-weight:500; color:var(--ink-soft);
+  padding:7px 10px; border-radius:8px; font-size:13.5px; font-weight:500; color:var(--ink-soft);
 }
 .tb-btn:hover{ background:var(--surface-2); color:var(--ink); }
 .tb-btn.primary{ background:var(--emerald); color:#fff; }
 .tb-btn.primary:hover{ background:var(--emerald-deep); }
-.tb-sep{ width:1px; height:22px; background:var(--border); margin:0 4px; flex:none; }
+.tb-sep{ width:1px; height:20px; background:var(--border); margin:0 4px; flex:none; }
 .tb-group{ display:flex; align-items:center; }
 
-.editor-area{ padding:18px; }
+/* Workspace: editor + keyboard as one shared two-panel tool.
+   Stacked by default (mobile/tablet); becomes a side-by-side desktop
+   layout at the --workspace-bp breakpoint below, so the full keyboard
+   and the editor are visible together without scrolling between them. */
+.workspace{ display:flex; flex-direction:column; }
+
+.editor-area{ padding:12px; }
 .editor{
-  width:100%; min-height:180px; resize:vertical; border:1px solid var(--border); border-radius:var(--radius-md);
-  background:var(--bg); padding:20px; font-size:24px; line-height:2; font-family:var(--font-ar-body);
+  width:100%; min-height:110px; resize:vertical; border:1px solid var(--border); border-radius:var(--radius-md);
+  background:var(--bg); padding:16px; font-size:21px; line-height:1.8; font-family:var(--font-ar-body);
   color:var(--ink); outline:none;
 }
 .editor:focus{ border-color:var(--emerald); box-shadow:0 0 0 3px color-mix(in srgb, var(--emerald) 18%, transparent); }
 .editor[dir="ltr"]{ font-family:var(--font-ui); }
-.editor-meta{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft); margin-top:8px; font-family:var(--font-ui); }
+.editor-meta{ display:flex; justify-content:space-between; gap:10px; font-size:12.5px; color:var(--ink-soft); margin-top:4px; font-family:var(--font-ui); }
+#dirIndicator{ font-weight:600; }
 
-.kb-panel{ border-top:1px solid var(--border); background:var(--surface-2); padding:16px; }
-.kb-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:10px; }
+.kb-panel{ border-top:1px solid var(--border); background:var(--surface-2); padding:8px 10px; }
+.kb-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; flex-wrap:wrap; gap:8px; }
 .mode-toggle{ display:inline-flex; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:3px; }
 .mode-toggle button{
-  border:none; background:transparent; padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; color:var(--ink-soft);
+  border:none; background:transparent; padding:5px 11px; border-radius:8px; cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-soft);
 }
 .mode-toggle button.active{ background:var(--emerald); color:#fff; }
 
-.kb-row{ display:flex; gap:6px; justify-content:center; margin-bottom:6px; }
+.kb-group{ margin-bottom:6px; }
+.kb-group:last-child{ margin-bottom:0; }
+.kb-row-divider{ margin-top:4px; padding-top:5px; border-top:1px dashed var(--border); }
+.kb-group-numerals .key, .kb-group-punct .key{ max-width:52px; }
+.kb-row{ display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-bottom:4px; row-gap:5px; }
 .key{
-  position:relative; flex:1; max-width:64px; min-width:30px; aspect-ratio:1/0.92; border:1px solid var(--border);
-  background:var(--surface); border-radius:9px; cursor:pointer; display:flex; flex-direction:column; align-items:center;
-  justify-content:center; font-family:var(--font-ar-body); font-size:18px; font-weight:500; color:var(--ink);
+  position:relative; flex:1; max-width:60px; min-width:30px; height:42px; border:1px solid var(--border);
+  background:var(--surface); border-radius:8px; cursor:pointer; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; font-family:var(--font-ar-body); font-size:17px; font-weight:500; color:var(--ink);
   box-shadow:0 1px 0 var(--border); transition:transform .06s, background .15s;
 }
 .key:hover{ border-color:var(--emerald); }
 .key:active, .key.pressed{ transform:translateY(2px); background:var(--gold-soft); box-shadow:none; }
-.key .hint{ font-family:var(--font-ui); font-size:9px; color:var(--ink-soft); margin-top:1px; }
-.key.wide{ max-width:110px; flex:1.6; font-size:13px; font-family:var(--font-ui); aspect-ratio:auto; height:52px; }
-.key.space{ max-width:none; flex:6; font-size:12px; font-family:var(--font-ui); color:var(--ink-soft); aspect-ratio:auto; height:52px; }
+.key:focus-visible{ outline:2px solid var(--emerald); outline-offset:1px; }
+.key .hint{ font-family:var(--font-ui); font-size:8.5px; color:var(--ink-soft); margin-top:1px; }
+.key.wide{ max-width:120px; flex:1.6; font-size:13px; font-family:var(--font-ui); height:44px; }
+.key.space{ max-width:none; flex:6; font-size:12px; font-family:var(--font-ui); color:var(--ink-soft); height:44px; }
 .key .dot{ position:absolute; top:4px; inset-inline-end:6px; width:5px; height:5px; border-radius:50%; background:var(--gold); opacity:0; }
 .key.has-alt .dot{ opacity:1; }
+.key-diacritic{ max-width:52px; }
+.key-diacritic .diacritic-preview{ font-size:19px; line-height:1; color:var(--emerald); }
+.key-diacritic .hint{ font-size:8px; white-space:nowrap; }
 .translit-note{ font-size:13px; color:var(--ink-soft); text-align:center; padding:10px 0; font-family:var(--font-ui); }
 
 /* ---------------- SECTIONS / CARDS ---------------- */
@@ -326,6 +344,15 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
 /* ---------------- RESPONSIVE ---------------- */
+
+/* Desktop: editor + keyboard side by side so both are visible together,
+   without scrolling between them. */
+@media (min-width:900px){
+  .workspace{ flex-direction:row; align-items:stretch; }
+  .editor-area{ flex:0 0 38%; max-width:38%; border-inline-end:1px solid var(--border); }
+  .kb-panel{ flex:1 1 62%; border-top:none; max-height:calc(100vh - 230px); overflow-y:auto; }
+}
+
 @media (max-width:860px){
   nav.primary{ display:none; }
   .hamburger{ display:flex; }
@@ -338,4 +365,6 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
   .kb-row{ gap:4px; }
   .editor{ font-size:20px; padding:14px; }
   .foot-grid{ grid-template-columns:1fr; }
+  .kb-group-numerals .key, .kb-group-punct .key, .key-diacritic{ max-width:42px; }
+  .key-diacritic .diacritic-preview{ font-size:18px; }
 }

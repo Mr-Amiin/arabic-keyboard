@@ -48,22 +48,25 @@ TOOLBAR_HTML = """
 
 def editor_block(placeholder="اكتب النص هنا…"):
     return f"""
-<div class="editor-area">
-  <textarea id="editor" class="editor" dir="rtl" placeholder="{placeholder}" aria-label="محرر النص العربي"></textarea>
-  <div class="editor-meta lang-en">
-    <span id="charCount">0 حرف</span>
-    <span id="wordCount">0 كلمة</span>
-  </div>
-</div>
-<div class="kb-panel">
-  <div class="kb-head">
-    <div class="mode-toggle" role="tablist" aria-label="وضع الإدخال">
-      <button class="active" id="modeKeyboard" role="tab" aria-selected="true">⌨️ لوحة افتراضية</button>
-      <button id="modeTranslit" role="tab" aria-selected="false">🔤 تحويل صوتي</button>
+<div class="workspace">
+  <div class="editor-area">
+    <textarea id="editor" class="editor" dir="rtl" placeholder="{placeholder}" aria-label="محرر النص العربي"></textarea>
+    <div class="editor-meta lang-en">
+      <span id="charCount">0 حرف</span>
+      <span id="wordCount">0 كلمة</span>
+      <span id="dirIndicator">RTL →</span>
     </div>
-    <span class="translit-note" id="modeHint">انقر الأزرار أو استخدم لوحة مفاتيحك الفعلية</span>
   </div>
-  <div id="virtualKeyboard"></div>
+  <div class="kb-panel notranslate" translate="no">
+    <div class="kb-head">
+      <div class="mode-toggle" role="tablist" aria-label="وضع الإدخال">
+        <button class="active" id="modeKeyboard" role="tab" aria-selected="true">⌨️ لوحة افتراضية</button>
+        <button id="modeTranslit" role="tab" aria-selected="false">🔤 تحويل صوتي</button>
+      </div>
+      <span class="translit-note" id="modeHint">انقر الأزرار أو استخدم لوحة مفاتيحك الفعلية</span>
+    </div>
+    <div id="virtualKeyboard" class="notranslate" translate="no"></div>
+  </div>
 </div>
 """
 
