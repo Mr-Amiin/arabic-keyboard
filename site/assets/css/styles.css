@@ -22,6 +22,7 @@
   --radius-lg:24px;
   --font-ar-display:'Aref Ruqaa', serif;
   --font-ar-body:'Tajawal', sans-serif;
+  --font-ar-keys:'Noto Naskh Arabic', 'Tajawal', serif;
   --font-ui:'Inter', sans-serif;
   --font-mono:'IBM Plex Mono', monospace;
 }
@@ -198,25 +199,23 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 
 .kb-group{ margin-bottom:6px; }
 .kb-group:last-child{ margin-bottom:0; }
-.kb-row-divider{ margin-top:4px; padding-top:5px; border-top:1px dashed var(--border); }
 .kb-group-numerals .key, .kb-group-punct .key{ max-width:52px; }
 .kb-row{ display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-bottom:4px; row-gap:5px; }
 .key{
   position:relative; flex:1; max-width:60px; min-width:30px; height:42px; border:1px solid var(--border);
   background:var(--surface); border-radius:8px; cursor:pointer; display:flex; flex-direction:column; align-items:center;
-  justify-content:center; font-family:var(--font-ar-body); font-size:17px; font-weight:500; color:var(--ink);
+  justify-content:center; font-family:var(--font-ar-keys); font-size:17px; font-weight:500; color:var(--ink);
   box-shadow:0 1px 0 var(--border); transition:transform .06s, background .15s;
 }
 .key:hover{ border-color:var(--emerald); }
 .key:active, .key.pressed{ transform:translateY(2px); background:var(--gold-soft); box-shadow:none; }
 .key:focus-visible{ outline:2px solid var(--emerald); outline-offset:1px; }
+.key-main{ display:block; line-height:1.15; }
 .key .hint{ font-family:var(--font-ui); font-size:8.5px; color:var(--ink-soft); margin-top:1px; }
 .key.wide{ max-width:120px; flex:1.6; font-size:13px; font-family:var(--font-ui); height:44px; }
 .key.space{ max-width:none; flex:6; font-size:12px; font-family:var(--font-ui); color:var(--ink-soft); height:44px; }
-.key .dot{ position:absolute; top:4px; inset-inline-end:6px; width:5px; height:5px; border-radius:50%; background:var(--gold); opacity:0; }
-.key.has-alt .dot{ opacity:1; }
 .key-diacritic{ max-width:52px; }
-.key-diacritic .diacritic-preview{ font-size:19px; line-height:1; color:var(--emerald); }
+.key-diacritic .diacritic-preview{ font-size:19px; line-height:1; color:var(--ink); font-weight:600; opacity:1; }
 .key-diacritic .hint{ font-size:8px; white-space:nowrap; }
 .translit-note{ font-size:13px; color:var(--ink-soft); text-align:center; padding:10px 0; font-family:var(--font-ui); }
 
@@ -237,6 +236,16 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 .card .ic{ width:42px; height:42px; border-radius:11px; background:color-mix(in srgb, var(--emerald) 14%, transparent); color:var(--emerald); display:flex; align-items:center; justify-content:center; font-size:19px; margin-bottom:14px; }
 .card h3{ font-size:18px; margin-bottom:6px; font-family:var(--font-ar-body); font-weight:700; }
 .card p{ font-size:13.5px; color:var(--ink-soft); margin:0; line-height:1.7; }
+
+/* Guard: the Tashkeel link/card must always match its sibling nav
+   links and tool cards exactly — full opacity, no filter, normal
+   color/background — regardless of link state (visited, etc). */
+.dropdown a[href*="tashkeel"],
+.mobile-panel a[href*="tashkeel"],
+.grid-cards a[href*="tashkeel"],
+.foot-grid a[href*="tashkeel"]{
+  opacity:1; filter:none;
+}
 
 .content-block{ font-size:15.5px; line-height:1.95; color:var(--ink-soft); }
 .content-block h2{ color:var(--ink); font-size:24px; margin:34px 0 12px; }
@@ -382,7 +391,6 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
   .translit-note{ font-size:11px; padding:5px 0; }
 
   .kb-group{ margin-bottom:5px; }
-  .kb-row-divider{ margin-top:3px; padding-top:4px; }
 
   /* The core fix: rows never wrap. Keys shrink evenly (flex-basis 0,
      no min-width floor) so a 13- or 15-key row always renders as one

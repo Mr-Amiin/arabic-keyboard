@@ -205,11 +205,11 @@ window.ArabicKeyboardTool = (function () {
     if (kb) {
       function makeKey(label, hintText, onClick, extraClass) {
         const btn = document.createElement("button");
-        btn.className = "key notranslate" + (hintText ? " has-alt" : "") + (extraClass ? " " + extraClass : "");
+        btn.className = "key notranslate" + (extraClass ? " " + extraClass : "");
         btn.type = "button";
         btn.setAttribute("aria-label", label);
         btn.setAttribute("translate", "no");
-        btn.innerHTML = `<span class="dot"></span><span class="key-main">${label}</span><span class="hint lang-en">${hintText || ""}</span>`;
+        btn.innerHTML = `<span class="key-main">${label}</span><span class="hint lang-en">${hintText || ""}</span>`;
         btn.addEventListener("click", () => { onClick(); btn.classList.add("pressed"); setTimeout(() => btn.classList.remove("pressed"), 120); });
         return btn;
       }
@@ -249,16 +249,16 @@ window.ArabicKeyboardTool = (function () {
          No text heading; the special forms row gets a thin top divider
          instead of a label so the grouping is still visually clear. --- */
       const mainGroup = addGroup(null);
-      ROWS.forEach((rowArr) => {
+      ROWS.forEach((rowArr, i) => {
+        /* The 3 hamza-carrying alef forms (SPECIAL_LETTERS) join the last
+           letter row instead of getting their own row, so it isn't left
+           as a lone 3-key row far narrower than the ones above it. */
+        const isLastRow = i === ROWS.length - 1;
+        const keys = isLastRow ? rowArr.concat(SPECIAL_LETTERS) : rowArr;
         const rowDiv = addRow(mainGroup);
-        rowArr.forEach((ch) => {
-          rowDiv.appendChild(makeKey(ch, HINTS[ch] || "", () => insertAtCursor(ch)));
+        keys.forEach((ch) => {
+          rowDiv.appendChild(makeKey(ch, HINTS[ch] || SPECIAL_HINTS[ch] || "", () => insertAtCursor(ch)));
         });
-      });
-      const specialRow = addRow(mainGroup);
-      specialRow.classList.add("kb-row-divider");
-      SPECIAL_LETTERS.forEach((ch) => {
-        specialRow.appendChild(makeKey(ch, SPECIAL_HINTS[ch] || "", () => insertAtCursor(ch)));
       });
 
       /* --- 3. Symbols / punctuation --- */
