@@ -16,13 +16,25 @@
   --gold:#B8873F;
   --gold-soft:#E8D9B9;
   --danger:#AE4A32;
+  --key-arabic-red:#c62828;
   --shadow: 0 1px 2px rgba(28,37,33,0.06), 0 8px 24px -12px rgba(28,37,33,0.18);
   --radius-sm:10px;
   --radius-md:16px;
   --radius-lg:24px;
   --font-ar-display:'Aref Ruqaa', serif;
-  --font-ar-body:'Tajawal', sans-serif;
-  --font-ar-keys:'Noto Naskh Arabic', 'Tajawal', serif;
+  /* Single shared Arabic typeface for the virtual keyboard's primary
+     glyphs and the editor's Arabic text, so a letter never looks
+     different between the key you tap and the text you type. Both
+     weights are already loaded via the same Google Fonts <link> on
+     every page (see build.py), so this loads identically on desktop
+     and mobile. --font-ar-keys and --font-ar-body now both point at
+     it (kept as separate variables, rather than deleted, in case
+     anything else in the codebase still references them). Page
+     headings (--font-ar-display), the Latin transliteration hints,
+     nav, and button labels (--font-ui) are untouched. */
+  --arabic-font:'Noto Naskh Arabic', 'Tajawal', sans-serif;
+  --font-ar-body:var(--arabic-font);
+  --font-ar-keys:var(--arabic-font);
   --font-ui:'Inter', sans-serif;
   --font-mono:'IBM Plex Mono', monospace;
 }
@@ -38,6 +50,7 @@ html[data-theme="dark"]{
   --gold:#D9B26B;
   --gold-soft:#3A3220;
   --danger:#E27358;
+  --key-arabic-red:#ff5252;
   --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px -12px rgba(0,0,0,0.55);
 }
 *{box-sizing:border-box;}
@@ -178,14 +191,35 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
    and the editor are visible together without scrolling between them. */
 .workspace{ display:flex; flex-direction:column; }
 
-.editor-area{ padding:12px; }
+.editor-area{ padding:12px; position:relative; }
 .editor{
   width:100%; min-height:110px; resize:vertical; border:1px solid var(--border); border-radius:var(--radius-md);
-  background:var(--bg); padding:16px; font-size:21px; line-height:1.8; font-family:var(--font-ar-body);
+  background:var(--bg); padding:16px; font-size:21px; line-height:1.8; font-family:var(--arabic-font);
   color:var(--ink); outline:none;
 }
 .editor:focus{ border-color:var(--emerald); box-shadow:0 0 0 3px color-mix(in srgb, var(--emerald) 18%, transparent); }
 .editor[dir="ltr"]{ font-family:var(--font-ui); }
+
+/* Tashkeel highlight overlay (built by keyboard-tool.js). A second,
+   non-interactive copy of the editor's text is layered directly behind
+   the real <textarea>, sized/positioned to match it exactly. Only this
+   overlay is colored per-character (Tashkeel marks red, everything else
+   the editor's normal ink color) — the textarea itself stays a plain,
+   fully-functional native text field (typing, physical/virtual keyboard
+   input, paste, undo/redo, selection, copy, cursor movement, Arabic
+   shaping, RTL) with its own glyphs made transparent so the overlay
+   shows through in the same spot. If JS never runs, the overlay is
+   never inserted and the textarea's ".editor--highlighted" class is
+   never added, so the normal opaque text color is the fallback. */
+.editor-highlight{
+  position:absolute; z-index:0; margin:0; overflow:hidden; resize:none;
+  pointer-events:none; user-select:none;
+  white-space:pre-wrap; word-wrap:break-word; word-break:break-word;
+}
+.editor-highlight .tashkeel-mark{ color:var(--key-arabic-red); }
+.editor.editor--highlighted{ position:relative; z-index:1; background:transparent; color:transparent; caret-color:var(--ink); }
+.editor.editor--highlighted::placeholder{ color:var(--ink-soft); opacity:1; }
+.editor.editor--highlighted::selection{ background:color-mix(in srgb, var(--emerald) 35%, transparent); }
 .editor-meta{ display:flex; justify-content:space-between; gap:10px; font-size:12.5px; color:var(--ink-soft); margin-top:4px; font-family:var(--font-ui); }
 #dirIndicator{ font-weight:600; }
 
@@ -212,10 +246,17 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 .key:focus-visible{ outline:2px solid var(--emerald); outline-offset:1px; }
 .key-main{ display:block; line-height:1.15; }
 .key .hint{ font-family:var(--font-ui); font-size:8.5px; color:var(--ink-soft); margin-top:1px; }
+/* Primary Arabic glyph on a keyboard key (alphabet letters, the hamza-
+   carrying alef forms, and the Arabic-Indic numerals). Scoped to this
+   dedicated class only — never applied to the whole .key — so the
+   Latin transliteration hint (.hint) and function-key labels (Delete /
+   Space / New Line, which don't use this class at all) keep their
+   existing styling untouched. */
+.key-main.arabic-glyph{ font-family:var(--arabic-font); color:var(--key-arabic-red); font-weight:700; font-size:1.08em; }
 .key.wide{ max-width:120px; flex:1.6; font-size:13px; font-family:var(--font-ui); height:44px; }
 .key.space{ max-width:none; flex:6; font-size:12px; font-family:var(--font-ui); color:var(--ink-soft); height:44px; }
 .key-diacritic{ max-width:52px; }
-.key-diacritic .diacritic-preview{ font-size:19px; line-height:1; color:var(--ink); font-weight:600; opacity:1; }
+.key-diacritic .diacritic-preview{ font-size:19px; line-height:1; color:var(--key-arabic-red); font-weight:600; opacity:1; }
 .key-diacritic .hint{ font-size:8px; white-space:nowrap; }
 .translit-note{ font-size:13px; color:var(--ink-soft); text-align:center; padding:10px 0; font-family:var(--font-ui); }
 

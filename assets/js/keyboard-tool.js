@@ -114,10 +114,73 @@ window.ArabicKeyboardTool = (function () {
 
     let undoStack = [""], redoStack = [], suppressPush = false, translitOn = false, fontSize = 24;
 
+    /* ---------------------------------------------------------------
+       Tashkeel highlight overlay
+       -------------------------------------------------------------
+       The editor stays a plain <textarea> so every native behaviour —
+       typing, physical/virtual keyboard input, paste, undo/redo,
+       selection, copy, cursor movement, Arabic shaping and RTL layout —
+       keeps working exactly as before, completely untouched by this
+       feature. A separate, non-interactive <div> is layered directly
+       behind the textarea and kept in sync with its value, size and
+       position on every change. The textarea's own glyphs are made
+       transparent (only its caret stays visible) so the overlay's
+       colored copy of the text shows through in the same place. Only
+       Tashkeel (diacritic) characters are wrapped in a red span in the
+       overlay; every base letter and everything else keeps the
+       editor's existing text color. This is dynamic (re-rendered from
+       editor.value on every change, from any input source) rather than
+       hard-coded for sample text. */
+    const TASHKEEL_RE = /[\u064B-\u0652\u0670]/g; // fatha/tanween/damma/tanween/kasra/tanween/sukun/shadda + dagger alif
+    let highlightEl = null;
+    if (editor.tagName === "TEXTAREA" && editor.parentElement) {
+      const host = editor.parentElement;
+      highlightEl = document.createElement("div");
+      highlightEl.className = "editor editor-highlight notranslate";
+      highlightEl.setAttribute("aria-hidden", "true");
+      highlightEl.setAttribute("translate", "no");
+      highlightEl.dir = editor.dir;
+      host.insertBefore(highlightEl, editor);
+      editor.classList.add("editor--highlighted");
+    }
+    function escapeHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+    function renderHighlight() {
+      if (!highlightEl) return;
+      const text = editor.value;
+      const escaped = escapeHtml(text).replace(TASHKEEL_RE, (m) => `<span class="tashkeel-mark">${m}</span>`);
+      // A trailing newline needs a placeholder character, or the overlay's
+      // last (empty) line collapses and its height stops matching the
+      // textarea's.
+      highlightEl.innerHTML = escaped + (/\n$/.test(text) ? "\u200b" : "");
+    }
+    function syncHighlightBox() {
+      if (!highlightEl) return;
+      highlightEl.style.width = editor.offsetWidth + "px";
+      highlightEl.style.height = editor.offsetHeight + "px";
+      highlightEl.style.top = editor.offsetTop + "px";
+      highlightEl.style.left = editor.offsetLeft + "px";
+      highlightEl.style.fontSize = getComputedStyle(editor).fontSize;
+      highlightEl.scrollTop = editor.scrollTop;
+      highlightEl.scrollLeft = editor.scrollLeft;
+    }
+    if (highlightEl) {
+      renderHighlight();
+      syncHighlightBox();
+      editor.addEventListener("scroll", syncHighlightBox);
+      if (window.ResizeObserver) {
+        new ResizeObserver(syncHighlightBox).observe(editor);
+      } else {
+        window.addEventListener("resize", syncHighlightBox);
+      }
+    }
+
     function updateMeta() {
       const text = editor.value;
       if (charCount) charCount.textContent = text.length + " حرف";
       if (wordCount) wordCount.textContent = (text.trim() ? text.trim().split(/\s+/).length : 0) + " كلمة";
+      renderHighlight();
     }
     function updateDirIndicator() {
       if (dirIndicator) dirIndicator.textContent = editor.dir === "rtl" ? "→ RTL" : "LTR ←";
@@ -163,11 +226,12 @@ window.ArabicKeyboardTool = (function () {
     bind(opts.printId || "btnPrint", () => window.print());
     bind(opts.dirId || "btnDir", () => {
       editor.dir = editor.dir === "rtl" ? "ltr" : "rtl";
+      if (highlightEl) highlightEl.dir = editor.dir;
       updateDirIndicator();
       window.showToast?.("الاتجاه: " + (editor.dir === "rtl" ? "من اليمين لليسار" : "من اليسار لليمين"));
     });
-    bind(opts.fontMinusId || "btnFontMinus", () => { fontSize = Math.max(14, fontSize - 2); editor.style.fontSize = fontSize + "px"; });
-    bind(opts.fontPlusId || "btnFontPlus", () => { fontSize = Math.min(40, fontSize + 2); editor.style.fontSize = fontSize + "px"; });
+    bind(opts.fontMinusId || "btnFontMinus", () => { fontSize = Math.max(14, fontSize - 2); editor.style.fontSize = fontSize + "px"; syncHighlightBox(); });
+    bind(opts.fontPlusId || "btnFontPlus", () => { fontSize = Math.min(40, fontSize + 2); editor.style.fontSize = fontSize + "px"; syncHighlightBox(); });
 
     function insertAtCursor(str) {
       const pos = editor.selectionStart ?? editor.value.length;
@@ -207,13 +271,17 @@ window.ArabicKeyboardTool = (function () {
 
     /* build virtual keyboard */
     if (kb) {
-      function makeKey(label, hintText, onClick, extraClass) {
+      function makeKey(label, hintText, onClick, extraClass, isPrimaryArabic) {
         const btn = document.createElement("button");
         btn.className = "key notranslate" + (extraClass ? " " + extraClass : "");
         btn.type = "button";
         btn.setAttribute("aria-label", label);
         btn.setAttribute("translate", "no");
-        btn.innerHTML = `<span class="key-main">${label}</span><span class="hint lang-en">${hintText || ""}</span>`;
+        // isPrimaryArabic adds the dedicated .arabic-glyph class to just the
+        // glyph span (never the button/hint) so only the main Arabic letter
+        // or numeral goes red+bold; the transliteration hint is untouched.
+        const glyphClass = "key-main" + (isPrimaryArabic ? " arabic-glyph" : "");
+        btn.innerHTML = `<span class="${glyphClass}">${label}</span><span class="hint lang-en">${hintText || ""}</span>`;
         btn.addEventListener("click", () => { onClick(); btn.classList.add("pressed"); setTimeout(() => btn.classList.remove("pressed"), 120); });
         return btn;
       }
@@ -255,7 +323,7 @@ window.ArabicKeyboardTool = (function () {
       const numGroup = addGroup(null, "kb-group-numerals");
       const numRow = addRow(numGroup, equalCols(NUMERALS.length));
       NUMERALS.forEach(([ar, western]) => {
-        numRow.appendChild(makeKey(ar, western, () => insertAtCursor(ar)));
+        numRow.appendChild(makeKey(ar, western, () => insertAtCursor(ar), null, true));
       });
 
       /* --- 2. Arabic letters (BELOW numbers) — special hamza forms are part of
@@ -280,7 +348,7 @@ window.ArabicKeyboardTool = (function () {
         const keys = isLastRow ? rowArr.concat(SPECIAL_LETTERS) : rowArr;
         const rowDiv = addRow(mainGroup, equalCols(keys.length));
         keys.forEach((ch) => {
-          rowDiv.appendChild(makeKey(ch, HINTS[ch] || SPECIAL_HINTS[ch] || "", () => insertAtCursor(ch)));
+          rowDiv.appendChild(makeKey(ch, HINTS[ch] || SPECIAL_HINTS[ch] || "", () => insertAtCursor(ch), null, true));
         });
       });
 
