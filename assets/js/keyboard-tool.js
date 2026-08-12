@@ -32,10 +32,14 @@ window.ArabicKeyboardTool = (function () {
     return out;
   }
 
-  /* Main Arabic letter rows — standard Arabic keyboard layout */
+  /* Main Arabic letter rows — standard Arabic keyboard layout.
+     Each array is a fixed logical row: on the mobile keyboard these
+     render as a single CSS Grid row (see .kb-row / addRow below) so the
+     12/12/10 key counts below always stay together on one line and are
+     never broken up by responsive wrapping. */
   const ROWS = [
-    ["ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "د", "ذ"],
-    ["ش", "س", "ي", "ب", "ل", "ا", "ت", "ن", "م", "ك", "ط"],
+    ["ض", "ص", "ث", "ق", "ف", "غ", "ع", "ه", "خ", "ح", "ج", "د"],
+    ["ذ", "ش", "س", "ي", "ب", "ل", "ا", "ت", "ن", "م", "ك", "ط"],
     ["ئ", "ء", "ؤ", "ر", "لا", "ى", "ة", "و", "ز", "ظ"]
   ];
   const HINTS = { "ض": "D", "ص": "S", "ث": "Th", "ق": "Q", "ف": "F", "غ": "Gh", "ع": "3", "ه": "H", "خ": "Kh", "ح": "7", "ج": "J", "د": "D", "ذ": "Dh", "ش": "Sh", "س": "S", "ي": "Y", "ب": "B", "ل": "L", "ا": "A", "ت": "T", "ن": "N", "م": "M", "ك": "K", "ط": "6", "ئ": "'", "ء": "'", "ؤ": "'", "ر": "R", "لا": "La", "ى": "A", "ة": "H", "و": "W", "ز": "Z", "ظ": "Z" };
@@ -228,17 +232,28 @@ window.ArabicKeyboardTool = (function () {
         return group;
       }
 
-      function addRow(group) {
+      /* Each row is given an explicit CSS Grid column template matching
+         its own key count (or a custom template, e.g. for the space bar
+         row). This is the data-defined row structure: the row's contents
+         decide how the row is divided, and the row is never allowed to
+         reflow its own keys onto a second line — see .kb-row in
+         styles.css, which uses `display:grid` with no wrapping mechanism
+         at all on mobile, instead of flex-wrap. `gridTemplate` is applied
+         as an inline style so it has no effect on the desktop flex
+         layout, which is untouched. */
+      function addRow(group, gridTemplate, extraClass) {
         const rowDiv = document.createElement("div");
-        rowDiv.className = "kb-row notranslate";
+        rowDiv.className = "kb-row notranslate" + (extraClass ? " " + extraClass : "");
         rowDiv.setAttribute("translate", "no");
+        if (gridTemplate) rowDiv.style.gridTemplateColumns = gridTemplate;
         group.appendChild(rowDiv);
         return rowDiv;
       }
+      const equalCols = (n) => `repeat(${n}, minmax(0, 1fr))`;
 
       /* --- 1. Numbers (Arabic-Indic, TOP) --- */
       const numGroup = addGroup(null, "kb-group-numerals");
-      const numRow = addRow(numGroup);
+      const numRow = addRow(numGroup, equalCols(NUMERALS.length));
       NUMERALS.forEach(([ar, western]) => {
         numRow.appendChild(makeKey(ar, western, () => insertAtCursor(ar)));
       });
@@ -250,27 +265,31 @@ window.ArabicKeyboardTool = (function () {
          instead of a label so the grouping is still visually clear. --- */
       const mainGroup = addGroup(null);
       ROWS.forEach((rowArr) => {
-        const rowDiv = addRow(mainGroup);
+        const rowDiv = addRow(mainGroup, equalCols(rowArr.length));
         rowArr.forEach((ch) => {
           rowDiv.appendChild(makeKey(ch, HINTS[ch] || "", () => insertAtCursor(ch)));
         });
       });
-      const specialRow = addRow(mainGroup);
-      specialRow.classList.add("kb-row-divider");
+      /* Small centered row — capped column width instead of stretching
+         to the full keyboard width, so 3 hamza forms don't get blown up
+         to the width of a 12-key row. */
+      const specialRow = addRow(mainGroup, `repeat(${SPECIAL_LETTERS.length}, minmax(0, 70px))`, "kb-row-divider kb-row-compact");
       SPECIAL_LETTERS.forEach((ch) => {
         specialRow.appendChild(makeKey(ch, SPECIAL_HINTS[ch] || "", () => insertAtCursor(ch)));
       });
 
       /* --- 3. Symbols / punctuation --- */
       const punctGroup = addGroup(null, "kb-group-punct");
-      const punctRow = addRow(punctGroup);
+      const punctRow = addRow(punctGroup, equalCols(PUNCTUATION.length));
       PUNCTUATION.forEach((ch) => {
         punctRow.appendChild(makeKey(ch, PUNCT_HINTS[ch] || "", () => insertAtCursor(ch)));
       });
 
-      /* --- 4. Tashkeel / diacritics (BELOW the letters) --- */
+      /* --- 4. Tashkeel / diacritics (BELOW the letters) — kept as a
+         single logical row via the same fixed grid-column approach, so
+         the marks never scatter onto a second line by accident. --- */
       const diacGroup = addGroup(null, "kb-group-diacritics");
-      const diacRow = addRow(diacGroup);
+      const diacRow = addRow(diacGroup, equalCols(DIACRITICS.length));
       DIACRITICS.forEach(({ mark, name }) => {
         const btn = document.createElement("button");
         btn.className = "key key-diacritic notranslate";
@@ -284,7 +303,7 @@ window.ArabicKeyboardTool = (function () {
 
       /* --- 5. Enter / Space / Delete (BOTTOM) --- */
       const controlGroup = addGroup(null, "kb-group-controls");
-      const lastRow = addRow(controlGroup);
+      const lastRow = addRow(controlGroup, "minmax(0, 1.4fr) minmax(0, 5fr) minmax(0, 1.4fr)");
       const spaceBtn = document.createElement("button");
       spaceBtn.className = "key space notranslate"; spaceBtn.type = "button"; spaceBtn.textContent = "مسافة";
       spaceBtn.setAttribute("aria-label", "مسافة");
