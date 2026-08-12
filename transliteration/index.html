@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التحويل الصوتي العربي (Arabizi) — تحويل فوري إلى العربية</title>
+<meta name="description" content="حوّل الكتابة اللاتينية العربية (Arabizi) إلى نص عربي فوريًا، مع جدول تعيين كامل وموثّق لأرقام وأحرف Arabizi.">
+<link rel="canonical" href="https://example.com/transliteration/">
+<meta property="og:title" content="التحويل الصوتي العربي (Arabizi) — تحويل فوري إلى العربية">
+<meta property="og:description" content="حوّل الكتابة اللاتينية العربية (Arabizi) إلى نص عربي فوريًا، مع جدول تعيين كامل وموثّق لأرقام وأحرف Arabizi.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://example.com/transliteration/">
+<meta name="theme-color" content="#1F6F53">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "هل نظام التحويل الصوتي موحّد عالميًا؟", "acceptedAnswer": {"@type": "Answer", "text": "لا. الكتابة العربية بأحرف لاتينية (تُعرف أيضًا بـ Arabizi) ليست معيارًا رسميًا واحدًا، بل عرفًا شائعًا بين المستخدمين تختلف تفاصيله من شخص لآخر. الجدول أدناه يوثّق التعيين الذي تستخدمه هذه الأداة تحديدًا."}}, {"@type": "Question", "name": "لماذا يُستخدم الرقم 3 لحرف العين؟", "acceptedAnswer": {"@type": "Answer", "text": "لأن شكل الرقم 3 يشبه بصريًا حرف العين المعكوس، وهو عرف شائع جدًا في الكتابة العربية غير الرسمية (Arabizi) منذ عهد الرسائل النصية المبكرة."}}, {"@type": "Question", "name": "هل يمكن أن يعطي حرف لاتيني واحد أكثر من حرف عربي؟", "acceptedAnswer": {"@type": "Answer", "text": "نعم في بعض الحالات (مثل w التي قد تدل على واو، أو الرقم 9 الذي يدل على صاد). عند الغموض تختار الأداة التعيين الأكثر شيوعًا، ويمكنك تصحيح الناتج يدويًا."}}]}</script>
+
+</head>
+<body>
+
+<a href="#main" class="skip-link lang-en">تخطَّ إلى المحتوى</a>
+<header class="site">
+  <div class="wrap nav-row">
+    <a href="../" class="brand"><span class="mark">ع</span>لوحة عربي</a>
+    <nav class="primary" aria-label="التنقل الرئيسي">
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">الأدوات <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a></div>
+      </div>
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">تعلّم <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a></div>
+      </div>
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">موارد <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../faq/">الأسئلة الشائعة</a><a href="../about/">من نحن</a><a href="../contact/">تواصل معنا</a></div>
+      </div>
+    </nav>
+    <div class="head-actions">
+      <select class="lang-select lang-en" aria-label="اختر اللغة">
+        <option value="ar" selected>العربية</option>
+        <option value="en">English</option>
+      </select>
+      <button class="icon-btn" id="themeToggle" aria-label="تبديل الوضع الداكن" title="الوضع الداكن">🌙</button>
+      <button class="icon-btn hamburger" id="menuToggle" aria-label="فتح القائمة">☰</button>
+    </div>
+  </div>
+</header>
+
+<div id="mobileNav" aria-hidden="true">
+  <div class="mobile-panel">
+    <div class="close-x"><button class="icon-btn" id="mobileNavClose" aria-label="إغلاق القائمة">✕</button></div>
+    <a href="../">الرئيسية</a>
+    <div class="grp-label lang-en">Tools</div>
+    <a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a>
+    <div class="grp-label lang-en">Learn</div>
+    <a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a>
+    <div class="grp-label lang-en">Resources</div>
+    <a href="../faq/">الأسئلة الشائعة</a><a href="../about/">من نحن</a><a href="../contact/">تواصل معنا</a>
+  </div>
+</div>
+
+<nav class="breadcrumbs wrap lang-en" aria-label="Breadcrumb"><a href="../">الرئيسية</a><span class="sep" aria-hidden="true">/</span><a href="../tools/">الأدوات</a><span class="sep" aria-hidden="true">/</span><span class="current" aria-current="page">التحويل الصوتي</span></nav>
+<main id="main">
+  <div class="wrap">
+    
+<section class="hero compact">
+  <span class="eyebrow lang-en">Latin → Arabic</span>
+  <h1>التحويل الصوتي (Arabizi) إلى العربية</h1>
+  <p class="lead">اكتب بأحرف لاتينية وأرقام مألوفة واحصل على نص عربي فوري، مع جدول تعيين موثّق أدناه.</p>
+</section>
+
+<section class="tool-card">
+  <div class="editor-area">
+    <label for="translitInput" class="lang-en" style="font-size:12.5px; color:var(--ink-soft); display:block; margin-bottom:8px;">Latin / Arabizi input</label>
+    <textarea id="translitInput" class="editor lang-en" dir="ltr" placeholder="Ex: ana asken fi masr, ahlan wa sahlan"></textarea>
+  </div>
+  <div class="toolbar">
+    <div class="tb-group">
+      <button class="tb-btn primary" id="btnConvert">🔤 <span>تحويل إلى عربية</span></button>
+      <button class="tb-btn" id="btnClearT">🗑️ <span>مسح</span></button>
+      <button class="tb-btn" id="btnCopyT">📋 <span>نسخ الناتج</span></button>
+      <button class="tb-btn" id="btnDownloadT">⬇️ <span>تنزيل</span></button>
+    </div>
+  </div>
+  <div class="editor-area" style="padding-top:0;">
+    <div id="translitOutput" class="editor" dir="rtl" style="min-height:120px;" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head left">
+    <span class="kicker lang-en">Mapping reference</span>
+    <h2>جدول التحويل الصوتي</h2>
+    <p>هذا هو التعيين الذي تعتمده الأداة أعلاه — مبني على الاصطلاح الشائع بين مستخدمي العربية (Arabizi).</p>
+  </div>
+  <div class="map-wrap">
+    <table class="map-table lang-en">
+      <thead><tr><th>Latin</th><th>Arabic</th><th>Latin</th><th>Arabic</th><th>Latin</th><th>Arabic</th></tr></thead>
+      <tbody id="mapTableBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head left">
+    <span class="kicker lang-en">Numbers</span>
+    <h2>تعيينات الأرقام في Arabizi</h2>
+  </div>
+  <div class="map-wrap">
+    <table class="map-table lang-en">
+      <thead><tr><th>Number</th><th>Represents</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td class="lat">2</td><td>ء / ق</td><td>Glottal stop shape</td></tr>
+        <tr><td class="lat">3</td><td>ع</td><td>Mirrors ain's curve</td></tr>
+        <tr><td class="lat">5</td><td>خ</td><td>Similar guttural sound to kh</td></tr>
+        <tr><td class="lat">6</td><td>ط</td><td>Emphatic ta</td></tr>
+        <tr><td class="lat">7</td><td>ح</td><td>Shape resembles ha</td></tr>
+        <tr><td class="lat">9</td><td>ص</td><td>Emphatic sad</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<article class="content-block wrap-narrow" style="padding:0 20px;">
+  <h2>ما هو التحويل الصوتي العربي؟</h2>
+  <p>التحويل الصوتي (يُعرف أيضًا باسم Arabizi أو Franco-Arabic) هو أسلوب كتابة الكلمات العربية بأحرف لاتينية وأرقام، نشأ من الحاجة للتواصل بالعربية عبر أجهزة لا تدعم لوحة المفاتيح العربية. هذه الأداة تحوّل هذا الأسلوب إلى نص عربي حقيقي فوريًا.</p>
+</article>
+
+<section class="section">
+  <div class="section-head"><span class="kicker lang-en">Related</span><h2>أدوات ذات صلة</h2></div>
+  <div class="grid-cards">
+      <a href="../arabic-keyboard/" class="card"><div class="ic">⌨️</div><h3>لوحة المفاتيح العربية</h3><p>اكتب بالعربية باستخدام لوحة مفاتيح افتراضية أو تحويل صوتي أو لوحتك الفعلية.</p></a>
+      <a href="../tashkeel/" class="card"><div class="ic">✨</div><h3>التشكيل</h3><p>أضف الحركات الإعرابية إلى نصك العربي — معاينة سريعة داخل المتصفح.</p></a>
+      <a href="../arabic-alphabet/" class="card"><div class="ic">📚</div><h3>الأبجدية العربية</h3><p>تعلم الحروف وأشكالها المتصلة ونطقها بشكل تفاعلي.</p></a></div>
+</section>
+
+<section class="section">
+  <div class="section-head"><span class="kicker lang-en">FAQ</span><h2>أسئلة شائعة عن التحويل الصوتي</h2></div>
+  <div class="wrap-narrow" style="padding:0;"><div id="pageFaq" data-faq-list>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">هل نظام التحويل الصوتي موحّد عالميًا؟ <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="faq-a">لا. الكتابة العربية بأحرف لاتينية (تُعرف أيضًا بـ Arabizi) ليست معيارًا رسميًا واحدًا، بل عرفًا شائعًا بين المستخدمين تختلف تفاصيله من شخص لآخر. الجدول أدناه يوثّق التعيين الذي تستخدمه هذه الأداة تحديدًا.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">لماذا يُستخدم الرقم 3 لحرف العين؟ <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="faq-a">لأن شكل الرقم 3 يشبه بصريًا حرف العين المعكوس، وهو عرف شائع جدًا في الكتابة العربية غير الرسمية (Arabizi) منذ عهد الرسائل النصية المبكرة.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">هل يمكن أن يعطي حرف لاتيني واحد أكثر من حرف عربي؟ <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="faq-a">نعم في بعض الحالات (مثل w التي قد تدل على واو، أو الرقم 9 الذي يدل على صاد). عند الغموض تختار الأداة التعيين الأكثر شيوعًا، ويمكنك تصحيح الناتج يدويًا.</div>
+      </div></div></div>
+</section>
+
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="../" class="brand" style="margin-bottom:10px;"><span class="mark">ع</span>لوحة عربي</a>
+        <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+      </div>
+      <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+      <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+      <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 لوحة عربي</span>
+      <span>صُنع بعناية للكتابة العربية</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/app.js" defer></script>
+  <script src="../assets/js/keyboard-tool.js" defer></script>
+  <script src="../assets/js/transliteration-init.js" defer></script>
+</body>
+</html>

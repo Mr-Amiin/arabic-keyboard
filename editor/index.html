@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المحرر العربي — اكتب وحرّر نصوصك العربية أونلاين</title>
+<meta name="description" content="محرر نصوص عربي كامل مع دعم RTL/LTR، تحكم بحجم الخط، تراجع وإعادة، تنزيل وطباعة، وإحصائيات حية للأحرف والكلمات.">
+<link rel="canonical" href="https://example.com/editor/">
+<meta property="og:title" content="المحرر العربي — اكتب وحرّر نصوصك العربية أونلاين">
+<meta property="og:description" content="محرر نصوص عربي كامل مع دعم RTL/LTR، تحكم بحجم الخط، تراجع وإعادة، تنزيل وطباعة، وإحصائيات حية للأحرف والكلمات.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://example.com/editor/">
+<meta name="theme-color" content="#1F6F53">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "هل يحفظ المحرر عملي تلقائيًا؟", "acceptedAnswer": {"@type": "Answer", "text": "لا يوجد حفظ سحابي تلقائي حاليًا. استخدم زر «تنزيل» بشكل دوري لحفظ نسخة من نصك على جهازك."}}, {"@type": "Question", "name": "هل يدعم المحرر النصوص الطويلة؟", "acceptedAnswer": {"@type": "Answer", "text": "نعم، مساحة الكتابة قابلة للتمدد رأسيًا ولا يوجد حد أقصى عملي لطول النص."}}, {"@type": "Question", "name": "هل يمكنني الكتابة بالعربية والإنجليزية معًا؟", "acceptedAnswer": {"@type": "Answer", "text": "نعم، استخدم زر «الاتجاه» لتبديل اتجاه الفقرة الحالية عند الحاجة للتبديل بين النصين."}}]}</script>
+
+</head>
+<body>
+
+<a href="#main" class="skip-link lang-en">تخطَّ إلى المحتوى</a>
+<header class="site">
+  <div class="wrap nav-row">
+    <a href="../" class="brand"><span class="mark">ع</span>لوحة عربي</a>
+    <nav class="primary" aria-label="التنقل الرئيسي">
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">الأدوات <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a></div>
+      </div>
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">تعلّم <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a></div>
+      </div>
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">موارد <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../faq/">الأسئلة الشائعة</a><a href="../about/">من نحن</a><a href="../contact/">تواصل معنا</a></div>
+      </div>
+    </nav>
+    <div class="head-actions">
+      <select class="lang-select lang-en" aria-label="اختر اللغة">
+        <option value="ar" selected>العربية</option>
+        <option value="en">English</option>
+      </select>
+      <button class="icon-btn" id="themeToggle" aria-label="تبديل الوضع الداكن" title="الوضع الداكن">🌙</button>
+      <button class="icon-btn hamburger" id="menuToggle" aria-label="فتح القائمة">☰</button>
+    </div>
+  </div>
+</header>
+
+<div id="mobileNav" aria-hidden="true">
+  <div class="mobile-panel">
+    <div class="close-x"><button class="icon-btn" id="mobileNavClose" aria-label="إغلاق القائمة">✕</button></div>
+    <a href="../">الرئيسية</a>
+    <div class="grp-label lang-en">Tools</div>
+    <a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a>
+    <div class="grp-label lang-en">Learn</div>
+    <a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a>
+    <div class="grp-label lang-en">Resources</div>
+    <a href="../faq/">الأسئلة الشائعة</a><a href="../about/">من نحن</a><a href="../contact/">تواصل معنا</a>
+  </div>
+</div>
+
+<nav class="breadcrumbs wrap lang-en" aria-label="Breadcrumb"><a href="../">الرئيسية</a><span class="sep" aria-hidden="true">/</span><a href="../tools/">الأدوات</a><span class="sep" aria-hidden="true">/</span><span class="current" aria-current="page">المحرر</span></nav>
+<main id="main">
+  <div class="wrap">
+    
+<section class="hero compact">
+  <span class="eyebrow lang-en">Writing tool</span>
+  <h1>المحرر العربي</h1>
+  <p class="lead">بيئة كتابة عربية مخصّصة للملاحظات والرسائل والنصوص القصيرة — بدون تسجيل دخول وبدون تعقيد.</p>
+</section>
+
+<section class="tool-card">
+  
+<div class="toolbar" role="toolbar" aria-label="أدوات المحرر">
+  <div class="tb-group">
+    <button class="tb-btn" id="btnClear">🗑️ <span>مسح</span></button>
+    <button class="tb-btn" id="btnUndo">↶ <span>تراجع</span></button>
+    <button class="tb-btn" id="btnRedo">↷ <span>إعادة</span></button>
+  </div>
+  <div class="tb-sep"></div>
+  <div class="tb-group">
+    <button class="tb-btn" id="btnCopy">📋 <span>نسخ</span></button>
+    <button class="tb-btn" id="btnPaste">📥 <span>لصق</span></button>
+    <button class="tb-btn" id="btnDownload">⬇️ <span>تنزيل</span></button>
+    <button class="tb-btn" id="btnPrint">🖨️ <span>طباعة</span></button>
+  </div>
+  <div class="tb-sep"></div>
+  <div class="tb-group">
+    <button class="tb-btn" id="btnDir">↔️ <span>الاتجاه</span></button>
+    <button class="tb-btn" id="btnFontMinus">A-</button>
+    <button class="tb-btn" id="btnFontPlus">A+</button>
+  </div>
+</div>
+
+  
+<div class="editor-area">
+  <textarea id="editor" class="editor" dir="rtl" placeholder="ابدأ الكتابة… ملاحظات، رسالة، فقرة قصيرة" aria-label="محرر النص العربي"></textarea>
+  <div class="editor-meta lang-en">
+    <span id="charCount">0 حرف</span>
+    <span id="wordCount">0 كلمة</span>
+  </div>
+</div>
+<div class="kb-panel">
+  <div class="kb-head">
+    <div class="mode-toggle" role="tablist" aria-label="وضع الإدخال">
+      <button class="active" id="modeKeyboard" role="tab" aria-selected="true">⌨️ لوحة افتراضية</button>
+      <button id="modeTranslit" role="tab" aria-selected="false">🔤 تحويل صوتي</button>
+    </div>
+    <span class="translit-note" id="modeHint">انقر الأزرار أو استخدم لوحة مفاتيحك الفعلية</span>
+  </div>
+  <div id="virtualKeyboard"></div>
+</div>
+
+</section>
+
+<article class="content-block wrap-narrow" style="padding:0 20px;">
+  <h2>محرر مخصّص للكتابة العربية</h2>
+  <p>على عكس الصفحة الرئيسية التي تُبرز اللوحة الافتراضية أولًا، هذه الصفحة مصمّمة لمن يريد التركيز على الكتابة المتصلة الطويلة: ملاحظة، رسالة، أو مسودة نص قصير، مع إحصائيات حية لعدد الأحرف والكلمات.</p>
+</article>
+
+<section class="section">
+  <div class="section-head"><span class="kicker lang-en">Related</span><h2>أدوات ذات صلة</h2></div>
+  <div class="grid-cards">
+      <a href="../arabic-keyboard/" class="card"><div class="ic">⌨️</div><h3>لوحة المفاتيح العربية</h3><p>اكتب بالعربية باستخدام لوحة مفاتيح افتراضية أو تحويل صوتي أو لوحتك الفعلية.</p></a>
+      <a href="../tashkeel/" class="card"><div class="ic">✨</div><h3>التشكيل</h3><p>أضف الحركات الإعرابية إلى نصك العربي — معاينة سريعة داخل المتصفح.</p></a>
+      <a href="../typing-test/" class="card"><div class="ic">⏱️</div><h3>اختبار الطباعة</h3><p>قِس سرعتك ودقتك في الكتابة بالعربية بمدد زمنية متعددة.</p></a></div>
+</section>
+
+<section class="section">
+  <div class="section-head"><span class="kicker lang-en">FAQ</span><h2>أسئلة شائعة عن المحرر</h2></div>
+  <div class="wrap-narrow" style="padding:0;"><div id="pageFaq" data-faq-list>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">هل يحفظ المحرر عملي تلقائيًا؟ <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="faq-a">لا يوجد حفظ سحابي تلقائي حاليًا. استخدم زر «تنزيل» بشكل دوري لحفظ نسخة من نصك على جهازك.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">هل يدعم المحرر النصوص الطويلة؟ <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="faq-a">نعم، مساحة الكتابة قابلة للتمدد رأسيًا ولا يوجد حد أقصى عملي لطول النص.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">هل يمكنني الكتابة بالعربية والإنجليزية معًا؟ <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="faq-a">نعم، استخدم زر «الاتجاه» لتبديل اتجاه الفقرة الحالية عند الحاجة للتبديل بين النصين.</div>
+      </div></div></div>
+</section>
+
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="../" class="brand" style="margin-bottom:10px;"><span class="mark">ع</span>لوحة عربي</a>
+        <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+      </div>
+      <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+      <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+      <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 لوحة عربي</span>
+      <span>صُنع بعناية للكتابة العربية</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/app.js" defer></script>
+  <script src="../assets/js/keyboard-tool.js" defer></script>
+  <script src="../assets/js/editor-init.js" defer></script>
+</body>
+</html>
