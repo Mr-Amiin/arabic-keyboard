@@ -192,42 +192,34 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 .workspace{ display:flex; flex-direction:column; }
 
 .editor-area{ padding:12px; position:relative; }
-
-/* #editor is a non-editable DISPLAY SURFACE (a plain <div>), never a
-   native text field — no contenteditable, no tabindex, no
-   textarea/input. It only ever renders editorState.text from
-   keyboard-tool.js; the virtual (and optional physical) keyboard write
-   into that state directly. Because #editor can never receive native
-   keyboard focus, it can never trigger Android/Gboard or any other
-   on-screen IME. */
 .editor{
-  width:100%; min-height:110px; max-height:46vh; overflow-y:auto; box-sizing:border-box;
-  border:1px solid var(--border); border-radius:var(--radius-md);
+  width:100%; min-height:110px; resize:vertical; border:1px solid var(--border); border-radius:var(--radius-md);
   background:var(--bg); padding:16px; font-size:21px; line-height:1.8; font-family:var(--arabic-font);
-  color:var(--ink); outline:none; cursor:text;
+  color:var(--ink); outline:none;
+}
+.editor:focus{ border-color:var(--emerald); box-shadow:0 0 0 3px color-mix(in srgb, var(--emerald) 18%, transparent); }
+.editor[dir="ltr"]{ font-family:var(--font-ui); }
+
+/* Tashkeel highlight overlay (built by keyboard-tool.js). A second,
+   non-interactive copy of the editor's text is layered directly behind
+   the real <textarea>, sized/positioned to match it exactly. Only this
+   overlay is colored per-character (Tashkeel marks red, everything else
+   the editor's normal ink color) — the textarea itself stays a plain,
+   fully-functional native text field (typing, physical/virtual keyboard
+   input, paste, undo/redo, selection, copy, cursor movement, Arabic
+   shaping, RTL) with its own glyphs made transparent so the overlay
+   shows through in the same spot. If JS never runs, the overlay is
+   never inserted and the textarea's ".editor--highlighted" class is
+   never added, so the normal opaque text color is the fallback. */
+.editor-highlight{
+  position:absolute; z-index:0; margin:0; overflow:hidden; resize:none;
+  pointer-events:none; user-select:none;
   white-space:pre-wrap; word-wrap:break-word; word-break:break-word;
 }
-.editor[dir="ltr"]{ font-family:var(--font-ui); }
-.editor .tashkeel-mark{ color:var(--key-arabic-red); }
-
-/* Blinking caret drawn as an inline element at editorState.cursor —
-   there is no native caret since #editor is not an editable field. */
-.editor-caret{
-  display:inline-block; width:2px; height:1.1em; vertical-align:-0.18em;
-  background:var(--ink); margin-inline-end:-2px; animation:editorCaretBlink 1s steps(1) infinite;
-}
-@keyframes editorCaretBlink{ 50%{ opacity:0; } }
-
-/* Placeholder shown only while editorState.text is empty. Rendered as
-   a plain absolutely-positioned label (there's no native
-   ::placeholder on a div) so it never competes with the caret. */
-.editor-placeholder{
-  position:absolute; z-index:0; top:28px; inset-inline-start:28px; inset-inline-end:16px;
-  color:var(--ink-soft); font-size:21px; line-height:1.8; font-family:var(--arabic-font);
-  pointer-events:none; user-select:none; display:none;
-}
-.editor.is-empty ~ .editor-placeholder{ display:block; }
-
+.editor-highlight .tashkeel-mark{ color:var(--key-arabic-red); }
+.editor.editor--highlighted{ position:relative; z-index:1; background:transparent; color:transparent; caret-color:var(--ink); }
+.editor.editor--highlighted::placeholder{ color:var(--ink-soft); opacity:1; }
+.editor.editor--highlighted::selection{ background:color-mix(in srgb, var(--emerald) 35%, transparent); }
 .editor-meta{ display:flex; justify-content:space-between; gap:10px; font-size:12.5px; color:var(--ink-soft); margin-top:4px; font-family:var(--font-ui); }
 #dirIndicator{ font-weight:600; }
 
@@ -341,10 +333,6 @@ html[data-theme="dark"] .demo-out{ color:var(--emerald); }
 .alpha-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); gap:10px; }
 .letter-card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 8px; text-align:center; cursor:pointer; }
 .letter-card:hover{ border-color:var(--emerald); }
-.letter-card.selected{ border-color:var(--emerald); box-shadow:0 0 0 2px color-mix(in srgb, var(--emerald) 25%, transparent); }
-.speak-status{ font-size:12.5px; color:var(--ink-soft); flex-basis:100%; }
-.speak-status:empty{ display:none; }
-.speak-status.is-error{ color:var(--danger); }
 .letter-card .big{ font-size:28px; font-family:var(--font-ar-display); }
 .letter-card .translit{ font-family:var(--font-ui); font-size:11px; color:var(--ink-soft); margin-top:4px; }
 .letter-detail{ display:none; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:24px; margin-top:20px; }
@@ -423,55 +411,43 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
   .form-grid{ grid-template-columns:repeat(2,1fr); }
 }
 
-/* ---------------- MOBILE KEYBOARD (<=899px) ----------------
+/* ---------------- MOBILE KEYBOARD (<=768px) ----------------
    Editor stacks above the keyboard (DOM order already puts .editor-area
    before .kb-panel, and .workspace is column-direction by default), the
    keyboard uses the full viewport width, and every logical row stays a
-   single row. Vertical rhythm is tightened throughout so the whole
-   keyboard, down to Enter/Space/Delete, is reachable with minimal
-   scrolling.
-
-   THE CORE FIX: each .kb-row is CSS Grid, not flexbox. Grid has no
-   wrapping mechanism at all — there is no flex-wrap equivalent that
-   could ever let an individual key spill onto a second line. The row's
-   own key count (data-defined in keyboard-tool.js, e.g. 12/12/10 for
-   the three Arabic letter rows) sets grid-template-columns inline per
-   row, and every key simply shrinks to fill its column. CSS only
-   controls how each row's fixed columns scale to the available width —
-   it never decides how many keys land on a row. */
+   single row — keys shrink to fit instead of wrapping into ragged
+   sub-rows. Vertical rhythm is tightened throughout so the whole keyboard,
+   down to Enter/Space/Delete, is reachable with minimal scrolling. */
 @media (max-width:899px){
   .wrap, .wrap-narrow{ padding:0 10px; }
   .tool-card{ border-radius:16px; margin:6px 0 14px; }
 
   .editor-area{ padding:10px; }
-  .editor{ min-height:180px; max-height:40vh; font-size:19px; padding:14px; }
-  .editor-placeholder{ top:24px; inset-inline-start:24px; font-size:19px; }
+  .editor{ height:180px; min-height:110px; font-size:19px; padding:14px; }
   .editor-meta{ font-size:11.5px; }
 
-  .kb-panel{ width:100%; max-width:none; padding:8px 8px 10px; overflow-x:hidden; }
+  .kb-panel{ width:100%; max-width:none; padding:8px 8px 10px; }
   .kb-head{ margin-bottom:4px; gap:6px; }
   .mode-toggle button{ padding:5px 9px; font-size:11.5px; }
   .translit-note{ font-size:11px; padding:5px 0; }
 
   .kb-group{ margin-bottom:5px; }
 
-  /* grid-template-columns is set per row inline (see addRow() in
-     keyboard-tool.js); this just turns on grid and removes anything
-     that could cause a second line. */
-  .kb-row{
-    display:grid; grid-auto-flow:column; gap:3px; margin-bottom:3px; width:100%;
-    justify-content:stretch;
-  }
-
+  /* The core fix: rows never wrap. Keys shrink evenly (flex-basis 0,
+     no min-width floor) so a 13- or 15-key row always renders as one
+     row at full width, instead of overflowing and breaking into an
+     awkward second line. */
+  .kb-row{ flex-wrap:nowrap; gap:3px; margin-bottom:3px; width:100%; }
   .key{
-    min-width:0; max-width:none; width:100%;
+    flex:1 1 0; min-width:0; max-width:none; width:auto;
     height:44px; padding:0 1px; font-size:16px;
   }
   .key .hint{ font-size:7.5px; }
-  .key.wide{ font-size:11px; height:44px; }
-  .key.space{ font-size:11px; height:44px; }
+  .key.wide{ flex:1.4 1 0; font-size:11px; height:44px; }
+  .key.space{ flex:5 1 0; font-size:11px; height:44px; }
   .key-diacritic .diacritic-preview{ font-size:16px; }
   .key-diacritic .hint{ font-size:7px; }
+  .kb-group-numerals .key, .kb-group-punct .key{ max-width:none; }
 }
 
 /* Smaller phones: keys stay tappable and legible, just slightly more
@@ -491,4 +467,75 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
 
 @media (max-width:520px){
   .foot-grid{ grid-template-columns:1fr; }
+}
+
+/* ===========================================================================
+   Calligraphy Studio (/calligraphy/)
+   Mobile-first: source order already matches the required mobile flow
+   (text -> preview -> family -> variation -> controls -> download).
+   At >=980px we switch to a two-column layout (main + side panel).
+   =========================================================================== */
+.cally-studio{ display:flex; flex-direction:column; gap:22px; padding:28px 0 8px; }
+.cally-label{ font-family:var(--font-ui); font-size:13px; font-weight:600; color:var(--ink-soft); display:block; margin-bottom:8px; }
+.cally-text{ min-height:70px; font-size:22px; }
+
+.cally-preview-wrap{
+  background:repeating-conic-gradient(var(--surface-2) 0% 25%, var(--surface) 0% 50%) 0 0/22px 22px;
+  border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden;
+  display:flex; align-items:center; justify-content:center; padding:8px;
+}
+.cally-canvas{ width:100%; height:auto; display:block; border-radius:var(--radius-md); touch-action:manipulation; }
+
+.cally-phrases{ display:flex; flex-wrap:wrap; gap:8px; }
+.cally-phrase-btn{
+  font-family:var(--font-ar-body); font-size:15px; padding:8px 14px; border-radius:999px;
+  border:1px solid var(--border); background:var(--surface); color:var(--ink); cursor:pointer;
+}
+.cally-phrase-btn:hover{ background:var(--surface-2); }
+
+.cally-download{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; }
+.cally-download-label{ font-weight:700; display:block; margin-bottom:10px; }
+.cally-download-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.cally-download-grid .tb-btn{ justify-content:center; width:100%; }
+.cally-hint{ font-family:var(--font-ui); font-size:12.5px; color:var(--ink-soft); margin:10px 0 0; line-height:1.7; }
+
+.cally-side{ display:flex; flex-direction:column; gap:20px; }
+.cally-block{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; }
+.cally-h2{ font-family:var(--font-ui); font-size:14px; font-weight:700; margin:0 0 10px; color:var(--ink); }
+
+.cally-families{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.cally-family-btn{
+  border:1px solid var(--border); background:var(--bg); border-radius:var(--radius-sm); padding:10px;
+  text-align:center; cursor:pointer; display:flex; flex-direction:column; gap:2px; font-family:var(--font-ar-display);
+}
+.cally-family-btn .fam-label{ font-size:16px; color:var(--ink); }
+.cally-family-btn .fam-count{ font-family:var(--font-ui); font-size:10.5px; color:var(--ink-soft); }
+.cally-family-btn:hover{ background:var(--surface-2); }
+.cally-family-btn.active{ border-color:var(--ink); background:var(--surface-2); }
+.cally-family-btn.is-soon{ opacity:.55; }
+
+.cally-variations{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
+.cally-variation-btn{
+  flex:0 0 auto; min-width:74px; border:1px solid var(--border); background:var(--bg); border-radius:var(--radius-sm);
+  padding:10px 8px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px;
+}
+.cally-variation-btn .var-sample{ font-size:26px; line-height:1; color:var(--ink); font-family:var(--font-ar-display); }
+.cally-variation-btn .var-label{ font-family:var(--font-ui); font-size:10px; color:var(--ink-soft); white-space:nowrap; }
+.cally-variation-btn:hover{ background:var(--surface-2); }
+.cally-variation-btn.active{ border-color:var(--ink); background:var(--surface-2); }
+
+.cally-controls{ display:flex; flex-direction:column; gap:14px; }
+.cally-ctl{ font-family:var(--font-ui); font-size:12.5px; color:var(--ink-soft); display:flex; flex-direction:column; gap:6px; }
+.cally-ctl select, .cally-ctl input[type="range"]{ width:100%; }
+.cally-ctl--inline{ flex:1; }
+.cally-check{ font-family:var(--font-ui); font-size:13px; color:var(--ink); display:flex; align-items:center; gap:8px; }
+.cally-row{ display:flex; gap:10px; align-items:center; }
+.cally-row--outline{ align-items:flex-end; }
+.cally-color{ font-family:var(--font-ui); font-size:12px; color:var(--ink-soft); display:flex; flex-direction:column; gap:6px; flex:1; }
+.cally-color input[type="color"]{ width:100%; height:36px; border-radius:8px; border:1px solid var(--border); background:none; cursor:pointer; }
+
+@media (min-width:980px){
+  .cally-studio{ display:grid; grid-template-columns:1fr 340px; align-items:start; gap:26px; }
+  .cally-main{ display:flex; flex-direction:column; gap:18px; }
+  .cally-canvas{ max-height:70vh; width:auto; max-width:100%; }
 }

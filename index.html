@@ -18,18 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./assets/css/styles.css">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "كيف أكتب بالعربية بدون لوحة مفاتيح عربية؟", "acceptedAnswer": {"@type": "Answer", "text": "استخدم لوحة المفاتيح الافتراضية بالنقر على الأحرف، أو فعّل وضع «تحويل صوتي» واكتب بأحرف لاتينية مثل a وb و3 و7 لتحويلها تلقائيًا إلى عربية."}}, {"@type": "Question", "name": "هل يعمل الموقع بدون اتصال بالإنترنت؟", "acceptedAnswer": {"@type": "Answer", "text": "الوظائف الأساسية مثل الكتابة والتحويل الصوتي ولوحة المفاتيح تعمل محليًا في متصفحك، ويمكن للنسخة المثبّتة كتطبيق ويب أن تستمر في العمل دون اتصال."}}, {"@type": "Question", "name": "هل يمكنني تنزيل النص الذي كتبته؟", "acceptedAnswer": {"@type": "Answer", "text": "نعم، استخدم زر «تنزيل» في شريط الأدوات لحفظ النص كملف نصي على جهازك."}}]}</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4632693492035799"
-     crossorigin="anonymous"></script>
-<meta name="google-adsense-account" content="ca-pub-4632693492035799">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-S07J4DS20K"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-S07J4DS20K');
-</script>
 </head>
 <body>
 
@@ -40,7 +29,7 @@
     <nav class="primary" aria-label="التنقل الرئيسي">
       <div class="nav-item">
         <button type="button" aria-haspopup="true">الأدوات <span aria-hidden="true">▾</span></button>
-        <div class="dropdown"><a href="./arabic-keyboard/">لوحة المفاتيح العربية</a><a href="./transliteration/">التحويل الصوتي</a><a href="./tashkeel/">التشكيل</a><a href="./editor/">المحرر</a><a href="./typing-test/">اختبار الطباعة</a></div>
+        <div class="dropdown"><a href="./arabic-keyboard/">لوحة المفاتيح العربية</a><a href="./calligraphy/">استوديو الخط العربي</a><a href="./transliteration/">التحويل الصوتي</a><a href="./tashkeel/">التشكيل</a><a href="./editor/">المحرر</a><a href="./typing-test/">اختبار الطباعة</a></div>
       </div>
       <div class="nav-item">
         <button type="button" aria-haspopup="true">تعلّم <span aria-hidden="true">▾</span></button>
@@ -67,7 +56,7 @@
     <div class="close-x"><button class="icon-btn" id="mobileNavClose" aria-label="إغلاق القائمة">✕</button></div>
     <a href="./" aria-current="page">الرئيسية</a>
     <div class="grp-label lang-en">Tools</div>
-    <a href="./arabic-keyboard/">لوحة المفاتيح العربية</a><a href="./transliteration/">التحويل الصوتي</a><a href="./tashkeel/">التشكيل</a><a href="./editor/">المحرر</a><a href="./typing-test/">اختبار الطباعة</a>
+    <a href="./arabic-keyboard/">لوحة المفاتيح العربية</a><a href="./calligraphy/">استوديو الخط العربي</a><a href="./transliteration/">التحويل الصوتي</a><a href="./tashkeel/">التشكيل</a><a href="./editor/">المحرر</a><a href="./typing-test/">اختبار الطباعة</a>
     <div class="grp-label lang-en">Learn</div>
     <a href="./arabic-alphabet/">الأبجدية العربية</a><a href="./learn-arabic/">تعلّم العربية</a>
     <div class="grp-label lang-en">Resources</div>
@@ -111,8 +100,7 @@
   
 <div class="workspace">
   <div class="editor-area">
-    <div id="editor" class="editor" dir="rtl" aria-label="محرر النص العربي"></div>
-    <div class="editor-placeholder" aria-hidden="true">اكتب النص هنا…</div>
+    <textarea id="editor" class="editor" dir="rtl" placeholder="اكتب النص هنا…" aria-label="محرر النص العربي"></textarea>
     <div class="editor-meta lang-en">
       <span id="charCount">0 حرف</span>
       <span id="wordCount">0 كلمة</span>
@@ -134,7 +122,7 @@
 </section>
 
 <div class="grid-cards" aria-label="أدوات سريعة">
-  <a href="arabic-keyboard/" class="card"><div class="ic">⌨️</div><h3>لوحة المفاتيح العربية</h3><p>اكتب بالعربية باستخدام لوحة مفاتيح افتراضية أو تحويل صوتي أو لوحتك الفعلية.</p></a><a href="transliteration/" class="card"><div class="ic">🔤</div><h3>التحويل الصوتي</h3><p>حوّل الكتابة اللاتينية (Arabizi) إلى نص عربي فوريًا مع مرجع تحويل كامل.</p></a><a href="tashkeel/" class="card"><div class="ic">✨</div><h3>التشكيل</h3><p>أضف الحركات الإعرابية إلى نصك العربي — معاينة سريعة داخل المتصفح.</p></a><a href="editor/" class="card"><div class="ic">📝</div><h3>المحرر العربي</h3><p>بيئة كتابة عربية كاملة مع تنسيق واتجاه نص وإحصائيات.</p></a><a href="typing-test/" class="card"><div class="ic">⏱️</div><h3>اختبار الطباعة</h3><p>قِس سرعتك ودقتك في الكتابة بالعربية بمدد زمنية متعددة.</p></a><a href="arabic-typing-test/" class="card"><div class="ic">🏁</div><h3>اختبار الطباعة العربي</h3><p>نسخة مخصّصة لاختبار سرعة الطباعة بالعربية الفصحى.</p></a><a href="arabic-alphabet/" class="card"><div class="ic">📚</div><h3>الأبجدية العربية</h3><p>تعلم الحروف وأشكالها المتصلة ونطقها بشكل تفاعلي.</p></a><a href="learn-arabic/" class="card"><div class="ic">🎓</div><h3>تعلّم العربية</h3><p>دروس منظمة تغطي الحروف والأرقام والتشكيل وأساسيات الكتابة.</p></a>
+  <a href="arabic-keyboard/" class="card"><div class="ic">⌨️</div><h3>لوحة المفاتيح العربية</h3><p>اكتب بالعربية باستخدام لوحة مفاتيح افتراضية أو تحويل صوتي أو لوحتك الفعلية.</p></a><a href="calligraphy/" class="card"><div class="ic">🖋️</div><h3>استوديو الخط العربي</h3><p>حوّل نصك العربي إلى لوحة خط فني — اختر الطراز والنمط وخصّص كل التفاصيل ثم نزّل النتيجة.</p></a><a href="transliteration/" class="card"><div class="ic">🔤</div><h3>التحويل الصوتي</h3><p>حوّل الكتابة اللاتينية (Arabizi) إلى نص عربي فوريًا مع مرجع تحويل كامل.</p></a><a href="tashkeel/" class="card"><div class="ic">✨</div><h3>التشكيل</h3><p>أضف الحركات الإعرابية إلى نصك العربي — معاينة سريعة داخل المتصفح.</p></a><a href="editor/" class="card"><div class="ic">📝</div><h3>المحرر العربي</h3><p>بيئة كتابة عربية كاملة مع تنسيق واتجاه نص وإحصائيات.</p></a><a href="typing-test/" class="card"><div class="ic">⏱️</div><h3>اختبار الطباعة</h3><p>قِس سرعتك ودقتك في الكتابة بالعربية بمدد زمنية متعددة.</p></a><a href="arabic-typing-test/" class="card"><div class="ic">🏁</div><h3>اختبار الطباعة العربي</h3><p>نسخة مخصّصة لاختبار سرعة الطباعة بالعربية الفصحى.</p></a><a href="arabic-alphabet/" class="card"><div class="ic">📚</div><h3>الأبجدية العربية</h3><p>تعلم الحروف وأشكالها المتصلة ونطقها بشكل تفاعلي.</p></a><a href="learn-arabic/" class="card"><div class="ic">🎓</div><h3>تعلّم العربية</h3><p>دروس منظمة تغطي الحروف والأرقام والتشكيل وأساسيات الكتابة.</p></a>
 </div>
 
 <section class="section">
@@ -183,7 +171,7 @@
         <a href="./" class="brand" style="margin-bottom:10px;"><span class="mark">ع</span>لوحة عربي</a>
         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
       </div>
-      <div><h4 class="lang-en">Tools</h4><ul><li><a href="./arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="./transliteration/">التحويل الصوتي</a></li><li><a href="./tashkeel/">التشكيل</a></li><li><a href="./editor/">المحرر</a></li><li><a href="./typing-test/">اختبار الطباعة</a></li><li><a href="./tools/">كل الأدوات</a></li></ul></div>
+      <div><h4 class="lang-en">Tools</h4><ul><li><a href="./arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="./calligraphy/">استوديو الخط العربي</a></li><li><a href="./transliteration/">التحويل الصوتي</a></li><li><a href="./tashkeel/">التشكيل</a></li><li><a href="./editor/">المحرر</a></li><li><a href="./typing-test/">اختبار الطباعة</a></li><li><a href="./tools/">كل الأدوات</a></li></ul></div>
       <div><h4 class="lang-en">Learn</h4><ul><li><a href="./arabic-alphabet/">الأبجدية العربية</a></li><li><a href="./learn-arabic/">تعلّم العربية</a></li><li><a href="./arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
       <div><h4 class="lang-en">Resources</h4><ul><li><a href="./faq/">الأسئلة الشائعة</a></li><li><a href="./about/">من نحن</a></li><li><a href="./contact/">تواصل معنا</a></li></ul></div>
       <div><h4 class="lang-en">Company</h4><ul><li><a href="./privacy/">الخصوصية</a></li><li><a href="./terms/">الشروط</a></li></ul></div>

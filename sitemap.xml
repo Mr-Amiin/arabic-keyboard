@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://arabic-keyboard.live/</loc></url>
-  <url><loc>https://arabic-keyboard.live/arabic-keyboard/</loc></url>
-  <url><loc>https://arabic-keyboard.live/transliteration/</loc></url>
-  <url><loc>https://arabic-keyboard.live/tashkeel/</loc></url>
-  <url><loc>https://arabic-keyboard.live/editor/</loc></url>
-  <url><loc>https://arabic-keyboard.live/typing-test/</loc></url>
-  <url><loc>https://arabic-keyboard.live/arabic-alphabet/</loc></url>
-  <url><loc>https://arabic-keyboard.live/learn-arabic/</loc></url>
-  <url><loc>https://arabic-keyboard.live/faq/</loc></url>
-  <url><loc>https://arabic-keyboard.live/about/</loc></url>
-  <url><loc>https://arabic-keyboard.live/contact/</loc></url>
-  <url><loc>https://arabic-keyboard.live/tools/</loc></url>
-  <url><loc>https://arabic-keyboard.live/arabic-typing-test/</loc></url>
-  <url><loc>https://arabic-keyboard.live/privacy/</loc></url>
-  <url><loc>https://arabic-keyboard.live/terms/</loc></url>
+  <url><loc>https://example.com/</loc></url>
+  <url><loc>https://example.com/arabic-keyboard/</loc></url>
+  <url><loc>https://example.com/calligraphy/</loc></url>
+  <url><loc>https://example.com/transliteration/</loc></url>
+  <url><loc>https://example.com/tashkeel/</loc></url>
+  <url><loc>https://example.com/editor/</loc></url>
+  <url><loc>https://example.com/typing-test/</loc></url>
+  <url><loc>https://example.com/arabic-alphabet/</loc></url>
+  <url><loc>https://example.com/learn-arabic/</loc></url>
+  <url><loc>https://example.com/faq/</loc></url>
+  <url><loc>https://example.com/about/</loc></url>
+  <url><loc>https://example.com/contact/</loc></url>
+  <url><loc>https://example.com/tools/</loc></url>
+  <url><loc>https://example.com/arabic-typing-test/</loc></url>
+  <url><loc>https://example.com/privacy/</loc></url>
+  <url><loc>https://example.com/terms/</loc></url>
 </urlset>
