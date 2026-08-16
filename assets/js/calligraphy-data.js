@@ -17,7 +17,11 @@
  *   label         Arabic label shown in the UI
  *   file          path under assets/fonts/calligraphy/<familyId>/
  *   weight        CSS font-weight to request (matches the static/instance)
- *   sample        two-letter Arabic sample rendered on the swatch button
+ *
+ * Note: there is intentionally no "sample" field here. Swatch/gallery
+ * previews always render the user's live studioState.text (see
+ * calligraphy-init.js: refreshVariationSamples) — never a hardcoded
+ * per-variation demo word.
  */
 (function (global) {
   "use strict";
@@ -32,17 +36,17 @@
       blurb: "الخط الأكثر انتشارًا، واضح ومتوازن ومناسب للنصوص الطويلة.",
       available: true,
       variations: [
-        { id: "naskh-amiri", label: "أميري", file: "amiri/Amiri-Regular.woff2", weight: 400, sample: "بس" },
-        { id: "naskh-amiri-bold", label: "أميري عريض", file: "amiri/Amiri-Bold.woff2", weight: 700, sample: "بس" },
-        { id: "naskh-scheherazade", label: "شهرزاد", file: "scheherazadenew/ScheherazadeNew-Regular.woff2", weight: 400, sample: "بس" },
-        { id: "naskh-scheherazade-bold", label: "شهرزاد عريض", file: "scheherazadenew/ScheherazadeNew-Bold.woff2", weight: 700, sample: "بس" },
-        { id: "naskh-noto", label: "نوتو نسخ", file: "notonaskharabic/NotoNaskhArabic-Variable.woff2", weight: 400, sample: "بس" },
-        { id: "naskh-noto-bold", label: "نوتو نسخ عريض", file: "notonaskharabic/NotoNaskhArabic-Variable.woff2", weight: 700, sample: "بس" },
-        { id: "naskh-lateef", label: "لطيف", file: "lateef/Lateef-Regular.woff2", weight: 400, sample: "بس" },
-        { id: "naskh-harmattan", label: "هرمتان", file: "harmattan/Harmattan-Regular.woff2", weight: 400, sample: "بس" },
-        { id: "naskh-elmessiri", label: "المسيري", file: "elmessiri/ElMessiri-Variable.woff2", weight: 400, sample: "بس" },
-        { id: "naskh-elmessiri-bold", label: "المسيري عريض", file: "elmessiri/ElMessiri-Variable.woff2", weight: 700, sample: "بس" },
-        { id: "naskh-markazi", label: "مركزي", file: "markazitext/MarkaziText-Variable.woff2", weight: 500, sample: "بس" }
+        { id: "naskh-amiri", label: "أميري", file: "amiri/Amiri-Regular.woff2", weight: 400 },
+        { id: "naskh-amiri-bold", label: "أميري عريض", file: "amiri/Amiri-Bold.woff2", weight: 700 },
+        { id: "naskh-scheherazade", label: "شهرزاد", file: "scheherazadenew/ScheherazadeNew-Regular.woff2", weight: 400 },
+        { id: "naskh-scheherazade-bold", label: "شهرزاد عريض", file: "scheherazadenew/ScheherazadeNew-Bold.woff2", weight: 700 },
+        { id: "naskh-noto", label: "نوتو نسخ", file: "notonaskharabic/NotoNaskhArabic-Variable.woff2", weight: 400 },
+        { id: "naskh-noto-bold", label: "نوتو نسخ عريض", file: "notonaskharabic/NotoNaskhArabic-Variable.woff2", weight: 700 },
+        { id: "naskh-lateef", label: "لطيف", file: "lateef/Lateef-Regular.woff2", weight: 400 },
+        { id: "naskh-harmattan", label: "هرمتان", file: "harmattan/Harmattan-Regular.woff2", weight: 400 },
+        { id: "naskh-elmessiri", label: "المسيري", file: "elmessiri/ElMessiri-Variable.woff2", weight: 400 },
+        { id: "naskh-elmessiri-bold", label: "المسيري عريض", file: "elmessiri/ElMessiri-Variable.woff2", weight: 700 },
+        { id: "naskh-markazi", label: "مركزي", file: "markazitext/MarkaziText-Variable.woff2", weight: 500 }
       ]
     },
     {
@@ -52,14 +56,14 @@
       blurb: "خط هندسي بزوايا مستقيمة، مثالي للشعارات والعناوين.",
       available: true,
       variations: [
-        { id: "kufi-reem", label: "ريم كوفي", file: "reemkufi/ReemKufi-Variable.woff2", weight: 400, sample: "كف" },
-        { id: "kufi-reem-bold", label: "ريم كوفي عريض", file: "reemkufi/ReemKufi-Variable.woff2", weight: 700, sample: "كف" },
-        { id: "kufi-reem-ink", label: "ريم كوفي إنك", file: "reemkufiink/ReemKufiInk-Regular.woff2", weight: 400, sample: "كف" },
-        { id: "kufi-noto", label: "نوتو كوفي", file: "notokufiarabic/NotoKufiArabic-Variable.woff2", weight: 400, sample: "كف" },
-        { id: "kufi-noto-bold", label: "نوتو كوفي عريض", file: "notokufiarabic/NotoKufiArabic-Variable.woff2", weight: 700, sample: "كف" },
-        { id: "kufi-mada", label: "مدى", file: "mada/Mada-Variable.woff2", weight: 500, sample: "كف" },
-        { id: "kufi-mada-bold", label: "مدى عريض", file: "mada/Mada-Variable.woff2", weight: 700, sample: "كف" },
-        { id: "kufi-katibeh", label: "كاتبة", file: "katibeh/Katibeh-Regular.woff2", weight: 400, sample: "كف" }
+        { id: "kufi-reem", label: "ريم كوفي", file: "reemkufi/ReemKufi-Variable.woff2", weight: 400 },
+        { id: "kufi-reem-bold", label: "ريم كوفي عريض", file: "reemkufi/ReemKufi-Variable.woff2", weight: 700 },
+        { id: "kufi-reem-ink", label: "ريم كوفي إنك", file: "reemkufiink/ReemKufiInk-Regular.woff2", weight: 400 },
+        { id: "kufi-noto", label: "نوتو كوفي", file: "notokufiarabic/NotoKufiArabic-Variable.woff2", weight: 400 },
+        { id: "kufi-noto-bold", label: "نوتو كوفي عريض", file: "notokufiarabic/NotoKufiArabic-Variable.woff2", weight: 700 },
+        { id: "kufi-mada", label: "مدى", file: "mada/Mada-Variable.woff2", weight: 500 },
+        { id: "kufi-mada-bold", label: "مدى عريض", file: "mada/Mada-Variable.woff2", weight: 700 },
+        { id: "kufi-katibeh", label: "كاتبة", file: "katibeh/Katibeh-Regular.woff2", weight: 400 }
       ]
     },
     {
@@ -69,10 +73,10 @@
       blurb: "خط سريع الكتابة بحروف مضغوطة، شائع في الاستخدام اليومي.",
       available: true,
       variations: [
-        { id: "ruqaa-aref", label: "عارف رقعة", file: "arefruqaa/ArefRuqaa-Regular.woff2", weight: 400, sample: "رق" },
-        { id: "ruqaa-aref-bold", label: "عارف رقعة عريض", file: "arefruqaa/ArefRuqaa-Bold.woff2", weight: 700, sample: "رق" },
-        { id: "ruqaa-aref-ink", label: "عارف رقعة إنك", file: "arefruqaaink/ArefRuqaaInk-Regular.woff2", weight: 400, sample: "رق" },
-        { id: "ruqaa-aref-ink-bold", label: "عارف رقعة إنك عريض", file: "arefruqaaink/ArefRuqaaInk-Bold.woff2", weight: 700, sample: "رق" }
+        { id: "ruqaa-aref", label: "عارف رقعة", file: "arefruqaa/ArefRuqaa-Regular.woff2", weight: 400 },
+        { id: "ruqaa-aref-bold", label: "عارف رقعة عريض", file: "arefruqaa/ArefRuqaa-Bold.woff2", weight: 700 },
+        { id: "ruqaa-aref-ink", label: "عارف رقعة إنك", file: "arefruqaaink/ArefRuqaaInk-Regular.woff2", weight: 400 },
+        { id: "ruqaa-aref-ink-bold", label: "عارف رقعة إنك عريض", file: "arefruqaaink/ArefRuqaaInk-Bold.woff2", weight: 700 }
       ]
     },
     {
@@ -82,9 +86,9 @@
       blurb: "خط مائل انسيابي شائع في الفارسية والأردية، بحروف متدلية.",
       available: true,
       variations: [
-        { id: "nastaliq-noto", label: "نوتو نستعليق", file: "notonastaliqurdu/NotoNastaliqUrdu-Variable.woff2", weight: 400, sample: "نس" },
-        { id: "nastaliq-noto-bold", label: "نوتو نستعليق عريض", file: "notonastaliqurdu/NotoNastaliqUrdu-Variable.woff2", weight: 700, sample: "نس" },
-        { id: "nastaliq-gulzar", label: "گلزار", file: "gulzar/Gulzar-Regular.woff2", weight: 400, sample: "نس" }
+        { id: "nastaliq-noto", label: "نوتو نستعليق", file: "notonastaliqurdu/NotoNastaliqUrdu-Variable.woff2", weight: 400 },
+        { id: "nastaliq-noto-bold", label: "نوتو نستعليق عريض", file: "notonastaliqurdu/NotoNastaliqUrdu-Variable.woff2", weight: 700 },
+        { id: "nastaliq-gulzar", label: "گلزار", file: "gulzar/Gulzar-Regular.woff2", weight: 400 }
       ]
     },
     {
@@ -94,10 +98,10 @@
       blurb: "خطوط جريئة ذات طابع فني، مناسبة للعناوين والملصقات — بأسمائها الحقيقية، وليست بديلاً عن الديواني أو الثلث.",
       available: true,
       variations: [
-        { id: "deco-blaka", label: "بلاكا", file: "blaka/Blaka-Regular.woff2", weight: 400, sample: "زخ" },
-        { id: "deco-blaka-ink", label: "بلاكا إنك", file: "blakaink/BlakaInk-Regular.woff2", weight: 400, sample: "زخ" },
-        { id: "deco-jomhuria", label: "جمهورية", file: "jomhuria/Jomhuria-Regular.woff2", weight: 400, sample: "زخ" },
-        { id: "deco-rakkas", label: "رقّاص", file: "rakkas/Rakkas-Regular.woff2", weight: 400, sample: "زخ" }
+        { id: "deco-blaka", label: "بلاكا", file: "blaka/Blaka-Regular.woff2", weight: 400 },
+        { id: "deco-blaka-ink", label: "بلاكا إنك", file: "blakaink/BlakaInk-Regular.woff2", weight: 400 },
+        { id: "deco-jomhuria", label: "جمهورية", file: "jomhuria/Jomhuria-Regular.woff2", weight: 400 },
+        { id: "deco-rakkas", label: "رقّاص", file: "rakkas/Rakkas-Regular.woff2", weight: 400 }
       ]
     },
     {

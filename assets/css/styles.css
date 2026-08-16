@@ -516,10 +516,19 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
 
 .cally-variations{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
 .cally-variation-btn{
-  flex:0 0 auto; min-width:74px; border:1px solid var(--border); background:var(--bg); border-radius:var(--radius-sm);
+  flex:0 0 auto; width:150px; border:1px solid var(--border); background:var(--bg); border-radius:var(--radius-sm);
   padding:10px 8px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px;
 }
-.cally-variation-btn .var-sample{ font-size:26px; line-height:1; color:var(--ink); font-family:var(--font-ar-display); }
+/* Fixed-size viewport the live sample text is fit into — width is what
+   the JS fitting algorithm (fitSampleText) measures against, so the
+   full current text is always visible, shrinking rather than clipping. */
+.cally-variation-btn .var-sample-box{
+  width:100%; height:34px; display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.cally-variation-btn .var-sample{
+  font-size:26px; line-height:1; color:var(--ink); font-family:var(--font-ar-display);
+  white-space:nowrap; display:inline-block;
+}
 .cally-variation-btn .var-label{ font-family:var(--font-ui); font-size:10px; color:var(--ink-soft); white-space:nowrap; }
 .cally-variation-btn:hover{ background:var(--surface-2); }
 .cally-variation-btn.active{ border-color:var(--ink); background:var(--surface-2); }

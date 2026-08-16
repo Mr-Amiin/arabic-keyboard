@@ -77,23 +77,51 @@
       } else {
         els.variationHint.textContent = "هذا الطراز غير متاح بعد بترخيص مفتوح موثّق — راجع fonts/LICENSES.md.";
         els.variations.innerHTML = "";
+        variationSampleEls = [];
       }
     }
 
+    // Every swatch card renders the SAME live text as the main canvas —
+    // studio.state.text is the single source of truth (see ARCHITECTURE.md
+    // pipeline: studio.state.text -> shaping/bidi -> font/variation ->
+    // renderer). We keep a list of the built sample <span> elements so
+    // that any text change can update + refit every card in one pass,
+    // instead of maintaining a second "gallery text" value anywhere.
+    var variationSampleEls = [];
+
     function buildVariations(fam) {
       els.variations.innerHTML = "";
+      variationSampleEls = [];
       els.variationHint.textContent = fam.blurb;
       fam.variations.forEach(function (v) {
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "cally-variation-btn";
         btn.setAttribute("data-variation", v.id);
-        btn.innerHTML = '<span class="var-sample">' + v.sample + '</span><span class="var-label">' + v.label + "</span>";
+
+        var sampleBox = document.createElement("span");
+        sampleBox.className = "var-sample-box";
+        var sampleEl = document.createElement("span");
+        sampleEl.className = "var-sample";
+        sampleEl.dir = "rtl";
+        sampleEl.lang = "ar";
+        sampleBox.appendChild(sampleEl);
+
+        var labelEl = document.createElement("span");
+        labelEl.className = "var-label";
+        labelEl.textContent = v.label;
+
+        btn.appendChild(sampleBox);
+        btn.appendChild(labelEl);
         btn.addEventListener("click", function () { selectVariation(v.id); });
         els.variations.appendChild(btn);
-        // Progressively apply the real font to its own swatch once loaded.
-        CalligraphyStudio && loadSwatchFont(v, btn.querySelector(".var-sample"));
+
+        variationSampleEls.push(sampleEl);
+        // Progressively apply the real font to its own swatch once loaded,
+        // then set + fit the CURRENT studio text (never a hardcoded word).
+        CalligraphyStudio && loadSwatchFont(v, sampleEl);
       });
+      refreshVariationSamples();
     }
 
     function loadSwatchFont(variation, sampleEl) {
@@ -107,7 +135,55 @@
         document.fonts.add(loaded);
         sampleEl.style.fontFamily = '"' + family + '"';
         sampleEl.style.fontWeight = variation.weight;
+        fitSampleText(sampleEl);
       }).catch(function () {});
+    }
+
+    // studio.state.text -> (tashkeel already whatever the user typed; the
+    // gallery intentionally mirrors the raw input 1:1, same as the main
+    // preview) -> each card's sample span. Multi-line input is flattened
+    // to one line here purely because the swatch is a small fixed-height
+    // box — the full text (every line) is still shown, nothing is cut.
+    function currentGalleryText() {
+      return studio.state.text.replace(/\n+/g, " ").trim();
+    }
+
+    function refreshVariationSamples() {
+      var text = currentGalleryText();
+      variationSampleEls.forEach(function (sampleEl) {
+        sampleEl.textContent = text;
+        fitSampleText(sampleEl);
+      });
+    }
+
+    // Responsive fit-to-box: the card width is fixed, so we shrink the
+    // sample's font-size proportionally until the (real, shaped) text
+    // fits on one line — never truncating or clipping it. Short text
+    // simply renders at the normal swatch size.
+    var SAMPLE_MAX_FONT = 26;
+    var SAMPLE_MIN_FONT = 7;
+    function fitSampleText(sampleEl) {
+      var box = sampleEl.parentElement;
+      if (!box || !sampleEl.textContent) return;
+      var maxWidth = box.clientWidth - 4; // small breathing room
+      if (maxWidth <= 0) return; // not laid out yet (e.g. hidden family tab)
+      sampleEl.style.fontSize = SAMPLE_MAX_FONT + "px";
+      sampleEl.title = "";
+      var natural = sampleEl.scrollWidth;
+      if (natural > maxWidth) {
+        var fitted = Math.floor(SAMPLE_MAX_FONT * (maxWidth / natural));
+        fitted = Math.max(SAMPLE_MIN_FONT, fitted);
+        sampleEl.style.fontSize = fitted + "px";
+        // Re-check once at the fitted size — Arabic contextual shaping
+        // can change slightly at very different sizes; nudge down further
+        // if it still slightly overflows, rather than ever clipping.
+        if (sampleEl.scrollWidth > maxWidth && fitted > SAMPLE_MIN_FONT) {
+          sampleEl.style.fontSize = Math.max(SAMPLE_MIN_FONT, fitted - 1) + "px";
+        }
+        if (sampleEl.scrollWidth > maxWidth) {
+          sampleEl.title = sampleEl.textContent; // tooltip fallback at the floor size
+        }
+      }
     }
 
     function selectVariation(id) {
@@ -156,16 +232,17 @@
       els.text.addEventListener("input", function () {
         studio.set({ text: els.text.value });
         queueRender();
+        refreshVariationSamples();
         clearTimeout(typingTimer);
         typingTimer = setTimeout(function () { studio.pushHistory(); }, 500);
       });
     }
 
     if (els.undo) els.undo.addEventListener("click", function () {
-      if (studio.undo()) { els.text.value = studio.state.text; queueRender(); }
+      if (studio.undo()) { els.text.value = studio.state.text; queueRender(); refreshVariationSamples(); }
     });
     if (els.redo) els.redo.addEventListener("click", function () {
-      if (studio.redo()) { els.text.value = studio.state.text; queueRender(); }
+      if (studio.redo()) { els.text.value = studio.state.text; queueRender(); refreshVariationSamples(); }
     });
     if (els.reset) els.reset.addEventListener("click", function () {
       studio.state = Object.assign({}, defaultState);
@@ -209,6 +286,7 @@
           els.text.value = phrase;
           studio.pushHistory();
           queueRender();
+          refreshVariationSamples();
         });
         els.phrases.appendChild(btn);
       });
@@ -263,5 +341,6 @@
     studio.pushHistory();
     queueRender();
     window.addEventListener("resize", queueRender);
+    window.addEventListener("resize", refreshVariationSamples);
   });
 })();
