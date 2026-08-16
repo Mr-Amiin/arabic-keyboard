@@ -63,7 +63,8 @@
         { id: "kufi-noto-bold", label: "نوتو كوفي عريض", file: "notokufiarabic/NotoKufiArabic-Variable.woff2", weight: 700 },
         { id: "kufi-mada", label: "مدى", file: "mada/Mada-Variable.woff2", weight: 500 },
         { id: "kufi-mada-bold", label: "مدى عريض", file: "mada/Mada-Variable.woff2", weight: 700 },
-        { id: "kufi-katibeh", label: "كاتبة", file: "katibeh/Katibeh-Regular.woff2", weight: 400 }
+        { id: "kufi-katibeh", label: "كاتبة", file: "katibeh/Katibeh-Regular.woff2", weight: 400 },
+        { id: "kufi-thabit", label: "ثابت", file: "thabit/Thabit-Regular.woff2", weight: 400 }
       ]
     },
     {
@@ -88,7 +89,8 @@
       variations: [
         { id: "nastaliq-noto", label: "نوتو نستعليق", file: "notonastaliqurdu/NotoNastaliqUrdu-Variable.woff2", weight: 400 },
         { id: "nastaliq-noto-bold", label: "نوتو نستعليق عريض", file: "notonastaliqurdu/NotoNastaliqUrdu-Variable.woff2", weight: 700 },
-        { id: "nastaliq-gulzar", label: "گلزار", file: "gulzar/Gulzar-Regular.woff2", weight: 400 }
+        { id: "nastaliq-gulzar", label: "گلزار", file: "gulzar/Gulzar-Regular.woff2", weight: 400 },
+        { id: "nastaliq-iran", label: "نستعليق إيران", file: "irannastaliq/IranNastaliq-Regular.woff2", weight: 400 }
       ]
     },
     {
@@ -101,16 +103,29 @@
         { id: "deco-blaka", label: "بلاكا", file: "blaka/Blaka-Regular.woff2", weight: 400 },
         { id: "deco-blaka-ink", label: "بلاكا إنك", file: "blakaink/BlakaInk-Regular.woff2", weight: 400 },
         { id: "deco-jomhuria", label: "جمهورية", file: "jomhuria/Jomhuria-Regular.woff2", weight: 400 },
-        { id: "deco-rakkas", label: "رقّاص", file: "rakkas/Rakkas-Regular.woff2", weight: 400 }
+        { id: "deco-rakkas", label: "رقّاص", file: "rakkas/Rakkas-Regular.woff2", weight: 400 },
+        { id: "deco-cortoba", label: "قرطبة", file: "cortoba/Cortoba-Regular.woff2", weight: 400 }
       ]
     },
     {
       id: "thuluth",
       label: "ثلث",
       labelEn: "Thuluth",
-      blurb: "لم نجد بعد خطًا رقميًا مرخّصًا بترخيص مفتوح يسمح بإعادة التوزيع.",
-      available: false,
-      variations: []
+      blurb: "خط الثلث بحروفه المنحنية الانسيابية، أقدم أشكاله الرقمية المتوفرة برخصة مفتوحة موثّقة.",
+      available: true,
+      variations: [
+        { id: "thuluth-tholoth", label: "ثلث (Khotot)", file: "tholoth/Tholoth-Regular.woff2", weight: 400 }
+      ]
+    },
+    {
+      id: "quranic",
+      label: "قرآني",
+      labelEn: "Quranic / Tajweed-oriented Naskh",
+      blurb: "نسخ مخصّص للنصوص القرآنية بتناسب حروف وتشكيل دقيق، مبني على نفس عائلة أميري.",
+      available: true,
+      variations: [
+        { id: "quranic-amiri", label: "أميري قرآن", file: "quranic/AmiriQuran-Regular.woff2", weight: 400 }
+      ]
     },
     {
       id: "jali-diwani",
