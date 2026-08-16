@@ -115,6 +115,70 @@ window.ArabicKeyboardTool = (function () {
     let undoStack = [""], redoStack = [], suppressPush = false, translitOn = false, fontSize = 24;
 
     /* ---------------------------------------------------------------
+       Mobile keyboard-focus mode
+       -------------------------------------------------------------
+       On phones, focusing #editor opens the Android system keyboard,
+       which shrinks window.visualViewport but leaves the layout
+       viewport (and so 100vh-based CSS) untouched. Left alone, the
+       lower rows of the virtual keyboard render past the bottom of
+       what's actually visible, underneath the system keyboard.
+
+       Fix: while the editor is focused on a mobile-width layout, add
+       .kb-focus-active to the tool-card and keep two CSS variables,
+       --visual-viewport-height and --visual-viewport-offset-top, in
+       sync with window.visualViewport. The CSS (see styles.css,
+       "MOBILE KEYBOARD-FOCUS OVERLAY") uses those to pin the tool-card
+       to exactly the visible area above the system keyboard, with the
+       virtual keyboard panel scrolling internally if space is
+       genuinely too tight rather than shrinking keys further. */
+    const workspaceEl = editor.closest(".workspace");
+    const toolCardEl = workspaceEl ? (workspaceEl.closest(".tool-card") || workspaceEl) : null;
+    if (toolCardEl && window.visualViewport) {
+      const vv = window.visualViewport;
+      const mobileQuery = window.matchMedia("(max-width: 899px)");
+      let focusActive = false;
+
+      function updateViewportVars() {
+        document.documentElement.style.setProperty("--visual-viewport-height", vv.height + "px");
+        document.documentElement.style.setProperty("--visual-viewport-offset-top", vv.offsetTop + "px");
+      }
+
+      function enterFocusMode() {
+        if (focusActive || !mobileQuery.matches) return;
+        focusActive = true;
+        updateViewportVars();
+        toolCardEl.classList.add("kb-focus-active");
+        document.documentElement.classList.add("kb-focus-mode");
+        document.body.classList.add("kb-focus-mode");
+      }
+      function exitFocusMode() {
+        if (!focusActive) return;
+        focusActive = false;
+        toolCardEl.classList.remove("kb-focus-active");
+        document.documentElement.classList.remove("kb-focus-mode");
+        document.body.classList.remove("kb-focus-mode");
+      }
+
+      updateViewportVars();
+      vv.addEventListener("resize", updateViewportVars);
+      vv.addEventListener("scroll", updateViewportVars);
+
+      editor.addEventListener("focus", enterFocusMode);
+      editor.addEventListener("blur", () => {
+        // Tapping a virtual key blurs #editor for an instant before
+        // insertAtCursor() calls editor.focus() again in the same
+        // tick's follow-up handler. Defer the exit one frame so a
+        // same-tick refocus cancels it instead of the layout
+        // flashing back and forth on every key tap.
+        setTimeout(() => { if (document.activeElement !== editor) exitFocusMode(); }, 60);
+      });
+
+      const onModeChange = () => { if (!mobileQuery.matches) exitFocusMode(); };
+      if (mobileQuery.addEventListener) mobileQuery.addEventListener("change", onModeChange);
+      else if (mobileQuery.addListener) mobileQuery.addListener(onModeChange);
+    }
+
+    /* ---------------------------------------------------------------
        Tashkeel highlight overlay
        -------------------------------------------------------------
        The editor stays a plain <textarea> so every native behaviour —

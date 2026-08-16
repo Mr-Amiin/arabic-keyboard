@@ -37,6 +37,13 @@
   --font-ar-keys:var(--arabic-font);
   --font-ui:'Inter', sans-serif;
   --font-mono:'IBM Plex Mono', monospace;
+  /* Kept in sync with window.visualViewport by keyboard-tool.js so the
+     mobile "keyboard focus" layout below can size itself to the space
+     actually left over once the Android system keyboard is open,
+     instead of the full (now-wrong) 100vh/100dvh. Defaults here only
+     matter before JS runs or if visualViewport is unsupported. */
+  --visual-viewport-height:100vh;
+  --visual-viewport-offset-top:0px;
 }
 html[data-theme="dark"]{
   --bg:#0E1713;
@@ -482,4 +489,82 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
 
 @media (max-width:520px){
   .foot-grid{ grid-template-columns:1fr; }
+}
+
+/* ---------------- MOBILE KEYBOARD-FOCUS OVERLAY ----------------
+   Fixes the Android-keyboard-covers-virtual-keyboard bug: when the
+   on-screen system keyboard opens, it shrinks window.visualViewport,
+   not the layout viewport, so plain 100vh/100dvh content (header,
+   hero text, toolbar, etc.) keeps reserving space that no longer
+   exists on screen and the lower half of .kb-panel ends up rendered
+   underneath the system keyboard.
+
+   keyboard-tool.js listens for visualViewport resize/scroll and for
+   focus/blur on #editor. While the editor is focused on a mobile
+   layout it adds .kb-focus-active to the tool-card and keeps
+   --visual-viewport-height / --visual-viewport-offset-top current.
+   That turns the tool-card into a fixed panel pinned to exactly the
+   visible viewport (never the taller layout viewport), stacked
+   editor -> virtual keyboard -> bottom controls per the required
+   priority, with the keyboard panel scrolling internally rather than
+   shrinking keys to unreadable sizes when space is genuinely tight.
+   The site header/hero/toolbar are covered, not removed from the
+   DOM, so nothing else needs to change; they reappear once the
+   editor blurs and the system keyboard closes. */
+@media (max-width:899px){
+  html.kb-focus-mode, body.kb-focus-mode{
+    overflow:hidden; height:100%;
+  }
+
+  .tool-card.kb-focus-active{
+    position:fixed;
+    top:var(--visual-viewport-offset-top,0px);
+    left:0; right:0;
+    height:var(--visual-viewport-height,100vh);
+    margin:0; border-radius:0; border:none; box-shadow:none;
+    z-index:210; /* above header/hero/nav, below modal + toast */
+    display:flex; flex-direction:column;
+    background:var(--surface);
+  }
+
+  /* Toolbar (clear/undo/copy/…) is the lowest-priority element per the
+     required stacking order; hide it while typing so its height goes
+     back to the editor + keyboard instead. */
+  .tool-card.kb-focus-active .toolbar{ display:none; }
+
+  .tool-card.kb-focus-active .workspace{
+    flex:1 1 auto; min-height:0; display:flex; flex-direction:column;
+  }
+
+  /* Editor keeps a capped share of the visible viewport (with its own
+     internal scroll for long text) so the virtual keyboard always
+     gets the rest of the space, never the other way around. */
+  .tool-card.kb-focus-active .editor-area{
+    flex:0 1 auto; padding:8px;
+    max-height:calc(var(--visual-viewport-height,100vh) * 0.34);
+    overflow-y:auto;
+  }
+  .tool-card.kb-focus-active .editor{
+    height:100%; min-height:64px;
+  }
+
+  /* Virtual keyboard takes all remaining height and scrolls internally
+     — rows never render beneath the system keyboard, and on genuinely
+     short viewports (small phones + a tall system keyboard) the user
+     scrolls this panel instead of every key shrinking to unreadable
+     sizes. */
+  .tool-card.kb-focus-active .kb-panel{
+    flex:1 1 auto; min-height:0;
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+  }
+
+  /* Space / Delete / New line stay pinned to the bottom of that
+     scrollable panel so they're reachable without hunting for them,
+     even while the letter rows above are mid-scroll. */
+  .tool-card.kb-focus-active .kb-group-controls{
+    position:sticky; bottom:0; z-index:2;
+    background:var(--surface-2); padding-top:5px; margin-top:2px;
+    box-shadow:0 -6px 10px -6px rgba(0,0,0,.18);
+  }
 }
