@@ -192,34 +192,42 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 .workspace{ display:flex; flex-direction:column; }
 
 .editor-area{ padding:12px; position:relative; }
-.editor{
-  width:100%; min-height:110px; resize:vertical; border:1px solid var(--border); border-radius:var(--radius-md);
-  background:var(--bg); padding:16px; font-size:21px; line-height:1.8; font-family:var(--arabic-font);
-  color:var(--ink); outline:none;
-}
-.editor:focus{ border-color:var(--emerald); box-shadow:0 0 0 3px color-mix(in srgb, var(--emerald) 18%, transparent); }
-.editor[dir="ltr"]{ font-family:var(--font-ui); }
 
-/* Tashkeel highlight overlay (built by keyboard-tool.js). A second,
-   non-interactive copy of the editor's text is layered directly behind
-   the real <textarea>, sized/positioned to match it exactly. Only this
-   overlay is colored per-character (Tashkeel marks red, everything else
-   the editor's normal ink color) — the textarea itself stays a plain,
-   fully-functional native text field (typing, physical/virtual keyboard
-   input, paste, undo/redo, selection, copy, cursor movement, Arabic
-   shaping, RTL) with its own glyphs made transparent so the overlay
-   shows through in the same spot. If JS never runs, the overlay is
-   never inserted and the textarea's ".editor--highlighted" class is
-   never added, so the normal opaque text color is the fallback. */
-.editor-highlight{
-  position:absolute; z-index:0; margin:0; overflow:hidden; resize:none;
-  pointer-events:none; user-select:none;
+/* #editor is a non-editable DISPLAY SURFACE (a plain <div>), never a
+   native text field — no contenteditable, no tabindex, no
+   textarea/input. It only ever renders editorState.text from
+   keyboard-tool.js; the virtual (and optional physical) keyboard write
+   into that state directly. Because #editor can never receive native
+   keyboard focus, it can never trigger Android/Gboard or any other
+   on-screen IME. */
+.editor{
+  width:100%; min-height:110px; max-height:46vh; overflow-y:auto; box-sizing:border-box;
+  border:1px solid var(--border); border-radius:var(--radius-md);
+  background:var(--bg); padding:16px; font-size:21px; line-height:1.8; font-family:var(--arabic-font);
+  color:var(--ink); outline:none; cursor:text;
   white-space:pre-wrap; word-wrap:break-word; word-break:break-word;
 }
-.editor-highlight .tashkeel-mark{ color:var(--key-arabic-red); }
-.editor.editor--highlighted{ position:relative; z-index:1; background:transparent; color:transparent; caret-color:var(--ink); }
-.editor.editor--highlighted::placeholder{ color:var(--ink-soft); opacity:1; }
-.editor.editor--highlighted::selection{ background:color-mix(in srgb, var(--emerald) 35%, transparent); }
+.editor[dir="ltr"]{ font-family:var(--font-ui); }
+.editor .tashkeel-mark{ color:var(--key-arabic-red); }
+
+/* Blinking caret drawn as an inline element at editorState.cursor —
+   there is no native caret since #editor is not an editable field. */
+.editor-caret{
+  display:inline-block; width:2px; height:1.1em; vertical-align:-0.18em;
+  background:var(--ink); margin-inline-end:-2px; animation:editorCaretBlink 1s steps(1) infinite;
+}
+@keyframes editorCaretBlink{ 50%{ opacity:0; } }
+
+/* Placeholder shown only while editorState.text is empty. Rendered as
+   a plain absolutely-positioned label (there's no native
+   ::placeholder on a div) so it never competes with the caret. */
+.editor-placeholder{
+  position:absolute; z-index:0; top:28px; inset-inline-start:28px; inset-inline-end:16px;
+  color:var(--ink-soft); font-size:21px; line-height:1.8; font-family:var(--arabic-font);
+  pointer-events:none; user-select:none; display:none;
+}
+.editor.is-empty ~ .editor-placeholder{ display:block; }
+
 .editor-meta{ display:flex; justify-content:space-between; gap:10px; font-size:12.5px; color:var(--ink-soft); margin-top:4px; font-family:var(--font-ui); }
 #dirIndicator{ font-weight:600; }
 
@@ -436,7 +444,8 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
   .tool-card{ border-radius:16px; margin:6px 0 14px; }
 
   .editor-area{ padding:10px; }
-  .editor{ height:180px; min-height:110px; font-size:19px; padding:14px; }
+  .editor{ min-height:180px; max-height:40vh; font-size:19px; padding:14px; }
+  .editor-placeholder{ top:24px; inset-inline-start:24px; font-size:19px; }
   .editor-meta{ font-size:11.5px; }
 
   .kb-panel{ width:100%; max-width:none; padding:8px 8px 10px; overflow-x:hidden; }
