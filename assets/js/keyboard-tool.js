@@ -3,6 +3,30 @@
    Mounts onto any page containing the expected element IDs:
    #editor, #virtualKeyboard, #modeKeyboard, #modeTranslit, #modeHint
    Toolbar buttons are optional and wired only if present.
+
+   ARCHITECTURE (mobile-safe by construction):
+   The visible #editor is a plain, non-focusable <div> — never a
+   <textarea>, never contenteditable, never given a tabindex that lets
+   it receive keyboard focus. It is a pure DISPLAY SURFACE. Tapping it
+   cannot open the Android/iOS system keyboard because it is never a
+   native text-entry control in the first place.
+
+   The only source of truth for the text is the in-memory `state`
+   object below (state.text / state.cursor). Every input source —
+   the virtual on-screen keyboard, the optional physical-keyboard
+   listener, undo/redo, clear, paste — mutates that state object and
+   then calls render(), which re-paints #editor's innerHTML from it.
+
+     virtual key tap ─┐
+     physical keydown ─┼─▶ state.text / state.cursor ─▶ render() ─▶ #editor
+     undo/redo/clear ─┘
+
+   No hidden/off-screen <input> or <textarea> is used to "catch" the
+   virtual keyboard's output — that pattern is exactly what re-invites
+   the OS IME. Arabic shaping/joining and RTL layout still work
+   normally because the rendered content is normal Unicode Arabic
+   text (direction:rtl; unicode-bidi:plaintext in CSS), not isolated
+   glyphs.
    ============================================================ */
 window.ArabicKeyboardTool = (function () {
   "use strict";
@@ -68,6 +92,15 @@ window.ArabicKeyboardTool = (function () {
   ];
   const DOTTED_CIRCLE = "\u25CC";
 
+  /* Combining diacritic range, used to detect and highlight Tashkeel in
+     the rendered editor text (dynamic — re-derived on every render, from
+     any input source, never hard-coded for sample text). */
+  const TASHKEEL_RE = /[\u064B-\u0652\u0670]/g;
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
   function buildMapTable(tbodyId) {
     const tbody = document.getElementById(tbodyId);
     if (!tbody) return;
@@ -85,6 +118,21 @@ window.ArabicKeyboardTool = (function () {
       rows += "</tr>";
     }
     tbody.innerHTML = rows;
+  }
+
+  /* A defensive, belt-and-suspenders layer only: if the visible editor
+     were ever to receive native focus (e.g. a future markup change
+     reintroduces a focusable attribute), blur it immediately so the
+     system keyboard cannot linger. This is NOT the fix — the real fix
+     is that #editor is never a native editable control to begin with —
+     it just guards against regressions. Installed once, globally. */
+  if (!window.__arabicEditorFocusGuardInstalled) {
+    window.__arabicEditorFocusGuardInstalled = true;
+    document.addEventListener("focusin", (event) => {
+      if (event.target && event.target.closest && event.target.closest("#editor")) {
+        event.target.blur();
+      }
+    });
   }
 
   function init(opts) {
@@ -108,111 +156,156 @@ window.ArabicKeyboardTool = (function () {
     const wordCount = document.getElementById(opts.wordCountId || "wordCount");
     const dirIndicator = document.getElementById(opts.dirIndicatorId || "dirIndicator");
 
-    let undoStack = [""], redoStack = [], suppressPush = false, translitOn = false, fontSize = 24;
+    // Make absolutely sure the display surface can never become a native
+    // editable/focusable control, no matter what the markup happened to
+    // ship with (defensive — the templates already omit these).
+    editor.removeAttribute("contenteditable");
+    editor.removeAttribute("tabindex");
+    if (editor.tagName === "TEXTAREA" || editor.tagName === "INPUT") {
+      // Should never happen with the current templates, but guarantees
+      // this module never wires virtual-keyboard input into a native
+      // field even if an older page markup is still cached somewhere.
+      editor.readOnly = true;
+      editor.setAttribute("readonly", "readonly");
+      editor.setAttribute("inputmode", "none");
+    }
 
     /* ---------------------------------------------------------------
-       Tashkeel highlight overlay
-       -------------------------------------------------------------
-       The editor stays a plain <textarea> so every native behaviour —
-       typing, physical/virtual keyboard input, paste, undo/redo,
-       selection, copy, cursor movement, Arabic shaping and RTL layout —
-       keeps working exactly as before, completely untouched by this
-       feature. A separate, non-interactive <div> is layered directly
-       behind the textarea and kept in sync with its value, size and
-       position on every change. The textarea's own glyphs are made
-       transparent (only its caret stays visible) so the overlay's
-       colored copy of the text shows through in the same place. Only
-       Tashkeel (diacritic) characters are wrapped in a red span in the
-       overlay; every base letter and everything else keeps the
-       editor's existing text color. This is dynamic (re-rendered from
-       editor.value on every change, from any input source) rather than
-       hard-coded for sample text. */
-    const TASHKEEL_RE = /[\u064B-\u0652\u0670]/g; // fatha/tanween/damma/tanween/kasra/tanween/sukun/shadda + dagger alif
-    let highlightEl = null;
-    if (editor.tagName === "TEXTAREA" && editor.parentElement) {
-      const host = editor.parentElement;
-      highlightEl = document.createElement("div");
-      highlightEl.className = "editor editor-highlight notranslate";
-      highlightEl.setAttribute("aria-hidden", "true");
-      highlightEl.setAttribute("translate", "no");
-      highlightEl.dir = editor.dir;
-      host.insertBefore(highlightEl, editor);
-      editor.classList.add("editor--highlighted");
+       Single source of truth for the editor's text.
+       Both the virtual keyboard and the optional physical-keyboard
+       listener only ever mutate `state`; #editor only ever renders it.
+       ------------------------------------------------------------- */
+    const state = { text: "", cursor: 0 };
+    let undoStack = [""], redoStack = [], suppressPush = false, translitOn = false, fontSize = 24;
+    const placeholder = editor.getAttribute("data-placeholder") || editor.getAttribute("placeholder") || "";
+
+    function clampCursor(pos) {
+      return Math.max(0, Math.min(pos, state.text.length));
     }
-    function escapeHtml(s) {
-      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-    function renderHighlight() {
-      if (!highlightEl) return;
-      const text = editor.value;
-      const escaped = escapeHtml(text).replace(TASHKEEL_RE, (m) => `<span class="tashkeel-mark">${m}</span>`);
-      // A trailing newline needs a placeholder character, or the overlay's
-      // last (empty) line collapses and its height stops matching the
-      // textarea's.
-      highlightEl.innerHTML = escaped + (/\n$/.test(text) ? "\u200b" : "");
-    }
-    function syncHighlightBox() {
-      if (!highlightEl) return;
-      highlightEl.style.width = editor.offsetWidth + "px";
-      highlightEl.style.height = editor.offsetHeight + "px";
-      highlightEl.style.top = editor.offsetTop + "px";
-      highlightEl.style.left = editor.offsetLeft + "px";
-      highlightEl.style.fontSize = getComputedStyle(editor).fontSize;
-      highlightEl.scrollTop = editor.scrollTop;
-      highlightEl.scrollLeft = editor.scrollLeft;
-    }
-    if (highlightEl) {
-      renderHighlight();
-      syncHighlightBox();
-      editor.addEventListener("scroll", syncHighlightBox);
-      if (window.ResizeObserver) {
-        new ResizeObserver(syncHighlightBox).observe(editor);
-      } else {
-        window.addEventListener("resize", syncHighlightBox);
+
+    function render() {
+      const text = state.text;
+      if (!text) {
+        editor.innerHTML =
+          '<span class="editor-caret" aria-hidden="true"></span>' +
+          '<span class="editor-placeholder">' + escapeHtml(placeholder) + "</span>";
+        return;
       }
+      const cursor = clampCursor(state.cursor);
+      const before = escapeHtml(text.slice(0, cursor)).replace(TASHKEEL_RE, (m) => `<span class="tashkeel-mark">${m}</span>`);
+      const after = escapeHtml(text.slice(cursor)).replace(TASHKEEL_RE, (m) => `<span class="tashkeel-mark">${m}</span>`);
+      editor.innerHTML = before + '<span class="editor-caret" aria-hidden="true"></span>' + after;
     }
 
     function updateMeta() {
-      const text = editor.value;
+      const text = state.text;
       if (charCount) charCount.textContent = text.length + " حرف";
       if (wordCount) wordCount.textContent = (text.trim() ? text.trim().split(/\s+/).length : 0) + " كلمة";
-      renderHighlight();
     }
     function updateDirIndicator() {
       if (dirIndicator) dirIndicator.textContent = editor.dir === "rtl" ? "→ RTL" : "LTR ←";
     }
     function pushUndo() {
       if (suppressPush) return;
-      undoStack.push(editor.value);
+      undoStack.push(state.text);
       if (undoStack.length > 100) undoStack.shift();
       redoStack = [];
     }
-    editor.addEventListener("input", () => { updateMeta(); pushUndo(); });
+
+    /* Replaces the whole text (used by clear/undo/redo/paste flows that
+       already know the full new string + desired cursor position). */
+    function setText(newText, newCursor) {
+      state.text = newText;
+      state.cursor = newCursor == null ? newText.length : clampCursor(newCursor);
+      render();
+      updateMeta();
+    }
+
+    function insertAtCursor(str) {
+      const pos = clampCursor(state.cursor);
+      state.text = state.text.slice(0, pos) + str + state.text.slice(pos);
+      state.cursor = pos + str.length;
+      render();
+      updateMeta();
+      pushUndo();
+    }
+
+    function backspaceAtCursor() {
+      const pos = clampCursor(state.cursor);
+      if (pos <= 0) return;
+      state.text = state.text.slice(0, pos - 1) + state.text.slice(pos);
+      state.cursor = pos - 1;
+      render();
+      updateMeta();
+      pushUndo();
+    }
+
+    function moveCursorTo(pos) {
+      state.cursor = clampCursor(pos);
+      render();
+    }
+
+    render();
     updateMeta();
     updateDirIndicator();
+
+    /* ---------------------------------------------------------------
+       Tap-to-place-caret: lets a user touch/click a spot in the
+       rendered text to move the caret there, purely via geometry
+       (caretRangeFromPoint / caretPositionFromPoint). This never
+       focuses #editor and never turns it into a native field — it
+       only recomputes state.cursor and re-renders. Falls back to
+       "do nothing special" (caret stays put) on browsers without
+       either API.
+       ------------------------------------------------------------- */
+    function textOffsetFromPoint(clientX, clientY) {
+      let range = null;
+      if (document.caretRangeFromPoint) {
+        range = document.caretRangeFromPoint(clientX, clientY);
+      } else if (document.caretPositionFromPoint) {
+        const pos = document.caretPositionFromPoint(clientX, clientY);
+        if (pos && pos.offsetNode) {
+          range = document.createRange();
+          range.setStart(pos.offsetNode, pos.offset);
+        }
+      }
+      if (!range || !editor.contains(range.startContainer)) return null;
+      let offset = 0;
+      const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
+      let node;
+      while ((node = walker.nextNode())) {
+        if (node === range.startContainer) return offset + range.startOffset;
+        offset += node.textContent.length;
+      }
+      return null;
+    }
+    editor.addEventListener("click", (e) => {
+      const off = textOffsetFromPoint(e.clientX, e.clientY);
+      if (off != null) moveCursorTo(off);
+    });
 
     function bind(id, fn) {
       const el = document.getElementById(id);
       if (el) el.addEventListener("click", fn);
     }
 
-    bind(opts.clearId || "btnClear", () => { editor.value = ""; updateMeta(); pushUndo(); window.showToast?.("تم مسح النص"); editor.focus(); });
+    bind(opts.clearId || "btnClear", () => { setText("", 0); pushUndo(); window.showToast?.("تم مسح النص"); });
     bind(opts.undoId || "btnUndo", () => {
-      if (undoStack.length > 1) { redoStack.push(undoStack.pop()); suppressPush = true; editor.value = undoStack[undoStack.length - 1]; suppressPush = false; updateMeta(); }
+      if (undoStack.length > 1) { redoStack.push(undoStack.pop()); suppressPush = true; setText(undoStack[undoStack.length - 1]); suppressPush = false; }
     });
     bind(opts.redoId || "btnRedo", () => {
-      if (redoStack.length) { const v = redoStack.pop(); undoStack.push(v); suppressPush = true; editor.value = v; suppressPush = false; updateMeta(); }
+      if (redoStack.length) { const v = redoStack.pop(); undoStack.push(v); suppressPush = true; setText(v); suppressPush = false; }
     });
     bind(opts.copyId || "btnCopy", async () => {
-      try { await navigator.clipboard.writeText(editor.value); window.showToast?.("تم النسخ إلى الحافظة"); }
-      catch (e) { editor.select(); document.execCommand("copy"); window.showToast?.("تم النسخ"); }
+      try { await navigator.clipboard.writeText(state.text); window.showToast?.("تم النسخ إلى الحافظة"); }
+      catch (e) { window.showToast?.("تعذّر النسخ التلقائي"); }
     });
     bind(opts.pasteId || "btnPaste", async () => {
-      try { const t = await navigator.clipboard.readText(); editor.value += t; updateMeta(); pushUndo(); window.showToast?.("تم اللصق"); }
-      catch (e) { window.showToast?.("تعذّر الوصول إلى الحافظة — الصق يدويًا (Ctrl+V)"); editor.focus(); }
+      try { const t = await navigator.clipboard.readText(); insertAtCursor(t); window.showToast?.("تم اللصق"); }
+      catch (e) { window.showToast?.("تعذّر الوصول إلى الحافظة"); }
     });
     bind(opts.downloadId || "btnDownload", () => {
-      const blob = new Blob([editor.value], { type: "text/plain;charset=utf-8" });
+      const blob = new Blob([state.text], { type: "text/plain;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url; a.download = "نص-عربي.txt"; a.click();
@@ -222,20 +315,11 @@ window.ArabicKeyboardTool = (function () {
     bind(opts.printId || "btnPrint", () => window.print());
     bind(opts.dirId || "btnDir", () => {
       editor.dir = editor.dir === "rtl" ? "ltr" : "rtl";
-      if (highlightEl) highlightEl.dir = editor.dir;
       updateDirIndicator();
       window.showToast?.("الاتجاه: " + (editor.dir === "rtl" ? "من اليمين لليسار" : "من اليسار لليمين"));
     });
-    bind(opts.fontMinusId || "btnFontMinus", () => { fontSize = Math.max(14, fontSize - 2); editor.style.fontSize = fontSize + "px"; syncHighlightBox(); });
-    bind(opts.fontPlusId || "btnFontPlus", () => { fontSize = Math.min(40, fontSize + 2); editor.style.fontSize = fontSize + "px"; syncHighlightBox(); });
-
-    function insertAtCursor(str) {
-      const pos = editor.selectionStart ?? editor.value.length;
-      editor.value = editor.value.slice(0, pos) + str + editor.value.slice(pos);
-      editor.selectionStart = editor.selectionEnd = pos + str.length;
-      editor.focus();
-      updateMeta(); pushUndo();
-    }
+    bind(opts.fontMinusId || "btnFontMinus", () => { fontSize = Math.max(14, fontSize - 2); editor.style.fontSize = fontSize + "px"; });
+    bind(opts.fontPlusId || "btnFontPlus", () => { fontSize = Math.min(40, fontSize + 2); editor.style.fontSize = fontSize + "px"; });
 
     /* mode switch */
     function setMode(on) {
@@ -248,22 +332,56 @@ window.ArabicKeyboardTool = (function () {
     if (modeKeyboard) modeKeyboard.addEventListener("click", () => setMode(false));
     if (modeTranslit) modeTranslit.addEventListener("click", () => setMode(true));
 
-    editor.addEventListener("keyup", (e) => {
-      if (!translitOn) return;
-      if (e.key.length === 1 && /[a-zA-Z0-9']/.test(e.key)) {
-        const pos = editor.selectionStart;
-        const before = editor.value.slice(0, pos);
-        const after = editor.value.slice(pos);
-        const match = before.match(/[a-zA-Z0-9']+$/);
-        if (match) {
-          const converted = transliterate(match[0]);
-          const newBefore = before.slice(0, before.length - match[0].length) + converted;
-          editor.value = newBefore + after;
-          editor.selectionStart = editor.selectionEnd = newBefore.length;
-          updateMeta();
-        }
+    /* ---------------------------------------------------------------
+       Desktop physical-keyboard support (item 9 of the spec): a
+       document-level listener, never a focus-dependent one, so #editor
+       itself never needs to be focusable. Only fires when no other
+       native editable field elsewhere on the page (a real
+       <input>/<textarea>/contenteditable, like the transliteration or
+       calligraphy tools) currently has focus, so it never steals
+       keystrokes meant for those fields. Arabic keys typed directly
+       are inserted as-is; when transliteration mode is on, Latin
+       letters convert exactly like the virtual keyboard's translit
+       mode always has. Mobile is untouched by this: on-screen virtual
+       keys stay the only input path there, per the spec. ---------- */
+    let translitBuffer = "";
+    function isForeignEditableFocused() {
+      const el = document.activeElement;
+      if (!el || el === document.body) return false;
+      if (el.closest && el.closest("#editor")) return false;
+      const tag = el.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || el.isContentEditable;
+    }
+    function handlePhysicalKeyboard(e) {
+      if (isForeignEditableFocused()) return; // let other page fields work normally
+      if (e.metaKey || e.ctrlKey || e.altKey) return; // don't hijack shortcuts (copy/paste/etc.)
+      if (e.key === "Backspace") { e.preventDefault(); backspaceAtCursor(); translitBuffer = translitBuffer.slice(0, -1); return; }
+      if (e.key === "Enter") { e.preventDefault(); insertAtCursor("\n"); translitBuffer = ""; return; }
+      if (e.key === " ") { e.preventDefault(); insertAtCursor(" "); translitBuffer = ""; return; }
+      if (e.key === "ArrowLeft") { e.preventDefault(); moveCursorTo(state.cursor + (editor.dir === "rtl" ? 1 : -1)); return; }
+      if (e.key === "ArrowRight") { e.preventDefault(); moveCursorTo(state.cursor + (editor.dir === "rtl" ? -1 : 1)); return; }
+      if (e.key.length !== 1) return; // ignore other control/function keys
+      e.preventDefault();
+      if (translitOn && /[a-zA-Z0-9']/.test(e.key)) {
+        translitBuffer += e.key;
+        // Re-derive the whole converted run so multi-letter digraphs
+        // (th/kh/sh/gh) keep resolving correctly as more letters arrive.
+        const pos = clampCursor(state.cursor);
+        const already = translitBuffer.length - 1;
+        const before = state.text.slice(0, pos - already);
+        const after = state.text.slice(pos);
+        const converted = transliterate(translitBuffer);
+        state.text = before + converted + after;
+        state.cursor = before.length + converted.length;
+        render();
+        updateMeta();
+        pushUndo();
+      } else {
+        translitBuffer = "";
+        insertAtCursor(e.key);
       }
-    });
+    }
+    document.addEventListener("keydown", handlePhysicalKeyboard);
 
     /* build virtual keyboard */
     if (kb) {
@@ -362,11 +480,7 @@ window.ArabicKeyboardTool = (function () {
       backBtn.className = "key wide notranslate"; backBtn.type = "button"; backBtn.textContent = "⌫ حذف";
       backBtn.setAttribute("aria-label", "حذف الحرف الأخير");
       backBtn.setAttribute("translate", "no");
-      backBtn.addEventListener("click", () => {
-        const pos = editor.selectionStart ?? editor.value.length;
-        if (pos > 0) { editor.value = editor.value.slice(0, pos - 1) + editor.value.slice(pos); editor.selectionStart = editor.selectionEnd = pos - 1; updateMeta(); pushUndo(); }
-        editor.focus();
-      });
+      backBtn.addEventListener("click", backspaceAtCursor);
       const enterBtn = document.createElement("button");
       enterBtn.className = "key wide notranslate"; enterBtn.type = "button"; enterBtn.textContent = "↵ سطر جديد";
       enterBtn.setAttribute("aria-label", "سطر جديد");
@@ -375,7 +489,14 @@ window.ArabicKeyboardTool = (function () {
       lastRow.appendChild(enterBtn); lastRow.appendChild(spaceBtn); lastRow.appendChild(backBtn);
     }
 
-    return { editor, insertAtCursor, transliterate };
+    return {
+      editor,
+      insertAtCursor,
+      transliterate,
+      // Exposed for debugging/tests; not required for normal operation.
+      getText: () => state.text,
+      setText,
+    };
   }
 
   return { init, transliterate, buildMapTable, TRANSLIT_MAP };

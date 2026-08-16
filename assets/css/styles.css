@@ -192,34 +192,42 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 .workspace{ display:flex; flex-direction:column; }
 
 .editor-area{ padding:12px; position:relative; }
-.editor{
-  width:100%; min-height:110px; resize:vertical; border:1px solid var(--border); border-radius:var(--radius-md);
-  background:var(--bg); padding:16px; font-size:21px; line-height:1.8; font-family:var(--arabic-font);
-  color:var(--ink); outline:none;
-}
-.editor:focus{ border-color:var(--emerald); box-shadow:0 0 0 3px color-mix(in srgb, var(--emerald) 18%, transparent); }
-.editor[dir="ltr"]{ font-family:var(--font-ui); }
 
-/* Tashkeel highlight overlay (built by keyboard-tool.js). A second,
-   non-interactive copy of the editor's text is layered directly behind
-   the real <textarea>, sized/positioned to match it exactly. Only this
-   overlay is colored per-character (Tashkeel marks red, everything else
-   the editor's normal ink color) — the textarea itself stays a plain,
-   fully-functional native text field (typing, physical/virtual keyboard
-   input, paste, undo/redo, selection, copy, cursor movement, Arabic
-   shaping, RTL) with its own glyphs made transparent so the overlay
-   shows through in the same spot. If JS never runs, the overlay is
-   never inserted and the textarea's ".editor--highlighted" class is
-   never added, so the normal opaque text color is the fallback. */
-.editor-highlight{
-  position:absolute; z-index:0; margin:0; overflow:hidden; resize:none;
-  pointer-events:none; user-select:none;
+/* #editor is a plain, non-editable DISPLAY SURFACE — never a <textarea>,
+   never contenteditable, never focusable. It only ever renders
+   keyboard-tool.js's in-memory text state, which is why tapping it can
+   never open the Android/iOS system keyboard. See keyboard-tool.js for
+   the full architecture note. */
+.editor{
+  width:100%; min-height:110px; max-height:calc(100vh - 320px); overflow-y:auto;
+  border:1px solid var(--border); border-radius:var(--radius-md);
+  background:var(--bg); padding:16px; font-size:21px; line-height:1.8; font-family:var(--arabic-font);
+  color:var(--ink); outline:none; cursor:text;
   white-space:pre-wrap; word-wrap:break-word; word-break:break-word;
+  unicode-bidi:plaintext;
 }
-.editor-highlight .tashkeel-mark{ color:var(--key-arabic-red); }
-.editor.editor--highlighted{ position:relative; z-index:1; background:transparent; color:transparent; caret-color:var(--ink); }
-.editor.editor--highlighted::placeholder{ color:var(--ink-soft); opacity:1; }
-.editor.editor--highlighted::selection{ background:color-mix(in srgb, var(--emerald) 35%, transparent); }
+.editor[dir="ltr"]{ font-family:var(--font-ui); }
+/* Only real focusable fields (other .editor textareas/inputs on other
+   tools, e.g. #translitInput) ever match :focus — #editor itself is
+   never focusable, so this never applies to it. */
+.editor:focus{ border-color:var(--emerald); box-shadow:0 0 0 3px color-mix(in srgb, var(--emerald) 18%, transparent); }
+
+/* Tashkeel (diacritic) characters are wrapped in a span by
+   keyboard-tool.js's render() on every state change, from any input
+   source — virtual keyboard, physical keyboard, undo/redo, paste. */
+.editor .tashkeel-mark{ color:var(--key-arabic-red); }
+
+/* Blinking caret span, re-positioned by render() to sit exactly at
+   state.cursor inside the text. Purely visual — there is no native
+   caret because #editor is never a native editable field. */
+.editor-caret{
+  display:inline-block; width:1px; height:1.1em; vertical-align:text-bottom;
+  background:var(--ink); animation:editor-caret-blink 1s steps(1) infinite;
+}
+@keyframes editor-caret-blink{ 0%, 49%{ opacity:1; } 50%, 100%{ opacity:0; } }
+
+.editor-placeholder{ color:var(--ink-soft); }
+
 .editor-meta{ display:flex; justify-content:space-between; gap:10px; font-size:12.5px; color:var(--ink-soft); margin-top:4px; font-family:var(--font-ui); }
 #dirIndicator{ font-weight:600; }
 
@@ -423,7 +431,7 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
   .tool-card{ border-radius:16px; margin:6px 0 14px; }
 
   .editor-area{ padding:10px; }
-  .editor{ height:180px; min-height:110px; font-size:19px; padding:14px; }
+  .editor{ height:180px; min-height:110px; max-height:180px; font-size:19px; padding:14px; }
   .editor-meta{ font-size:11.5px; }
 
   .kb-panel{ width:100%; max-width:none; padding:8px 8px 10px; }

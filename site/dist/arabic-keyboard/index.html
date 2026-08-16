@@ -29,7 +29,7 @@
     <nav class="primary" aria-label="التنقل الرئيسي">
       <div class="nav-item">
         <button type="button" aria-haspopup="true">الأدوات <span aria-hidden="true">▾</span></button>
-        <div class="dropdown"><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a></div>
+        <div class="dropdown"><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../calligraphy/">استوديو الخط العربي</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a></div>
       </div>
       <div class="nav-item">
         <button type="button" aria-haspopup="true">تعلّم <span aria-hidden="true">▾</span></button>
@@ -56,7 +56,7 @@
     <div class="close-x"><button class="icon-btn" id="mobileNavClose" aria-label="إغلاق القائمة">✕</button></div>
     <a href="../">الرئيسية</a>
     <div class="grp-label lang-en">Tools</div>
-    <a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a>
+    <a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../calligraphy/">استوديو الخط العربي</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a>
     <div class="grp-label lang-en">Learn</div>
     <a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a>
     <div class="grp-label lang-en">Resources</div>
@@ -100,7 +100,7 @@
   
 <div class="workspace">
   <div class="editor-area">
-    <textarea id="editor" class="editor" dir="rtl" placeholder="اكتب النص هنا…" aria-label="محرر النص العربي"></textarea>
+    <div id="editor" class="editor notranslate" dir="rtl" data-placeholder="اكتب النص هنا…" aria-label="محرر النص العربي" role="textbox" aria-multiline="true" aria-readonly="true" translate="no"></div>
     <div class="editor-meta lang-en">
       <span id="charCount">0 حرف</span>
       <span id="wordCount">0 كلمة</span>
@@ -172,7 +172,7 @@
         <a href="../" class="brand" style="margin-bottom:10px;"><span class="mark">ع</span>لوحة عربي</a>
         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
       </div>
-      <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+      <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../calligraphy/">استوديو الخط العربي</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
       <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>

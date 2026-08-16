@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://example.com/</loc></url>
   <url><loc>https://example.com/arabic-keyboard/</loc></url>
+  <url><loc>https://example.com/calligraphy/</loc></url>
   <url><loc>https://example.com/transliteration/</loc></url>
   <url><loc>https://example.com/tashkeel/</loc></url>
   <url><loc>https://example.com/editor/</loc></url>
