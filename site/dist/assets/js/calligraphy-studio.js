@@ -1,13 +1,31 @@
 /*
  * Arabic Calligraphy Studio — rendering engine.
  *
- * Pipeline (matches the architecture doc):
- *   Arabic text input -> text state -> Arabic shaping (native, via the
- *   browser's own text engine inside <canvas> / SVG <text>, which is
- *   what actually performs correct contextual joining — see
- *   ARCHITECTURE.md for why we deliberately do NOT hand-roll shaping)
- *   -> selected calligraphy font -> selected variation -> canvas
- *   renderer -> preview -> export (PNG/JPG/SVG/PDF).
+ * Pipeline:
+ *   Arabic text input -> text state -> build an SVG <text> markup (this
+ *   is what actually performs correct contextual joining AND real
+ *   OpenType feature application — see "Why SVG, not Canvas 2D text"
+ *   below) -> live preview (the SVG is inserted directly into the
+ *   page) -> export (PNG/JPG/PDF rasterize that same SVG onto an
+ *   offscreen canvas; SVG export serves the markup directly with the
+ *   font embedded as base64).
+ *
+ * Why SVG, not Canvas 2D text
+ * ----------------------------
+ * Canvas 2D's fillText()/strokeText() has no API for OpenType feature
+ * toggles (font-feature-settings) — see whatwg/html#4074. That means a
+ * stylistic set or character variant selected in the UI would silently
+ * fail to render on a <canvas>, even though the font genuinely supports
+ * it: the preview and every export would just show the font's default
+ * glyphs no matter which "variation" was picked. That would make the
+ * whole point of this expansion (real per-font OpenType variations)
+ * fake in practice, even though the underlying data is genuine.
+ *
+ * SVG <text> is regular CSS-styled text as far as the browser's layout
+ * engine is concerned, so font-feature-settings on it works exactly
+ * like it does on any HTML element, while Arabic contextual shaping
+ * (letter joining) still happens natively via the browser's own text
+ * engine (HarfBuzz in Chromium/Firefox) — nothing here is hand-rolled.
  *
  * This file has no framework dependency and no build step, matching
  * the rest of the site (plain script, loaded via <script defer>).
@@ -45,14 +63,18 @@
     return out;
   }
 
+  function escapeXml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
   // ---------------------------------------------------------------------
-  // Font loading (FontFace API). One FontFace per underlying file — a
-  // variable font's different "variations" (regular/bold instances)
-  // share a single registered FontFace with a weight axis range, so we
-  // don't load the same bytes twice.
+  // Font loading (FontFace API), used for the live preview so the SVG's
+  // font-family reference resolves without re-fetching the WOFF2 per
+  // render. Exports embed the font as base64 instead (see fontBytes),
+  // so they're self-contained files that render identically anywhere.
   // ---------------------------------------------------------------------
   var loadedFonts = {}; // fileFamily -> Promise<FontFace>
-  var fontBytesCache = {}; // file -> Promise<ArrayBuffer> (for SVG export embedding)
+  var fontBytesCache = {}; // file -> Promise<ArrayBuffer> (base64 embedding for export)
 
   function fileFamilyName(file) {
     return "cal-" + file.replace(/[^a-z0-9]/gi, "-").toLowerCase();
@@ -90,11 +112,10 @@
   }
 
   // ---------------------------------------------------------------------
-  // Studio: owns state + draws to a given canvas.
+  // Studio: owns state + draws to a given "stage" container element.
   // ---------------------------------------------------------------------
-  function CalligraphyStudio(canvas) {
-    this.canvas = canvas;
-    this.ctx = canvas.getContext("2d");
+  function CalligraphyStudio(stageEl) {
+    this.stage = stageEl;
     this.state = {
       text: "بسم الله الرحمن الرحيم",
       variationId: "naskh-amiri",
@@ -160,112 +181,162 @@
     return text.split("\n");
   }
 
-  // Draws a simple, original geometric 8-point-star lattice — not a
-  // reproduction of any existing artwork, just an algorithmic tiling.
-  function drawDecorativeBackground(ctx, w, h, tint) {
-    ctx.save();
-    ctx.globalAlpha = 0.14;
-    ctx.strokeStyle = tint;
-    ctx.lineWidth = 1.5;
-    var step = Math.max(48, Math.min(w, h) / 10);
-    for (var y = -step; y < h + step; y += step) {
-      for (var x = -step; x < w + step; x += step) {
-        drawEightPointStar(ctx, x, y, step * 0.42);
-      }
-    }
-    ctx.restore();
-  }
-
-  function drawEightPointStar(ctx, cx, cy, r) {
+  // A simple, original geometric 8-point-star lattice — not a
+  // reproduction of any existing artwork, just an algorithmic tiling —
+  // expressed as an SVG <pattern> so it composites the same way in the
+  // live preview, the raster exports, and the SVG export.
+  function eightPointStarPath(cx, cy, r) {
     var spikes = 8, outer = r, inner = r * 0.5;
-    ctx.beginPath();
+    var pts = [];
     for (var i = 0; i < spikes * 2; i++) {
       var rad = i % 2 === 0 ? outer : inner;
       var ang = (Math.PI / spikes) * i - Math.PI / 2;
-      var px = cx + Math.cos(ang) * rad;
-      var py = cy + Math.sin(ang) * rad;
-      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      pts.push((cx + Math.cos(ang) * rad).toFixed(2) + "," + (cy + Math.sin(ang) * rad).toFixed(2));
     }
-    ctx.closePath();
-    ctx.stroke();
+    return "M" + pts.join("L") + "Z";
   }
 
+  function decorativePatternDefs(tint, w, h) {
+    var step = Math.max(48, Math.min(w, h) / 10);
+    var star = eightPointStarPath(step / 2, step / 2, step * 0.42);
+    return '<pattern id="callyStarPattern" x="0" y="0" width="' + step + '" height="' + step +
+      '" patternUnits="userSpaceOnUse">' +
+      '<path d="' + star + '" fill="none" stroke="' + tint + '" stroke-width="1.5" opacity="0.14"/>' +
+      "</pattern>";
+  }
+
+  // -----------------------------------------------------------------
+  // Core SVG builder — shared by the live preview and every export
+  // format, so what the user sees is always exactly what gets saved.
+  // fontFaceCss is "" for the live preview (references the already
+  // -registered FontFace by name) or a base64 @font-face <style> block
+  // for exports (self-contained files).
+  // -----------------------------------------------------------------
+  function buildSvg(state, variation, fontFaceCss, w, h) {
+    var lines = preparedLines(state);
+    var lineHeight = state.fontSize * state.lineSpacing;
+    var totalH = lineHeight * lines.length;
+    var startY = h / 2 - totalH / 2 + lineHeight / 2 + state.fontSize * 0.32; // baseline correction
+
+    var family = fileFamilyName(variation.file);
+    var featureSettings = CalligraphyData.buildFeatureSettings(variation.features);
+
+    var textAnchor = state.align === "center" ? "middle" :
+      (state.rtl ? (state.align === "start" ? "end" : "start") : (state.align === "start" ? "start" : "end"));
+    var anchorX = state.align === "center" ? w / 2 : (textAnchor === "end" ? w - 40 : 40);
+
+    var defs = "<defs>" + fontFaceCss;
+    var bgRect = state.transparentBg ? "" : '<rect width="' + w + '" height="' + h + '" fill="' + state.bg + '"/>';
+    var decoRect = "";
+    if (state.decorativeBg) {
+      defs += decorativePatternDefs(state.color, w, h);
+      decoRect = '<rect width="' + w + '" height="' + h + '" fill="url(#callyStarPattern)"/>';
+    }
+    var filterDef = "";
+    var shadowAttr = "";
+    if (state.shadow) {
+      filterDef = '<filter id="callyShadowFilter" x="-50%" y="-50%" width="200%" height="200%">' +
+        '<feDropShadow dx="0" dy="' + (state.shadowBlur / 4) + '" stdDeviation="' + (state.shadowBlur / 3) +
+        '" flood-color="' + state.shadowColor + '"/></filter>';
+      shadowAttr = ' filter="url(#callyShadowFilter)"';
+    }
+    defs += filterDef + "</defs>";
+
+    var textStyle = "font-family:'" + family + "';font-weight:" + variation.weight +
+      ";font-size:" + state.fontSize + "px;font-feature-settings:" + featureSettings +
+      ";letter-spacing:" + state.letterSpacing + "px;";
+    var strokeAttrs = state.outline ?
+      ' stroke="' + state.outlineColor + '" stroke-width="' + state.outlineWidth + '" paint-order="stroke fill"' : "";
+
+    var tspans = lines.map(function (line, i) {
+      var y = startY + i * lineHeight;
+      return '<text x="' + anchorX + '" y="' + y + '" style="' + textStyle + '" fill="' + state.color +
+        '" text-anchor="' + textAnchor + '" direction="' + (state.rtl ? "rtl" : "ltr") +
+        '" dir="' + (state.rtl ? "rtl" : "ltr") + '" lang="ar"' + strokeAttrs + shadowAttr + ">" +
+        escapeXml(line) + "</text>";
+    }).join("\n");
+
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h +
+      '" viewBox="0 0 ' + w + " " + h + '">\n' + defs + "\n" + bgRect + "\n" + decoRect + "\n" + tspans + "\n</svg>";
+  }
+
+  function svgToDataUrl(svgString) {
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString);
+  }
+
+  // -----------------------------------------------------------------
+  // Live preview: builds the SVG and inserts it directly into the DOM.
+  // -----------------------------------------------------------------
   CalligraphyStudio.prototype.render = function (opts) {
     opts = opts || {};
-    var scale = opts.scale || (global.devicePixelRatio || 1);
     var state = this.state;
     var variation = this.currentVariation();
     var self = this;
 
     return loadFontForVariation(variation).then(function () {
-      var canvas = self.canvas;
       var w = self.baseW, h = self.baseH;
-      canvas.width = w * scale;
-      canvas.height = h * scale;
-      canvas.style.width = "100%";
-      var ctx = self.ctx;
-      ctx.setTransform(scale, 0, 0, scale, 0, 0);
-      ctx.clearRect(0, 0, w, h);
-
-      if (!state.transparentBg || opts.forceBg) {
-        ctx.fillStyle = state.bg;
-        ctx.fillRect(0, 0, w, h);
-      }
-      if (state.decorativeBg) {
-        drawDecorativeBackground(ctx, w, h, state.color);
-      }
-
-      var family = fileFamilyName(variation.file);
-      var size = state.fontSize;
-      ctx.font = variation.weight + " " + size + "px \"" + family + "\"";
-      ctx.textBaseline = "middle";
-      ctx.direction = state.rtl ? "rtl" : "ltr";
-      if ("letterSpacing" in ctx) {
-        try { ctx.letterSpacing = state.letterSpacing + "px"; } catch (e) {}
-      }
-
-      var lines = preparedLines(state);
-      var lineHeight = size * state.lineSpacing;
-      var totalH = lineHeight * lines.length;
-      var startY = h / 2 - totalH / 2 + lineHeight / 2;
-
-      var anchorX;
-      var textAlign;
-      if (state.align === "center") { textAlign = "center"; anchorX = w / 2; }
-      else if (state.align === "start") { textAlign = state.rtl ? "right" : "left"; anchorX = state.rtl ? w - 40 : 40; }
-      else { textAlign = state.rtl ? "left" : "right"; anchorX = state.rtl ? 40 : w - 40; }
-      ctx.textAlign = textAlign;
-
-      lines.forEach(function (line, i) {
-        var y = startY + i * lineHeight;
-        if (state.shadow) {
-          ctx.shadowColor = state.shadowColor;
-          ctx.shadowBlur = state.shadowBlur;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = state.shadowBlur / 4;
-        } else {
-          ctx.shadowColor = "transparent";
-          ctx.shadowBlur = 0;
+      var svg = buildSvg(state, variation, "", w, h);
+      if (self.stage) {
+        self.stage.innerHTML = svg;
+        var svgEl = self.stage.querySelector("svg");
+        if (svgEl) {
+          svgEl.setAttribute("preserveAspectRatio", "xMidYMid meet");
+          svgEl.style.width = "100%";
+          svgEl.style.height = "auto";
+          svgEl.style.display = "block";
         }
-        if (state.outline) {
-          ctx.lineWidth = state.outlineWidth;
-          ctx.strokeStyle = state.outlineColor;
-          ctx.strokeText(line, anchorX, y);
-        }
-        ctx.fillStyle = state.color;
-        ctx.fillText(line, anchorX, y);
-      });
-
-      return canvas;
+      }
+      return self.stage;
     });
   };
 
   // -----------------------------------------------------------------
-  // Export helpers
+  // Export helpers — build a self-contained SVG (font embedded as
+  // base64) so the artwork is pixel/feature-identical wherever it's
+  // opened, then rasterize it for PNG/JPG/PDF.
   // -----------------------------------------------------------------
+  function buildExportSvg(state, variation, scale) {
+    var w = 1200 * scale, h = 700 * scale;
+    // Font size / spacing scale with the export multiplier so a 4x PNG
+    // isn't just a blurry upscale of the 1x preview.
+    var scaledState = Object.assign({}, state, {
+      fontSize: state.fontSize * scale,
+      letterSpacing: state.letterSpacing * scale,
+      outlineWidth: state.outlineWidth * scale,
+      shadowBlur: state.shadowBlur * scale
+    });
+    return fontBytes(variation.file).then(function (buf) {
+      var b64 = arrayBufferToBase64(buf);
+      var family = fileFamilyName(variation.file);
+      var fontFaceCss = "<style>@font-face{font-family:\"" + family +
+        "\";src:url(data:font/woff2;base64," + b64 + ") format(\"woff2\");font-weight:100 900;}</style>";
+      return buildSvg(scaledState, variation, fontFaceCss, w, h);
+    });
+  }
+
   function canvasToBlob(canvas, type, quality) {
     return new Promise(function (resolve) {
       canvas.toBlob(function (blob) { resolve(blob); }, type, quality);
+    });
+  }
+
+  function rasterizeSvg(svgString, w, h, forceBg, bg) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () { resolve(img); };
+      img.onerror = reject;
+      img.src = svgToDataUrl(svgString);
+    }).then(function (img) {
+      var canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      var ctx = canvas.getContext("2d");
+      if (forceBg) {
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+      }
+      ctx.drawImage(img, 0, 0, w, h);
+      return canvas;
     });
   }
 
@@ -281,65 +352,38 @@
   }
 
   CalligraphyStudio.prototype.exportRaster = function (format, multiplier) {
-    var self = this;
+    var state = this.state;
+    var variation = this.currentVariation();
     var type = format === "jpg" ? "image/jpeg" : "image/png";
-    var forceBg = format === "jpg"; // JPEG has no alpha channel
-    var savedW = this.baseW, savedH = this.baseH;
-    return this.render({ scale: (global.devicePixelRatio || 1) * multiplier, forceBg: forceBg })
-      .then(function (canvas) {
-        return canvasToBlob(canvas, type, 0.95).then(function (blob) {
-          // restore normal preview resolution
-          return self.render({}).then(function () {
-            return blob;
-          });
-        });
-      });
+    // JPEG has no alpha channel, so it always needs an opaque canvas
+    // fill underneath. PNG relies on the SVG's own background rect
+    // (present whenever transparentBg is false) — no separate fill.
+    var forceBg = format === "jpg";
+    var scale = (global.devicePixelRatio || 1) * multiplier;
+    var w = Math.round(this.baseW * scale), h = Math.round(this.baseH * scale);
+
+    return buildExportSvg(state, variation, scale).then(function (svg) {
+      return rasterizeSvg(svg, w, h, forceBg, state.bg);
+    }).then(function (canvas) {
+      return canvasToBlob(canvas, type, 0.95);
+    });
   };
 
   CalligraphyStudio.prototype.exportSvg = function () {
-    var state = this.state;
     var variation = this.currentVariation();
-    var w = this.baseW, h = this.baseH;
-    var lines = preparedLines(state);
-    var lineHeight = state.fontSize * state.lineSpacing;
-    var totalH = lineHeight * lines.length;
-    var startY = h / 2 - totalH / 2 + lineHeight / 2 + state.fontSize * 0.32; // baseline correction
-
-    return fontBytes(variation.file).then(function (buf) {
-      var b64 = arrayBufferToBase64(buf);
-      var family = fileFamilyName(variation.file);
-      var anchor = state.align === "center" ? "middle" : (state.align === "start") === state.rtl ? "end" : "start";
-      // simplified: center/start/end mapped consistently with canvas logic
-      var textAnchor = state.align === "center" ? "middle" : (state.rtl ? (state.align === "start" ? "end" : "start") : (state.align === "start" ? "start" : "end"));
-      var anchorX = state.align === "center" ? w / 2 : (textAnchor === "end" ? w - 40 : 40);
-
-      var bgRect = state.transparentBg ? "" :
-        '<rect width="' + w + '" height="' + h + '" fill="' + state.bg + '"/>';
-
-      var tspans = lines.map(function (line, i) {
-        var y = startY + i * lineHeight;
-        var esc = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        var strokeAttr = state.outline ? ' stroke="' + state.outlineColor + '" stroke-width="' + state.outlineWidth + '" paint-order="stroke"' : "";
-        return '<text x="' + anchorX + '" y="' + y + '" font-family="' + family + '" font-weight="' + variation.weight +
-          '" font-size="' + state.fontSize + '" fill="' + state.color + '" text-anchor="' + textAnchor +
-          '" direction="' + (state.rtl ? "rtl" : "ltr") + '" letter-spacing="' + state.letterSpacing + '"' + strokeAttr + '>' + esc + '</text>';
-      }).join("\n");
-
-      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">\n' +
-        '<defs><style>\n@font-face{font-family:"' + family + '";src:url(data:font/woff2;base64,' + b64 + ') format("woff2");}\n' +
-        'text{font-synthesis:none;}\n</style></defs>\n' +
-        bgRect + "\n" + tspans + "\n</svg>";
+    return buildExportSvg(this.state, variation, 1).then(function (svg) {
       return new Blob([svg], { type: "image/svg+xml" });
     });
   };
 
   // Minimal single-page PDF wrapping a JPEG raster (DCTDecode XObject).
   // We deliberately export raster-in-PDF rather than converting glyphs
-  // to vector paths: Arabic contextual shaping (letter joining) is
-  // performed by the browser's text engine at render time, and glyph
-  // outlines extracted after the fact from a naive JS reshaper would
-  // risk breaking that joining. A high-resolution embedded raster
-  // preserves the exact preview appearance instead. See ARCHITECTURE.md.
+  // to vector paths: Arabic contextual shaping (letter joining) and the
+  // OpenType feature applied by the selected variation both happen at
+  // SVG-render time in the browser's own text engine; re-deriving vector
+  // glyph outlines afterwards from a naive JS parser would risk breaking
+  // either. A high-resolution embedded raster preserves the exact
+  // preview appearance instead. See ARCHITECTURE.md.
   function buildPdfFromJpeg(jpegBuf, pxW, pxH) {
     var dpi = 144;
     var ptW = (pxW / dpi) * 72;
@@ -386,17 +430,19 @@
   }
 
   CalligraphyStudio.prototype.exportPdf = function () {
-    var self = this;
-    return this.render({ scale: 3, forceBg: true }).then(function (canvas) {
-      var w = canvas.width, h = canvas.height;
-      return canvasToBlob(canvas, "image/jpeg", 0.95).then(function (blob) {
-        return blob.arrayBuffer().then(function (buf) {
-          return self.render({}).then(function () {
+    var state = this.state;
+    var variation = this.currentVariation();
+    var scale = 3;
+    var w = Math.round(this.baseW * scale), h = Math.round(this.baseH * scale);
+    return buildExportSvg(state, variation, scale)
+      .then(function (svg) { return rasterizeSvg(svg, w, h, true, state.bg); })
+      .then(function (canvas) {
+        return canvasToBlob(canvas, "image/jpeg", 0.95).then(function (blob) {
+          return blob.arrayBuffer().then(function (buf) {
             return buildPdfFromJpeg(buf, w, h);
           });
         });
       });
-    });
   };
 
   global.CalligraphyStudio = CalligraphyStudio;

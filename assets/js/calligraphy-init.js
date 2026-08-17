@@ -1,15 +1,16 @@
 (function () {
   "use strict";
   document.addEventListener("DOMContentLoaded", function () {
-    var canvas = document.getElementById("callyCanvas");
-    if (!canvas || !window.CalligraphyStudio || !window.CalligraphyData) return;
+    var stage = document.getElementById("callyStage");
+    if (!stage || !window.CalligraphyStudio || !window.CalligraphyData) return;
 
-    var studio = new CalligraphyStudio(canvas);
+    var studio = new CalligraphyStudio(stage);
     var $ = function (id) { return document.getElementById(id); };
 
     var els = {
       text: $("callyText"),
       families: $("callyFamilies"),
+      familyTotal: $("callyFamilyTotal"),
       variations: $("callyVariations"),
       variationHint: $("callyVariationHint"),
       size: $("callySize"),
@@ -55,11 +56,15 @@
         btn.className = "cally-family-btn" + (fam.available ? "" : " is-soon");
         btn.setAttribute("data-family", fam.id);
         btn.innerHTML = '<span class="fam-label">' + fam.label + '</span>' +
-          (fam.available ? '<span class="fam-count">' + fam.variations.length + ' نمط</span>' : '<span class="fam-count">قريبًا</span>');
+          (fam.available ? '<span class="fam-count">' + fam.variations.length + ' متغيّرًا</span>' : '<span class="fam-count">قريبًا</span>');
         btn.title = fam.blurb;
         btn.addEventListener("click", function () { selectFamily(fam.id); });
         els.families.appendChild(btn);
       });
+      if (els.familyTotal) {
+        els.familyTotal.textContent = CalligraphyData.totalVariationCount() + " متغيّرًا حقيقيًا عبر " +
+          CalligraphyData.FAMILIES.filter(function (f) { return f.available; }).length + " عائلات متاحة";
+      }
     }
 
     var currentFamilyId = "naskh";
@@ -96,8 +101,10 @@
       fam.variations.forEach(function (v) {
         var btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "cally-variation-btn";
+        btn.className = "cally-variation-card";
         btn.setAttribute("data-variation", v.id);
+        btn.setAttribute("role", "option");
+        btn.setAttribute("aria-selected", "false");
 
         var sampleBox = document.createElement("span");
         sampleBox.className = "var-sample-box";
@@ -105,14 +112,26 @@
         sampleEl.className = "var-sample";
         sampleEl.dir = "rtl";
         sampleEl.lang = "ar";
+        // Apply the real OpenType feature(s) this variation represents —
+        // e.g. font-feature-settings: "ss01" 1 — so a stylistic-set or
+        // character-variant card actually shows different glyphs, not
+        // just a different font-family/weight.
+        sampleEl.style.fontFeatureSettings = CalligraphyData.buildFeatureSettings(v.features);
         sampleBox.appendChild(sampleEl);
 
+        var metaWrap = document.createElement("span");
+        metaWrap.className = "var-meta";
         var labelEl = document.createElement("span");
         labelEl.className = "var-label";
         labelEl.textContent = v.label;
+        var descEl = document.createElement("span");
+        descEl.className = "var-desc";
+        descEl.textContent = v.meta; // real OpenType feature name, never "Variation N"
+        metaWrap.appendChild(labelEl);
+        metaWrap.appendChild(descEl);
 
         btn.appendChild(sampleBox);
-        btn.appendChild(labelEl);
+        btn.appendChild(metaWrap);
         btn.addEventListener("click", function () { selectVariation(v.id); });
         els.variations.appendChild(btn);
 
@@ -160,8 +179,8 @@
     // sample's font-size proportionally until the (real, shaped) text
     // fits on one line — never truncating or clipping it. Short text
     // simply renders at the normal swatch size.
-    var SAMPLE_MAX_FONT = 26;
-    var SAMPLE_MIN_FONT = 7;
+    var SAMPLE_MAX_FONT = 36;
+    var SAMPLE_MIN_FONT = 9;
     function fitSampleText(sampleEl) {
       var box = sampleEl.parentElement;
       if (!box || !sampleEl.textContent) return;
@@ -188,8 +207,15 @@
 
     function selectVariation(id) {
       studio.set({ variationId: id });
-      Array.prototype.forEach.call(els.variations.querySelectorAll(".cally-variation-btn"), function (b) {
-        b.classList.toggle("active", b.getAttribute("data-variation") === id);
+      Array.prototype.forEach.call(els.variations.querySelectorAll(".cally-variation-card"), function (b) {
+        var isActive = b.getAttribute("data-variation") === id;
+        b.classList.toggle("active", isActive);
+        b.setAttribute("aria-selected", isActive ? "true" : "false");
+        if (isActive) {
+          // Keep the selected card in view on the horizontally-scrollable
+          // mobile gallery without yanking the whole page on desktop.
+          b.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+        }
       });
       queueRender();
     }

@@ -192,42 +192,34 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 .workspace{ display:flex; flex-direction:column; }
 
 .editor-area{ padding:12px; position:relative; }
-
-/* #editor is a plain, non-editable DISPLAY SURFACE — never a <textarea>,
-   never contenteditable, never focusable. It only ever renders
-   keyboard-tool.js's in-memory text state, which is why tapping it can
-   never open the Android/iOS system keyboard. See keyboard-tool.js for
-   the full architecture note. */
 .editor{
-  width:100%; min-height:110px; max-height:calc(100vh - 320px); overflow-y:auto;
-  border:1px solid var(--border); border-radius:var(--radius-md);
+  width:100%; min-height:110px; resize:vertical; border:1px solid var(--border); border-radius:var(--radius-md);
   background:var(--bg); padding:16px; font-size:21px; line-height:1.8; font-family:var(--arabic-font);
-  color:var(--ink); outline:none; cursor:text;
-  white-space:pre-wrap; word-wrap:break-word; word-break:break-word;
-  unicode-bidi:plaintext;
+  color:var(--ink); outline:none;
 }
-.editor[dir="ltr"]{ font-family:var(--font-ui); }
-/* Only real focusable fields (other .editor textareas/inputs on other
-   tools, e.g. #translitInput) ever match :focus — #editor itself is
-   never focusable, so this never applies to it. */
 .editor:focus{ border-color:var(--emerald); box-shadow:0 0 0 3px color-mix(in srgb, var(--emerald) 18%, transparent); }
+.editor[dir="ltr"]{ font-family:var(--font-ui); }
 
-/* Tashkeel (diacritic) characters are wrapped in a span by
-   keyboard-tool.js's render() on every state change, from any input
-   source — virtual keyboard, physical keyboard, undo/redo, paste. */
-.editor .tashkeel-mark{ color:var(--key-arabic-red); }
-
-/* Blinking caret span, re-positioned by render() to sit exactly at
-   state.cursor inside the text. Purely visual — there is no native
-   caret because #editor is never a native editable field. */
-.editor-caret{
-  display:inline-block; width:1px; height:1.1em; vertical-align:text-bottom;
-  background:var(--ink); animation:editor-caret-blink 1s steps(1) infinite;
+/* Tashkeel highlight overlay (built by keyboard-tool.js). A second,
+   non-interactive copy of the editor's text is layered directly behind
+   the real <textarea>, sized/positioned to match it exactly. Only this
+   overlay is colored per-character (Tashkeel marks red, everything else
+   the editor's normal ink color) — the textarea itself stays a plain,
+   fully-functional native text field (typing, physical/virtual keyboard
+   input, paste, undo/redo, selection, copy, cursor movement, Arabic
+   shaping, RTL) with its own glyphs made transparent so the overlay
+   shows through in the same spot. If JS never runs, the overlay is
+   never inserted and the textarea's ".editor--highlighted" class is
+   never added, so the normal opaque text color is the fallback. */
+.editor-highlight{
+  position:absolute; z-index:0; margin:0; overflow:hidden; resize:none;
+  pointer-events:none; user-select:none;
+  white-space:pre-wrap; word-wrap:break-word; word-break:break-word;
 }
-@keyframes editor-caret-blink{ 0%, 49%{ opacity:1; } 50%, 100%{ opacity:0; } }
-
-.editor-placeholder{ color:var(--ink-soft); }
-
+.editor-highlight .tashkeel-mark{ color:var(--key-arabic-red); }
+.editor.editor--highlighted{ position:relative; z-index:1; background:transparent; color:transparent; caret-color:var(--ink); }
+.editor.editor--highlighted::placeholder{ color:var(--ink-soft); opacity:1; }
+.editor.editor--highlighted::selection{ background:color-mix(in srgb, var(--emerald) 35%, transparent); }
 .editor-meta{ display:flex; justify-content:space-between; gap:10px; font-size:12.5px; color:var(--ink-soft); margin-top:4px; font-family:var(--font-ui); }
 #dirIndicator{ font-weight:600; }
 
@@ -431,7 +423,7 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
   .tool-card{ border-radius:16px; margin:6px 0 14px; }
 
   .editor-area{ padding:10px; }
-  .editor{ height:180px; min-height:110px; max-height:180px; font-size:19px; padding:14px; }
+  .editor{ height:180px; min-height:110px; font-size:19px; padding:14px; }
   .editor-meta{ font-size:11.5px; }
 
   .kb-panel{ width:100%; max-width:none; padding:8px 8px 10px; }
@@ -522,24 +514,52 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
 .cally-family-btn.active{ border-color:var(--ink); background:var(--surface-2); }
 .cally-family-btn.is-soon{ opacity:.55; }
 
-.cally-variations{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin; }
-.cally-variation-btn{
-  flex:0 0 auto; width:150px; border:1px solid var(--border); background:var(--bg); border-radius:var(--radius-sm);
-  padding:10px 8px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px;
+.cally-variations{
+  display:flex; gap:12px; overflow-x:auto; padding-bottom:8px; scrollbar-width:thin;
+  scroll-snap-type:x proximity;
+}
+.cally-variation-card{
+  flex:0 0 auto; width:168px; scroll-snap-align:start;
+  border:1px solid var(--border); background:var(--bg); border-radius:var(--radius-md);
+  padding:14px 10px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:8px;
+  transition:border-color .15s ease, background .15s ease, transform .15s ease;
 }
 /* Fixed-size viewport the live sample text is fit into — width is what
    the JS fitting algorithm (fitSampleText) measures against, so the
    full current text is always visible, shrinking rather than clipping. */
-.cally-variation-btn .var-sample-box{
-  width:100%; height:34px; display:flex; align-items:center; justify-content:center; overflow:hidden;
+.cally-variation-card .var-sample-box{
+  width:100%; height:56px; display:flex; align-items:center; justify-content:center; overflow:hidden;
 }
-.cally-variation-btn .var-sample{
-  font-size:26px; line-height:1; color:var(--ink); font-family:var(--font-ar-display);
+.cally-variation-card .var-sample{
+  font-size:36px; line-height:1; color:var(--ink); font-family:var(--font-ar-display);
   white-space:nowrap; display:inline-block;
 }
-.cally-variation-btn .var-label{ font-family:var(--font-ui); font-size:10px; color:var(--ink-soft); white-space:nowrap; }
-.cally-variation-btn:hover{ background:var(--surface-2); }
-.cally-variation-btn.active{ border-color:var(--ink); background:var(--surface-2); }
+.cally-variation-card .var-meta{ display:flex; flex-direction:column; align-items:center; gap:2px; width:100%; }
+.cally-variation-card .var-label{ font-family:var(--font-ui); font-size:12px; font-weight:600; color:var(--ink); white-space:nowrap; }
+.cally-variation-card .var-desc{
+  font-family:var(--font-ui); font-size:10.5px; color:var(--ink-soft); white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; max-width:100%;
+}
+.cally-variation-card:hover{ background:var(--surface-2); }
+.cally-variation-card.active{
+  border-color:var(--ink); background:var(--surface-2); box-shadow:0 0 0 2px var(--ink) inset;
+}
+.cally-variation-card.active .var-label{ color:var(--accent, var(--ink)); }
+
+.cally-gallery-section{ padding:6px 0 40px; }
+.cally-gallery-head{ margin-bottom:12px; }
+.cally-family-total{ margin-top:0; margin-bottom:8px; font-weight:600; }
+
+@media (min-width:640px){
+  /* On wider phones/small tablets, drop the horizontal scroll strip for
+     a responsive wrapping grid — "several cards visible simultaneously"
+     without needing to scroll sideways at all. */
+  .cally-variations{
+    flex-wrap:wrap; overflow-x:visible; scroll-snap-type:none;
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  }
+  .cally-variation-card{ width:auto; }
+}
 
 .cally-controls{ display:flex; flex-direction:column; gap:14px; }
 .cally-ctl{ font-family:var(--font-ui); font-size:12.5px; color:var(--ink-soft); display:flex; flex-direction:column; gap:6px; }
@@ -555,4 +575,8 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
   .cally-studio{ display:grid; grid-template-columns:1fr 340px; align-items:start; gap:26px; }
   .cally-main{ display:flex; flex-direction:column; gap:18px; }
   .cally-canvas{ max-height:70vh; width:auto; max-width:100%; }
+  .cally-variations{ grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; }
+  .cally-variation-card{ padding:16px 12px; }
+  .cally-variation-card .var-sample-box{ height:64px; }
+  .cally-variation-card .var-sample{ font-size:40px; }
 }
