@@ -9,8 +9,6 @@
 
     var els = {
       text: $("callyText"),
-      familySearch: $("callyFamilySearch"),
-      familyFilter: $("callyFamilyFilter"),
       families: $("callyFamilies"),
       familyTotal: $("callyFamilyTotal"),
       variations: $("callyVariations"),
@@ -40,110 +38,36 @@
 
     var defaultState = Object.assign({}, studio.state);
     var renderQueued = false;
-    var familyPreviewEls = [];
     function queueRender() {
       if (renderQueued) return;
       renderQueued = true;
       requestAnimationFrame(function () {
         renderQueued = false;
-        studio.render().then(function () {
-          refreshFamilySamples();
-          refreshVariationSamples();
-        }).catch(function (err) { console.error(err); });
+        studio.render().catch(function (err) { console.error(err); });
       });
     }
 
     // ---------------- Family + variation galleries ----------------
-    function familyStatusLabel(fam) {
-      return fam.available ? (fam.variations.length + " genuine variations") : "Coming soon";
-    }
-
-    function familySearchText(fam) {
-      return [fam.label, fam.labelEn, fam.blurb, familyStatusLabel(fam)].join(" ").toLowerCase();
-    }
-
     function buildFamilies() {
       els.families.innerHTML = "";
-      familyPreviewEls = [];
       CalligraphyData.FAMILIES.forEach(function (fam) {
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "cally-family-btn" + (fam.available ? "" : " is-soon");
         btn.setAttribute("data-family", fam.id);
-        btn.setAttribute("data-search", familySearchText(fam));
+        btn.innerHTML = '<span class="fam-label">' + fam.label + '</span>' +
+          (fam.available ? '<span class="fam-count">' + fam.variations.length + ' متغيّرًا</span>' : '<span class="fam-count">قريبًا</span>');
         btn.title = fam.blurb;
-
-        var preview = document.createElement("span");
-        preview.className = "fam-preview";
-        preview.textContent = fam.available ? "" : "قريبًا";
-
-        var labelEl = document.createElement("span");
-        labelEl.className = "fam-label";
-        labelEl.textContent = fam.label;
-
-        var countEl = document.createElement("span");
-        countEl.className = "fam-count";
-        countEl.textContent = fam.available ? (fam.variations.length + " متغيّرًا حقيقيًا") : "قريبًا";
-
-        var statusEl = document.createElement("span");
-        statusEl.className = "fam-status";
-        statusEl.textContent = fam.available ? "available" : "coming soon";
-
-        btn.appendChild(preview);
-        btn.appendChild(labelEl);
-        btn.appendChild(countEl);
-        btn.appendChild(statusEl);
         btn.addEventListener("click", function () { selectFamily(fam.id); });
         els.families.appendChild(btn);
-
-        if (fam.available && fam.variations.length) {
-          familyPreviewEls.push({ fam: fam, el: preview });
-          loadSwatchFont(fam.variations[0], preview, true);
-        }
       });
-      updateFamilySummary();
-      applyFamilyFilters();
-      refreshFamilySamples();
+      if (els.familyTotal) {
+        els.familyTotal.textContent = CalligraphyData.totalVariationCount() + " متغيّرًا حقيقيًا عبر " +
+          CalligraphyData.FAMILIES.filter(function (f) { return f.available; }).length + " عائلات متاحة";
+      }
     }
 
     var currentFamilyId = "naskh";
-
-    function updateFamilySummary() {
-      if (!els.familyTotal) return;
-      var totalFamilies = CalligraphyData.FAMILIES.length;
-      var availableFamilies = CalligraphyData.FAMILIES.filter(function (f) { return f.available; }).length;
-      var visibleFamilies = Array.prototype.filter.call(els.families.querySelectorAll(".cally-family-btn"), function (btn) {
-        return !btn.classList.contains("is-hidden");
-      }).length;
-      els.familyTotal.textContent = CalligraphyData.totalVariationCount() + " متغيّرًا حقيقيًا عبر " +
-        availableFamilies + " عائلات متاحة من أصل " + totalFamilies +
-        (visibleFamilies !== totalFamilies ? " • المعروض الآن " + visibleFamilies + " عائلة" : "");
-    }
-
-    function getFamilyFilterValue() {
-      return els.familyFilter ? els.familyFilter.value : "all";
-    }
-
-    function getFamilySearchValue() {
-      return els.familySearch ? els.familySearch.value.trim().toLowerCase() : "";
-    }
-
-    function applyFamilyFilters() {
-      var filter = getFamilyFilterValue();
-      var term = getFamilySearchValue();
-      Array.prototype.forEach.call(els.families.querySelectorAll(".cally-family-btn"), function (btn) {
-        var famId = btn.getAttribute("data-family");
-        var fam = CalligraphyData.FAMILIES.filter(function (f) { return f.id === famId; })[0];
-        if (!fam) return;
-        var matchesFilter = filter === "all" ||
-          (filter === "available" && fam.available) ||
-          (filter === "soon" && !fam.available);
-        var haystack = btn.getAttribute("data-search") || "";
-        var matchesSearch = !term || haystack.indexOf(term) !== -1;
-        btn.classList.toggle("is-hidden", !(matchesFilter && matchesSearch));
-      });
-      updateFamilySummary();
-    }
 
     function selectFamily(famId) {
       var fam = CalligraphyData.FAMILIES.filter(function (f) { return f.id === famId; })[0];
@@ -160,7 +84,6 @@
         els.variations.innerHTML = "";
         variationSampleEls = [];
       }
-      updateFamilySummary();
     }
 
     // Every swatch card renders the SAME live text as the main canvas —
@@ -187,9 +110,8 @@
         sampleBox.className = "var-sample-box";
         var sampleEl = document.createElement("span");
         sampleEl.className = "var-sample";
-        sampleEl.dir = studio.state.rtl ? "rtl" : "ltr";
+        sampleEl.dir = "rtl";
         sampleEl.lang = "ar";
-        sampleEl.style.direction = studio.state.rtl ? "rtl" : "ltr";
         // Apply the real OpenType feature(s) this variation represents —
         // e.g. font-feature-settings: "ss01" 1 — so a stylistic-set or
         // character-variant card actually shows different glyphs, not
@@ -221,7 +143,7 @@
       refreshVariationSamples();
     }
 
-    function loadSwatchFont(variation, sampleEl, isFamilyPreview) {
+    function loadSwatchFont(variation, sampleEl) {
       // Reuses the studio's internal loader indirectly by triggering a
       // tiny FontFace load through the browser font loading API so the
       // swatch shows the *real* glyph shapes, not a placeholder font.
@@ -236,27 +158,19 @@
       }).catch(function () {});
     }
 
-    function refreshFamilySamples() {
-      var text = studio.state.text;
-      familyPreviewEls.forEach(function (pair) {
-        if (!pair || !pair.el || !pair.fam || !pair.fam.available || !pair.fam.variations.length) return;
-        pair.el.textContent = text;
-        pair.el.dir = studio.state.rtl ? "rtl" : "ltr";
-        pair.el.style.direction = studio.state.rtl ? "rtl" : "ltr";
-        fitSampleText(pair.el);
-      });
-    }
-
+    // studio.state.text -> (tashkeel already whatever the user typed; the
+    // gallery intentionally mirrors the raw input 1:1, same as the main
+    // preview) -> each card's sample span. Multi-line input is flattened
+    // to one line here purely because the swatch is a small fixed-height
+    // box — the full text (every line) is still shown, nothing is cut.
     function currentGalleryText() {
-      return studio.state.text;
+      return studio.state.text.replace(/\n+/g, " ").trim();
     }
 
     function refreshVariationSamples() {
       var text = currentGalleryText();
       variationSampleEls.forEach(function (sampleEl) {
         sampleEl.textContent = text;
-        sampleEl.dir = studio.state.rtl ? "rtl" : "ltr";
-        sampleEl.style.direction = studio.state.rtl ? "rtl" : "ltr";
         fitSampleText(sampleEl);
       });
     }
@@ -271,26 +185,23 @@
       var box = sampleEl.parentElement;
       if (!box || !sampleEl.textContent) return;
       var maxWidth = box.clientWidth - 4; // small breathing room
-      var maxHeight = box.clientHeight - 4;
       if (maxWidth <= 0) return; // not laid out yet (e.g. hidden family tab)
-      var low = SAMPLE_MIN_FONT;
-      var high = SAMPLE_MAX_FONT;
-      var best = SAMPLE_MIN_FONT;
       sampleEl.style.fontSize = SAMPLE_MAX_FONT + "px";
       sampleEl.title = "";
-      for (var i = 0; i < 7; i++) {
-        var mid = Math.floor((low + high) / 2);
-        sampleEl.style.fontSize = mid + "px";
-        if (sampleEl.scrollWidth <= maxWidth && sampleEl.scrollHeight <= maxHeight) {
-          best = mid;
-          low = mid + 1;
-        } else {
-          high = mid - 1;
+      var natural = sampleEl.scrollWidth;
+      if (natural > maxWidth) {
+        var fitted = Math.floor(SAMPLE_MAX_FONT * (maxWidth / natural));
+        fitted = Math.max(SAMPLE_MIN_FONT, fitted);
+        sampleEl.style.fontSize = fitted + "px";
+        // Re-check once at the fitted size — Arabic contextual shaping
+        // can change slightly at very different sizes; nudge down further
+        // if it still slightly overflows, rather than ever clipping.
+        if (sampleEl.scrollWidth > maxWidth && fitted > SAMPLE_MIN_FONT) {
+          sampleEl.style.fontSize = Math.max(SAMPLE_MIN_FONT, fitted - 1) + "px";
         }
-      }
-      sampleEl.style.fontSize = Math.max(SAMPLE_MIN_FONT, best) + "px";
-      if (sampleEl.scrollWidth > maxWidth || sampleEl.scrollHeight > maxHeight) {
-        sampleEl.title = sampleEl.textContent; // tooltip fallback at the floor size
+        if (sampleEl.scrollWidth > maxWidth) {
+          sampleEl.title = sampleEl.textContent; // tooltip fallback at the floor size
+        }
       }
     }
 
@@ -347,29 +258,17 @@
       els.text.addEventListener("input", function () {
         studio.set({ text: els.text.value });
         queueRender();
-        refreshFamilySamples();
         refreshVariationSamples();
         clearTimeout(typingTimer);
         typingTimer = setTimeout(function () { studio.pushHistory(); }, 500);
       });
     }
 
-    if (els.familySearch) {
-      els.familySearch.addEventListener("input", function () {
-        applyFamilyFilters();
-      });
-    }
-    if (els.familyFilter) {
-      els.familyFilter.addEventListener("change", function () {
-        applyFamilyFilters();
-      });
-    }
-
     if (els.undo) els.undo.addEventListener("click", function () {
-      if (studio.undo()) { els.text.value = studio.state.text; queueRender(); refreshFamilySamples(); refreshVariationSamples(); }
+      if (studio.undo()) { els.text.value = studio.state.text; queueRender(); refreshVariationSamples(); }
     });
     if (els.redo) els.redo.addEventListener("click", function () {
-      if (studio.redo()) { els.text.value = studio.state.text; queueRender(); refreshFamilySamples(); refreshVariationSamples(); }
+      if (studio.redo()) { els.text.value = studio.state.text; queueRender(); refreshVariationSamples(); }
     });
     if (els.reset) els.reset.addEventListener("click", function () {
       studio.state = Object.assign({}, defaultState);
@@ -399,8 +298,6 @@
       if (els.decorativeBg) els.decorativeBg.checked = s.decorativeBg;
       selectFamily("naskh");
       selectVariation(s.variationId);
-      refreshFamilySamples();
-      refreshVariationSamples();
     }
 
     // ---------------- Ready-made phrases ----------------
@@ -415,7 +312,6 @@
           els.text.value = phrase;
           studio.pushHistory();
           queueRender();
-          refreshFamilySamples();
           refreshVariationSamples();
         });
         els.phrases.appendChild(btn);
@@ -470,9 +366,7 @@
     selectFamily("naskh");
     studio.pushHistory();
     queueRender();
-    applyFamilyFilters();
     window.addEventListener("resize", queueRender);
-    window.addEventListener("resize", refreshFamilySamples);
     window.addEventListener("resize", refreshVariationSamples);
   });
 })();

@@ -503,31 +503,6 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
 .cally-block{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; }
 .cally-h2{ font-family:var(--font-ui); font-size:14px; font-weight:700; margin:0 0 10px; color:var(--ink); }
 
-.cally-family-tools{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  margin-bottom:10px;
-}
-.cally-family-search,
-.cally-family-filter{
-  width:100%;
-  border:1px solid var(--border);
-  background:var(--bg);
-  border-radius:10px;
-  padding:10px 12px;
-  font-family:var(--font-ui);
-  font-size:13px;
-  color:var(--ink);
-}
-.cally-family-search::placeholder{ color:var(--ink-soft); }
-.cally-family-search:focus,
-.cally-family-filter:focus{
-  outline:none;
-  border-color:var(--emerald);
-  box-shadow:0 0 0 3px color-mix(in srgb, var(--emerald) 16%, transparent);
-}
-
 .cally-families{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .cally-family-btn{
   border:1px solid var(--border); background:var(--bg); border-radius:var(--radius-sm); padding:10px;
@@ -535,31 +510,9 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
 }
 .cally-family-btn .fam-label{ font-size:16px; color:var(--ink); }
 .cally-family-btn .fam-count{ font-family:var(--font-ui); font-size:10.5px; color:var(--ink-soft); }
-.cally-family-btn .fam-preview{
-  min-height:36px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:24px;
-  line-height:1.05;
-  color:var(--ink);
-  white-space:pre-wrap;
-  word-break:break-word;
-  overflow:hidden;
-  text-wrap:balance;
-}
-.cally-family-btn .fam-status{
-  font-family:var(--font-ui);
-  font-size:10px;
-  font-weight:700;
-  color:var(--emerald);
-  text-transform:uppercase;
-  letter-spacing:.04em;
-}
 .cally-family-btn:hover{ background:var(--surface-2); }
 .cally-family-btn.active{ border-color:var(--ink); background:var(--surface-2); }
 .cally-family-btn.is-soon{ opacity:.55; }
-.cally-family-btn.is-hidden{ display:none; }
 
 .cally-variations{
   display:flex; gap:12px; overflow-x:auto; padding-bottom:8px; scrollbar-width:thin;
@@ -579,7 +532,7 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
 }
 .cally-variation-card .var-sample{
   font-size:36px; line-height:1; color:var(--ink); font-family:var(--font-ar-display);
-  white-space:pre-wrap; word-break:break-word; display:inline-block; text-align:center;
+  white-space:nowrap; display:inline-block;
 }
 .cally-variation-card .var-meta{ display:flex; flex-direction:column; align-items:center; gap:2px; width:100%; }
 .cally-variation-card .var-label{ font-family:var(--font-ui); font-size:12px; font-weight:600; color:var(--ink); white-space:nowrap; }
@@ -626,5 +579,4 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
   .cally-variation-card{ padding:16px 12px; }
   .cally-variation-card .var-sample-box{ height:64px; }
   .cally-variation-card .var-sample{ font-size:40px; }
-  .cally-families{ grid-template-columns:1fr; }
 }
