@@ -1,0 +1,11 @@
+{
+  "name": "calligraphy-editor-project",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Standalone Arabic calligraphy design editor — Phase 1 (shell + canvas + tools + zoom/pan).",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {}
+}

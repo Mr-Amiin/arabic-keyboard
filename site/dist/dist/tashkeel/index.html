@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أداة التشكيل العربي — إضافة الحركات الإعرابية</title>
+<meta name="description" content="أضف الحركات الإعرابية (الفتحة، الضمة، الكسرة، الشدة، التنوين) إلى نصك العربي عبر معاينة تجريبية داخل المتصفح، مع شرح كامل لأنواع الحركات.">
+<link rel="canonical" href="https://example.com/tashkeel/">
+<meta property="og:title" content="أداة التشكيل العربي — إضافة الحركات الإعرابية">
+<meta property="og:description" content="أضف الحركات الإعرابية (الفتحة، الضمة، الكسرة، الشدة، التنوين) إلى نصك العربي عبر معاينة تجريبية داخل المتصفح، مع شرح كامل لأنواع الحركات.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://example.com/tashkeel/">
+<meta name="theme-color" content="#1F6F53">
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "هل التشكيل التلقائي دقيق لغويًا 100%؟", "acceptedAnswer": {"@type": "Answer", "text": "لا. التشكيل العربي الصحيح يعتمد على السياق النحوي والصرفي الكامل للجملة، وهو ما يحتاج فعليًا محرك معالجة لغة طبيعية متخصصًا. المعاينة الحالية على هذه الصفحة تجريبية وتوضّح الفكرة فقط."}}, {"@type": "Question", "name": "ما هي الحركات العربية الأساسية؟", "acceptedAnswer": {"@type": "Answer", "text": "الفتحة، الضمة، الكسرة، السكون، الشدة، والتنوين بأنواعه الثلاثة (تنوين الفتح والضم والكسر)."}}, {"@type": "Question", "name": "متى أحتاج إلى تشكيل النص؟", "acceptedAnswer": {"@type": "Answer", "text": "التشكيل مفيد في تعليم القراءة، والنصوص الدينية، والشعر، وأي سياق يتطلب نطقًا دقيقًا لا لبس فيه."}}]}</script>
+
+</head>
+<body>
+
+<a href="#main" class="skip-link lang-en">تخطَّ إلى المحتوى</a>
+<header class="site">
+  <div class="wrap nav-row">
+    <a href="../" class="brand"><span class="mark">ع</span>لوحة عربي</a>
+    <nav class="primary" aria-label="التنقل الرئيسي">
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">الأدوات <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../calligraphy/">استوديو الخط العربي</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a></div>
+      </div>
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">تعلّم <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a></div>
+      </div>
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">موارد <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../faq/">الأسئلة الشائعة</a><a href="../about/">من نحن</a><a href="../contact/">تواصل معنا</a></div>
+      </div>
+    </nav>
+    <div class="head-actions">
+      <select class="lang-select lang-en" aria-label="اختر اللغة">
+        <option value="ar" selected>العربية</option>
+        <option value="en">English</option>
+      </select>
+      <button class="icon-btn" id="themeToggle" aria-label="تبديل الوضع الداكن" title="الوضع الداكن">🌙</button>
+      <button class="icon-btn hamburger" id="menuToggle" aria-label="فتح القائمة">☰</button>
+    </div>
+  </div>
+</header>
+
+<div id="mobileNav" aria-hidden="true">
+  <div class="mobile-panel">
+    <div class="close-x"><button class="icon-btn" id="mobileNavClose" aria-label="إغلاق القائمة">✕</button></div>
+    <a href="../">الرئيسية</a>
+    <div class="grp-label lang-en">Tools</div>
+    <a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../calligraphy/">استوديو الخط العربي</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a>
+    <div class="grp-label lang-en">Learn</div>
+    <a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a>
+    <div class="grp-label lang-en">Resources</div>
+    <a href="../faq/">الأسئلة الشائعة</a><a href="../about/">من نحن</a><a href="../contact/">تواصل معنا</a>
+  </div>
+</div>
+
+<nav class="breadcrumbs wrap lang-en" aria-label="Breadcrumb"><a href="../">الرئيسية</a><span class="sep" aria-hidden="true">/</span><a href="../tools/">الأدوات</a><span class="sep" aria-hidden="true">/</span><span class="current" aria-current="page">التشكيل</span></nav>
+<main id="main">
+  <div class="wrap">
+    
+<section class="hero compact">
+  <span class="eyebrow lang-en">Diacritics</span>
+  <h1>أداة التشكيل</h1>
+  <p class="lead">أضف الحركات الإعرابية إلى نصك العربي.</p>
+  <div style="margin-top:14px;"><span class="badge preview">⚠️ معاينة تجريبية داخل المتصفح</span></div>
+</section>
+
+<section class="demo-box wrap-narrow">
+  <label for="tashkeelIn" style="font-size:13px; font-weight:600; display:block; margin-bottom:8px;">النص بدون تشكيل</label>
+  <textarea class="demo-in editor" id="tashkeelIn" dir="rtl" placeholder="اكتب نصًا عربيًا بدون تشكيل…"></textarea>
+  <div style="text-align:center; margin-top:14px;">
+    <button class="tb-btn primary" id="tashkeelRun">تشكيل النص ✨</button>
+  </div>
+  <label for="tashkeelOut" style="font-size:13px; font-weight:600; display:block; margin:14px 0 8px;">الناتج</label>
+  <div class="demo-out" id="tashkeelOut" dir="rtl" aria-live="polite">—</div>
+  <div class="notice">⚠️ <span>هذه معاينة تقريبية تضيف حركة الفتحة بشكل مبسّط فوق الحروف الساكنة، ولا تعكس قواعد الإعراب الكاملة. النتائج قد تكون غير دقيقة لغويًا في بعض السياقات — راجع النصوص الرسمية بشريًا.</span></div>
+</section>
+
+<article class="content-block wrap-narrow" style="padding:32px 20px 0;">
+  <h2>ما هو التشكيل العربي؟</h2>
+  <p>التشكيل هو مجموعة العلامات التي تُضاف فوق الحروف العربية أو تحتها لتوضيح النطق الصحيح للكلمة.</p>
+  <h3>أنواع الحركات</h3>
+  <ul>
+    <li><strong>الفتحة (َ)</strong> — تدل على صوت "أ" قصير.</li>
+    <li><strong>الضمة (ُ)</strong> — تدل على صوت "أُ" قصير.</li>
+    <li><strong>الكسرة (ِ)</strong> — تدل على صوت "إ" قصير.</li>
+    <li><strong>السكون (ْ)</strong> — يدل على عدم وجود حركة بعد الحرف.</li>
+    <li><strong>الشدة (ّ)</strong> — تدل على تضعيف الحرف (نطقه مرتين).</li>
+    <li><strong>التنوين</strong> — إضافة نون ساكنة في النطق عند وقف الاسم عن الإعراب (فتح، ضم، كسر).</li>
+  </ul>
+  <h3>حدود هذه الأداة</h3>
+  <p>نظام التشكيل الآلي الدقيق يتطلب تحليلًا نحويًا وصرفيًا كاملًا للجملة عبر خدمة معالجة لغة طبيعية متخصصة. النسخة الحالية على هذه الصفحة هي <strong>معاينة تجريبية بسيطة</strong> تعمل بالكامل داخل المتصفح دون اتصال بخادم، وهي مخصّصة لتوضيح الفكرة فقط. ندرس دمج خدمة تشكيل حقيقية عبر واجهة برمجية (API) في تحديث قادم — إن توفر ذلك سيظهر بوضوح كميزة "مدعومة بالذكاء الاصطناعي" منفصلة عن هذه المعاينة.</p>
+</article>
+
+<section class="section">
+  <div class="section-head"><span class="kicker lang-en">Related</span><h2>أدوات ذات صلة</h2></div>
+  <div class="grid-cards">
+      <a href="../arabic-keyboard/" class="card"><div class="ic">⌨️</div><h3>لوحة المفاتيح العربية</h3><p>اكتب بالعربية باستخدام لوحة مفاتيح افتراضية أو تحويل صوتي أو لوحتك الفعلية.</p></a>
+      <a href="../editor/" class="card"><div class="ic">📝</div><h3>المحرر العربي</h3><p>بيئة كتابة عربية كاملة مع تنسيق واتجاه نص وإحصائيات.</p></a>
+      <a href="../arabic-alphabet/" class="card"><div class="ic">📚</div><h3>الأبجدية العربية</h3><p>تعلم الحروف وأشكالها المتصلة ونطقها بشكل تفاعلي.</p></a></div>
+</section>
+
+<section class="section">
+  <div class="section-head"><span class="kicker lang-en">FAQ</span><h2>أسئلة شائعة عن التشكيل</h2></div>
+  <div class="wrap-narrow" style="padding:0;"><div id="pageFaq" data-faq-list>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">هل التشكيل التلقائي دقيق لغويًا 100%؟ <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="faq-a">لا. التشكيل العربي الصحيح يعتمد على السياق النحوي والصرفي الكامل للجملة، وهو ما يحتاج فعليًا محرك معالجة لغة طبيعية متخصصًا. المعاينة الحالية على هذه الصفحة تجريبية وتوضّح الفكرة فقط.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">ما هي الحركات العربية الأساسية؟ <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="faq-a">الفتحة، الضمة، الكسرة، السكون، الشدة، والتنوين بأنواعه الثلاثة (تنوين الفتح والضم والكسر).</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">متى أحتاج إلى تشكيل النص؟ <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="faq-a">التشكيل مفيد في تعليم القراءة، والنصوص الدينية، والشعر، وأي سياق يتطلب نطقًا دقيقًا لا لبس فيه.</div>
+      </div></div></div>
+</section>
+
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="../" class="brand" style="margin-bottom:10px;"><span class="mark">ع</span>لوحة عربي</a>
+        <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+      </div>
+      <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../calligraphy/">استوديو الخط العربي</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+      <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+      <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 لوحة عربي</span>
+      <span>صُنع بعناية للكتابة العربية</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="../assets/js/app.js" defer></script>
+  <script src="../assets/js/tashkeel-tool.js" defer></script>
+  <script src="../assets/js/tashkeel-init.js" defer></script>
+</body>
+</html>

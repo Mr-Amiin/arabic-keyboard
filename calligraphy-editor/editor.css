@@ -1,0 +1,1346 @@
+/* ===========================================================
+   Calligraphy Editor — application shell
+   Phase 1: shell, canvas viewport, dock, zoom, contextual panel.
+   No webpage chrome. No scrolling. Full-viewport app surface.
+   =========================================================== */
+
+:root{
+  --bar-h: 52px;
+  --dock-bg: rgba(30,31,34,0.92);
+  --dock-bg-light: #ffffff;
+  --panel-border: rgba(0,0,0,0.08);
+  --ink: #1c1d20;
+  --ink-soft: #6b6d76;
+  --accent: #3b6ef6;
+  --danger: #e5484d;
+  --canvas-bg: #e7e8eb;
+  --artboard-bg: #ffffff;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --shadow-panel: 0 6px 24px rgba(0,0,0,0.16), 0 1px 2px rgba(0,0,0,0.08);
+}
+
+*{ box-sizing: border-box; }
+
+/* Phase 6, point 10: a consistent keyboard-focus ring for every button/
+   link in the app. :focus-visible (not :focus) so a mouse click still
+   doesn't show a ring where one isn't expected, but Tab-ing to any
+   control always does -- this is the single generic rule covering
+   icon-btn/dock-btn/chip/text-btn/close buttons/popover buttons that,
+   before this phase, had no explicit focus style of their own and fell
+   back to whatever (if anything) the browser default provided.
+   Native controls (input/select/textarea) already get a clearly
+   visible default focus ring from the browser, and the two text
+   inputs that customize it (.text-panel-input, .project-rename-input)
+   already have their own deliberate :focus treatment below -- so this
+   rule intentionally leaves inputs alone rather than fighting them. */
+button:focus-visible, a:focus-visible{
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+html, body{
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;          /* no page scrolling — this is an app, not a webpage */
+  background: var(--canvas-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Tahoma, Arial, sans-serif;
+  color: var(--ink);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#app{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== TOP BAR ===================== */
+#top-bar{
+  height: var(--bar-h);
+  flex: 0 0 var(--bar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--panel-border);
+  z-index: 40;
+}
+
+.bar-group{ display: flex; align-items: center; gap: 4px; }
+.bar-left{ min-width: 0; }
+.bar-right{ min-width: 0; }
+.bar-center{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: var(--ink-soft);
+  max-width: 40vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* Phase 6, point 3/5/12: purely a display label (no click handler,
+     not editable despite contenteditable="false" being present for
+     historical reasons) -- but being position:absolute, it paints
+     ABOVE the normal-flow .bar-right buttons regardless of DOM order,
+     and on narrow phones (found at 320px) its centered 40vw box
+     genuinely overlaps the Export button's real hit area, silently
+     eating the tap. Since it has nothing to receive a click for, it
+     should never be able to intercept one meant for what's under it. */
+  pointer-events: none;
+}
+
+.bar-sep{ width: 1px; height: 22px; background: var(--panel-border); margin: 0 6px; }
+
+/* Keep the top bar to its fixed one-line height on narrow viewports —
+   "Export" / "Project" together are too wide for a phone screen;
+   without this they used to wrap onto a second line and bleed down
+   past the bar's fixed height into whatever sits below it (found via
+   real mobile-viewport testing). Shrink and let this group scroll
+   horizontally rather than wrap. */
+@media (max-width: 820px){
+  .bar-right{
+    max-width: 46vw;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .bar-right::-webkit-scrollbar{ display: none; }
+  .bar-right .text-btn{ flex: 0 0 auto; padding: 7px 10px; font-size: 12px; }
+
+  /* Phase 28 (visual QA): pointer-events:none above already stopped the
+     centered title from silently eating a tap meant for the Download
+     button underneath it, but on narrow phones (found at 320-430px)
+     the title's own 40vw box is still centered independently of
+     .bar-right's real width, so its text visibly renders underneath /
+     gets cut off by that button -- unreadable, not just untappable.
+     Below 820px, drop the independent absolute-centering and let the
+     title become a normal flex sibling instead: .bar-left and
+     .bar-right already shrink to their content (min-width:0), so this
+     gives the title exactly the leftover space between them, and its
+     existing overflow:hidden/text-overflow:ellipsis/white-space:nowrap
+     truncates within that real space instead of floating over it. */
+  .bar-center{
+    position: static;
+    left: auto;
+    transform: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+    justify-content: center;
+  }
+  /* The truncation itself has to live on the actual text element now --
+     .bar-center is a flex container (inherited from .bar-group), and a
+     flex container's own text-overflow doesn't clip its children the
+     way it clips a block element's inline content. */
+  #project-name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+}
+
+.icon-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--ink);
+  transition: background .12s ease, opacity .12s ease;
+}
+.icon-btn svg{
+  width: 18px; height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon-btn:hover:not(:disabled){ background: rgba(0,0,0,0.06); }
+.icon-btn:active:not(:disabled){ background: rgba(0,0,0,0.1); }
+.icon-btn:disabled{ opacity: .32; cursor: default; }
+.icon-btn.sm{ width: 30px; height: 30px; }
+.icon-btn.sm svg{ width: 16px; height: 16px; }
+
+.text-btn{
+  appearance: none;
+  border: none;
+  background: var(--ink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  /* Phase 6, point 5: 8px vertical padding alone measured out to ~31px
+     tall (found while sweeping 320-820px touch targets) -- a hair
+     under a comfortable tap target. min-height guarantees the floor
+     without changing the button's visual padding/proportions on
+     larger, already-fine instances. */
+  min-height: 36px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.text-btn:hover{ opacity: .88; }
+/* Phase 29 (UI language + terminology consistency): the English half of
+   a bilingual "Arabic • English" top-bar button (#btn-export,
+   #btn-project) must stay visually subordinate to the Arabic primary
+   text -- per the phase's own design requirement -- and, on the
+   narrowest supported phone widths where .bar-right already scrolls
+   horizontally (see the 820px media query below), keep the button
+   short enough that its real tap target doesn't get pushed past the
+   visible edge of that scroll container. A smaller, lighter secondary
+   run does both at once. */
+.text-btn .lang-secondary{
+  font-size: .82em;
+  font-weight: 500;
+  opacity: .82;
+}
+.text-btn-ghost{
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--panel-border);
+  font-weight: 500;
+}
+.text-btn-ghost:hover{ background: rgba(0,0,0,0.04); color: var(--ink); }
+
+/* ===================== WORKSPACE / CANVAS ===================== */
+#workspace{
+  position: relative;
+  flex: 1 1 auto;
+  overflow: hidden;
+  background:
+    radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px) 0 0/22px 22px,
+    var(--canvas-bg);
+  cursor: default;
+  touch-action: none; /* we drive pan/zoom/drag ourselves via pointer events */
+}
+#workspace.tool-hand{ cursor: grab; }
+#workspace.tool-hand.panning{ cursor: grabbing; }
+#workspace.tool-select{ cursor: default; }
+#workspace.tool-pen,
+#workspace.tool-line,
+#workspace.tool-arrow,
+#workspace.tool-rectangle,
+#workspace.tool-circle,
+#workspace.tool-triangle,
+#workspace.tool-diamond{ cursor: crosshair; }
+
+#world{
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+#artboard{
+  width: 1600px;
+  height: 1000px;
+  background: var(--artboard-bg);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 20px 60px rgba(0,0,0,0.18);
+  position: relative;
+}
+
+#scene{ display: block; width: 100%; height: 100%; }
+
+/* Live drag-to-draw preview (Phase 4): a sibling SVG stacked exactly
+   over #scene, never cleared by scene.js's render(), so it's safe for
+   tools.js to draw an in-progress pen/line/arrow/shape gesture into it
+   on every pointermove without fighting scene re-renders. Never
+   hit-testable — the real object it previews doesn't exist until
+   pointerup. */
+#draw-preview{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* ===================== EMPTY-STATE HINT (Phase 6, point 13) ===================== */
+/* Shown only while the canvas has zero objects -- a blank artboard on
+   first open should read as "an empty page ready for work", not "the
+   app is broken", without turning the canvas into a marketing page. */
+.empty-state-hint{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+  color: var(--ink-soft);
+  font-size: 16px;
+  opacity: .5;
+  text-align: center;
+  padding: 0 24px;
+  direction: rtl;
+}
+.empty-state-hint[hidden]{ display: none; }
+
+/* ===================== FLOATING PANELS (shared) ===================== */
+.floating-panel{
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--dock-bg-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel);
+  padding: 6px;
+  z-index: 30;
+}
+
+.panel-sep-v{ width: 1px; height: 20px; background: var(--panel-border); margin: 0 4px; }
+
+/* .floating-panel sets display:flex unconditionally, which otherwise
+   beats the browser's default [hidden]{display:none} (author rules
+   outrank the UA stylesheet even at equal specificity) — without this,
+   a "closed" floating panel (e.g. #text-panel) stays in the layout and
+   keeps intercepting clicks/drags on the canvas underneath it. */
+.floating-panel[hidden]{ display: none; }
+
+/* zoom controls: bottom-left */
+.panel-zoom{
+  left: 16px;
+  bottom: 16px;
+}
+/* contextual object controls: bottom-right. Declared here (before the
+   narrow-viewport media query below) on purpose: an equal-specificity
+   unconditional rule declared AFTER a media query still wins the
+   cascade regardless of viewport width, which — when this rule used to
+   live after that block — silently defeated the media query's
+   bottom:78px override at mobile widths and let this always-visible
+   panel physically overlap the tool dock's right-hand buttons (found
+   via real touch testing at 320px, where the contextual panel was
+   intercepting taps meant for dock buttons underneath it). Keeping the
+   base rule first lets the narrow-viewport override apply as intended. */
+.panel-context{
+  right: 16px;
+  bottom: 16px;
+}
+.zoom-readout{
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  min-width: 46px;
+  text-align: center;
+  cursor: pointer;
+  padding: 6px 2px;
+  border-radius: var(--radius-md);
+}
+.zoom-readout:hover{ background: rgba(0,0,0,0.06); color: var(--ink); }
+
+/* tool dock: bottom-center, dark floating dock.
+   On a narrow (mobile) viewport the full button row is wider than the
+   screen; since the workspace itself never scrolls (by design — see
+   #workspace overflow:hidden above), an overflowing fixed-position dock
+   would leave its edge buttons permanently unreachable. So the dock
+   scrolls itself horizontally instead of relying on page scroll. */
+.panel-dock{
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  background: var(--dock-bg);
+  padding: 7px;
+  gap: 3px;
+  max-width: calc(100vw - 24px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.panel-dock::-webkit-scrollbar{ display: none; }
+
+/* On a narrow viewport the bottom-left zoom controls, the bottom-center
+   dock, and the bottom-right contextual panel are all wide enough
+   (added up) to physically overlap in the same row — found via real
+   mobile-viewport testing, where the (higher, later-in-DOM) contextual
+   panel was silently eating clicks meant for the zoom buttons under it.
+   Lift the zoom and contextual panels into their own row above the
+   dock, and cap each one's width (with its own horizontal scroll, same
+   trick as the dock) so they don't collide with each other either. */
+@media (max-width: 820px){
+  .panel-zoom{
+    bottom: 78px;
+    max-width: 46vw;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .panel-zoom::-webkit-scrollbar{ display: none; }
+  .panel-context{
+    bottom: 78px;
+    max-width: 46vw;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .panel-context::-webkit-scrollbar{ display: none; }
+  .panel-zoom > *, .panel-context > *{ flex: 0 0 auto; }
+}
+.dock-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  color: #e9e9ee;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease;
+}
+.dock-btn svg{
+  width: 19px; height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dock-btn:hover{ background: rgba(255,255,255,0.12); }
+.dock-btn.active{ background: var(--accent); color: #fff; }
+.dock-btn-danger:hover{ background: rgba(229,72,77,0.85); color: #fff; }
+.dock-sep{ width: 1px; height: 24px; background: rgba(255,255,255,0.14); margin: 0 5px; flex: 0 0 auto; }
+
+/* ===================== TOAST ===================== */
+.toast{
+  position: absolute;
+  left: 50%;
+  bottom: 84px;
+  transform: translateX(-50%) translateY(6px);
+  background: var(--ink);
+  color: #fff;
+  font-size: 12.5px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-panel);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease, transform .15s ease;
+  z-index: 50;
+  white-space: nowrap;
+}
+.toast.show{
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Project name label: rename happens through the Project panel's own
+   input (Phase 5), not inline-editable here, so this stays plain text. */
+#project-name{ cursor: default; }
+
+/* ===================== SCENE OBJECTS (Phase 2+) ===================== */
+#selection-overlay{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#workspace.tool-select .scene-object{ cursor: pointer; }
+#workspace.tool-select .scene-object.locked{ cursor: not-allowed; }
+
+/* ===================== ADD TEXT PANEL (Phase 2) ===================== */
+.panel-text-add{
+  left: 50%;
+  bottom: 86px;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: stretch;
+  width: min(92vw, 560px);
+  max-height: 74vh;
+  overflow-y: auto;
+  padding: 16px 18px 18px;
+  gap: 0;
+}
+
+.text-panel-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  direction: rtl;
+}
+.text-panel-title{ font-size: 15px; font-weight: 700; color: var(--ink); }
+
+.text-panel-label{
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin: 12px 0 6px;
+  text-align: right;
+}
+
+.text-panel-input{
+  width: 100%;
+  resize: none;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  line-height: 1.5;
+  min-height: 44px;
+  max-height: 120px;
+  color: var(--ink);
+}
+.text-panel-input:focus{ outline: none; border-color: var(--accent); }
+
+.chip-row{
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 4px;
+  direction: rtl;
+}
+.chip-row-families{ flex-wrap: wrap; overflow-x: visible; }
+
+.chip{
+  flex: 0 0 auto;
+  appearance: none;
+  border: 1px solid var(--panel-border);
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.chip:hover:not(:disabled){ border-color: var(--accent); }
+.chip.active{ background: var(--accent); border-color: var(--accent); color: #fff; }
+.chip.chip-unavailable{ opacity: .4; cursor: not-allowed; }
+.chip:disabled{ cursor: not-allowed; }
+
+/* ===================== DECORATIONS PANEL (Phase 4) ===================== */
+.panel-decorations{
+  left: 50%;
+  bottom: 86px;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: stretch;
+  width: min(92vw, 420px);
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 16px 18px 18px;
+  gap: 0;
+}
+.panel-decorations .text-panel-header{ direction: ltr; }
+.decorations-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.decoration-chip{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  appearance: none;
+  border: 1px solid var(--panel-border);
+  background: #fff;
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  padding: 10px 6px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.decoration-chip:hover{ border-color: var(--accent); }
+.decoration-chip svg{ width: 34px; height: 34px; }
+
+/* ===================== Phase 7: TASHKEEL / ELEMENTS / DESIGNS library panels =====================
+   Same floating-panel-with-grid shape as Decorations above (deliberately:
+   these are conceptually siblings — click a real vector thing, it lands
+   on the canvas as a real, fully-editable scene object) so they share
+   one set of grid/chip classes rather than three near-duplicates. */
+.panel-tashkeel, .panel-elements, .panel-designs{
+  left: 50%;
+  bottom: 86px;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: stretch;
+  width: min(92vw, 420px);
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 16px 18px 18px;
+  gap: 0;
+}
+.panel-tashkeel .text-panel-header, .panel-elements .text-panel-header, .panel-designs .text-panel-header{ direction: ltr; }
+.library-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.library-grid.library-grid-wide{ grid-template-columns: repeat(2, 1fr); }
+.library-chip{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  appearance: none;
+  border: 1px solid var(--panel-border);
+  background: #fff;
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  padding: 10px 6px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.library-chip:hover:not(:disabled){ border-color: var(--accent); }
+.library-chip svg{ width: 34px; height: 34px; }
+.library-chip.chip-unavailable, .library-chip:disabled{ opacity: .4; cursor: not-allowed; }
+.library-chip-note{ font-size: 11.5px; color: var(--ink-soft); padding: 8px 2px; text-align: center; }
+
+/* ===================== Phase 15: TASHKEEL style-organized glyph library =====================
+   Turns the flat single-font grid above into a real, style-grouped
+   calligraphic glyph library (one section per real registered style —
+   see tashkeel-library.js's STYLE_SECTIONS): a centered Arabic heading
+   with a rule on each side, an honest secondary label (or, when a
+   style genuinely holds more than one real font, a small picker) for
+   which real variation is shown, then a dense grid of that style's own
+   real glyph tiles. Reuses .library-grid/.library-chip as-is (denser
+   via .tashkeel-style-grid below) so hover/disabled/unavailable
+   styling stays identical to every other library panel. */
+.tashkeel-sections{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tashkeel-style-section{
+  padding: 10px 0 16px;
+  border-bottom: 1px solid var(--panel-border);
+}
+.tashkeel-style-section:last-child{ border-bottom: none; padding-bottom: 4px; }
+.tashkeel-style-heading{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 2px 0 6px;
+}
+.tashkeel-style-heading::before, .tashkeel-style-heading::after{
+  content: '';
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--panel-border) 30%, var(--panel-border) 70%, transparent);
+  max-width: 72px;
+}
+.tashkeel-style-subvariation{
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+.tashkeel-variation-picker{
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.tashkeel-variation-chip{
+  appearance: none;
+  border: 1px solid var(--panel-border);
+  background: #fff;
+  color: var(--ink-soft);
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.tashkeel-variation-chip:hover{ border-color: var(--accent); }
+.tashkeel-variation-chip.active{ border-color: var(--accent); color: var(--ink); background: rgba(0,0,0,0.04); font-weight: 600; }
+.tashkeel-style-section .library-section-label{ display: block; text-align: center; font-size: 11px; margin: 10px 0 8px; }
+.tashkeel-style-grid{
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.tashkeel-style-grid .library-chip{ padding: 8px 2px; }
+.tashkeel-style-grid .library-chip svg{ width: 24px; height: 24px; }
+@media (max-width: 820px){
+  .tashkeel-style-grid{ grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ===================== Phase 15 (library structure rebuild): CALLIGRAPHIC
+   GLYPH LIBRARY (Layer 2) =====================
+   A second, dense, flat, card-less grid inside each .tashkeel-style-
+   section above, sitting between the centered heading and the (now
+   visually secondary) Layer-1 font-marks block. Deliberately NOT built
+   from .library-grid/.library-chip -- those have padded white bordered
+   cards, which is exactly the "generic settings/icon-picker" look the
+   corrected spec forbids. This instead matches the reference tool's OWN
+   verified density: a plain two-column grid (its own .tool_row held
+   exactly two .tool_col per row), each cell a large borderless glyph
+   with no permanent visible label (identification is hover/tap-only,
+   via the tile's title attribute) and only a hairline row separator --
+   never a bordered card, never a title/paragraph of chrome around it.
+   No reference artwork, styling, or class names are reused here -- only
+   the structural fact "two dense columns, glyph-first, minimal chrome"
+   that was independently verified by inspecting the reference HTML. */
+.tashkeel-calligraphic-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  margin: 2px 0 4px;
+}
+.tashkeel-calligraphic-chip{
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 64px;
+  padding: 8px 6px;
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: transparent;
+  cursor: pointer;
+  border-radius: 0;
+}
+.tashkeel-calligraphic-grid .tashkeel-calligraphic-chip:nth-child(odd){
+  border-left: 1px solid rgba(0,0,0,0.06);
+}
+.tashkeel-calligraphic-chip:hover:not(.unavailable){ background: rgba(0,0,0,0.03); }
+.tashkeel-calligraphic-chip:active:not(.unavailable){ background: rgba(0,0,0,0.06); }
+.tashkeel-calligraphic-chip svg{ width: 46px; height: 46px; }
+/* Phase 17: an unavailable slot is a normal, focusable <button> (see
+   tashkeel-panel.js -- deliberately not `disabled`, so a keyboard/
+   screen-reader user can still discover it and hear why), so its
+   "inert" look has to come entirely from styling rather than the
+   browser's native disabled state. Reduced opacity + a quiet neutral
+   lock indicator + a tiny "غير متاح" caption reads as "reserved,
+   unavailable" without ever looking like a broken control or a real
+   glyph -- and stays visually secondary to an available item's 46px
+   glyph preview (point 5: real glyph > unavailable indicator). */
+.tashkeel-calligraphic-chip.unavailable{
+  flex-direction: column;
+  gap: 2px;
+  cursor: default;
+  opacity: .38;
+}
+.tashkeel-calligraphic-chip.unavailable:focus-visible{
+  opacity: .6;
+  outline: 2px solid var(--ink-soft);
+  outline-offset: -2px;
+}
+.tashkeel-calligraphic-unavailable-icon svg{
+  width: 20px;
+  height: 20px;
+  fill: var(--ink-soft);
+}
+.tashkeel-calligraphic-unavailable-label{
+  font-size: 8.5px;
+  color: var(--ink-soft);
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+@media (max-width: 430px){
+  .tashkeel-calligraphic-chip{ min-height: 56px; padding: 6px 4px; }
+  .tashkeel-calligraphic-chip svg{ width: 38px; height: 38px; }
+  .tashkeel-calligraphic-unavailable-icon svg{ width: 17px; height: 17px; }
+  .tashkeel-calligraphic-unavailable-label{ font-size: 7.5px; }
+}
+
+/* Layer 1 (existing font-driven OpenType marks/combos, untouched logic)
+   now renders BENEATH Layer 2 in every style section -- kept fully
+   functional and fully legible, but deliberately quieter than the
+   dense glyph-library grid above it, so the panel's dominant first
+   impression is the calligraphic library the corrected spec asks for,
+   not a settings sub-panel. A hairline top rule + reduced-opacity label
+   is the only visual demotion; the grid/chips/picker beneath it are
+   the same real, fully-supported controls as before this rebuild. */
+.tashkeel-font-marks-layer{
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--panel-border);
+}
+.tashkeel-font-marks-layer .library-section-label{ opacity: .65; }
+
+/* ===================== Phase 7: TRACE IMAGE panel ===================== */
+.panel-trace-image{
+  left: 50%;
+  bottom: 86px;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: stretch;
+  width: min(92vw, 340px);
+  padding: 16px 18px 18px;
+  gap: 10px;
+}
+.panel-trace-image .text-panel-header{ direction: ltr; }
+.trace-image-row{ display: flex; flex-direction: column; gap: 8px; }
+.trace-image-import-btn{
+  appearance: none;
+  border: 1px dashed var(--panel-border);
+  background: #fafafa;
+  color: var(--ink-soft);
+  font-size: 13px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: center;
+}
+.trace-image-import-btn:hover{ border-color: var(--accent); color: var(--ink); }
+.trace-image-controls[hidden]{ display: none; }
+
+/* ===================== Phase 7: EDIT / TRANSFORM / ARRANGE / VIEW menu bar ===================== */
+.panel-menu-bar{
+  top: 54px;
+  left: 12px;
+  flex-direction: column;
+  align-items: stretch;
+  width: min(88vw, 300px);
+  max-height: min(80vh, 560px);
+  overflow-y: auto;
+  padding: 12px 14px 14px;
+  gap: 0;
+}
+.menu-bar-accordion{ display: flex; flex-direction: column; gap: 2px; }
+.menu-bar-section{ display: flex; flex-direction: column; }
+.menu-bar-section-header{
+  appearance: none;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  padding: 8px 4px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+}
+.menu-bar-section-header:hover, .menu-bar-section-header.active{ background: rgba(0,0,0,0.05); }
+.menu-bar-section-list{ display: flex; flex-direction: column; padding: 2px 0 6px 10px; }
+.menu-bar-section-list[hidden]{ display: none; }
+.menu-bar-row{
+  appearance: none;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  padding: 7px 8px;
+  cursor: pointer;
+  border-radius: calc(var(--radius-md) - 2px);
+}
+.menu-bar-row:hover:not(:disabled){ background: rgba(0,0,0,0.05); color: var(--ink); }
+.menu-bar-row:disabled{ opacity: .4; cursor: not-allowed; }
+.menu-bar-section-list hr{ border: none; border-top: 1px solid var(--panel-border); margin: 4px 4px; }
+/* Help > Keyboard Shortcuts: a plain, non-interactive read-out, never
+   a clickable command — no hover/cursor affordance. */
+.menu-bar-info{ cursor: default; font-weight: 700; color: var(--ink); }
+.menu-bar-info.menu-bar-info-indent{ font-weight: 400; color: var(--ink-soft); padding-inline-start: 16px; font-size: 12px; }
+
+/* ===================== PROJECT PANEL (Phase 5, point 10/11) ===================== */
+.panel-project{
+  top: calc(var(--bar-h) + 8px);
+  left: 10px;
+  align-items: stretch;
+  padding: 0;
+}
+.project-panel-inner{
+  display: flex;
+  flex-direction: column;
+  width: min(90vw, 340px);
+  max-height: calc(100vh - var(--bar-h) - 32px);
+  padding: 14px 16px 16px;
+  overflow-y: auto;
+}
+.project-panel-body{ display: flex; flex-direction: column; }
+.project-panel-actions{
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.project-panel-actions .text-btn{ flex: 1 1 0; text-align: center; }
+
+.project-rename-row{ display: flex; gap: 6px; align-items: center; }
+.project-rename-input{
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.project-rename-input:focus{ outline: none; border-color: var(--accent); }
+
+.project-list{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.project-list-empty{
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  padding: 10px 2px;
+  text-align: center;
+}
+.project-list-row{
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+}
+.project-list-row:hover{ background: rgba(0,0,0,0.03); }
+.project-list-row.active{ border-color: var(--accent); }
+.project-list-open{
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: right;
+  direction: rtl;
+}
+.project-list-name{
+  font-size: 13px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.project-list-time{ font-size: 11px; color: var(--ink-soft); flex: 0 0 auto; }
+.project-list-delete{ flex: 0 0 auto; align-self: center; color: var(--ink-soft); }
+.project-list-delete:hover{ color: #e5484d; }
+
+.project-panel-confirm{
+  width: min(90vw, 340px);
+  padding: 14px 16px 16px;
+  direction: rtl;
+}
+.project-confirm-msg{ font-size: 13px; color: var(--ink); line-height: 1.6; margin: 0 0 12px; }
+.project-confirm-actions{ display: flex; flex-direction: column; gap: 6px; }
+.project-confirm-actions .text-btn{ width: 100%; text-align: center; }
+
+/* ===================== EXPORT PANEL (Phase 6, point 1/5) ===================== */
+.panel-export{
+  top: calc(var(--bar-h) + 8px);
+  right: 10px;
+  align-items: stretch;
+  padding: 0;
+}
+.export-panel-inner{
+  display: flex;
+  flex-direction: column;
+  width: min(90vw, 340px);
+  max-height: calc(100vh - var(--bar-h) - 32px);
+  padding: 14px 16px 16px;
+  overflow-y: auto;
+}
+.export-panel-body{ display: flex; flex-direction: column; direction: rtl; }
+
+.export-format-tabs{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  background: rgba(0,0,0,0.04);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  margin-bottom: 4px;
+}
+.export-format-tab{
+  flex: 1 1 30%;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 4px;
+  border-radius: calc(var(--radius-md) - 2px);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.export-format-tab:hover{ color: var(--ink); }
+.export-format-tab.active{ background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+.export-format-tab:focus-visible{ outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.export-section[hidden]{ display: none; }
+.export-custom-color{ display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.export-custom-color[hidden]{ display: none; }
+
+.export-run-btn{
+  margin-top: 16px;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}
+.export-run-btn:disabled{ opacity: .6; cursor: wait; }
+
+.text-panel-preview{
+  margin-top: 12px;
+  border: 1px dashed var(--panel-border);
+  border-radius: var(--radius-md);
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  background: #fafafa;
+  overflow: hidden;
+}
+.text-panel-preview-text{
+  font-size: 40px;
+  line-height: 1.3;
+  color: #161616;
+  text-align: center;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.text-panel-error{
+  margin-top: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  background: rgba(229,72,77,0.1);
+  border: 1px solid rgba(229,72,77,0.3);
+  color: #a8262a;
+  font-size: 12.5px;
+  direction: rtl;
+  text-align: right;
+  white-space: pre-wrap;
+}
+
+.text-panel-submit{
+  margin-top: 14px;
+  width: 100%;
+  justify-content: center;
+  padding: 12px 14px;
+  font-size: 14px;
+  border-radius: var(--radius-md);
+}
+.text-panel-submit:disabled{ opacity: .4; cursor: default; }
+
+/* ===================== SELECTION FRAME + HANDLES (Phase 3) ===================== */
+.selection-frame{
+  position: absolute;
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+  transform-origin: center center;
+  pointer-events: none;
+}
+.selection-frame.locked{ outline-color: var(--ink-soft); outline-style: dashed; }
+.selection-frame-group{
+  outline-style: dashed;
+  background: rgba(59,110,246,0.04);
+}
+.selection-member{
+  position: absolute;
+  outline: 1px solid rgba(59,110,246,0.55);
+  pointer-events: none;
+}
+
+.handle{
+  position: absolute;
+  pointer-events: auto;
+  touch-action: none;
+}
+.handle-corner{
+  width: 12px; height: 12px;
+  margin: -6px 0 0 -6px;
+  background: #fff;
+  border: 2px solid var(--accent);
+  border-radius: 3px;
+  cursor: nwse-resize;
+}
+.handle-nw{ top: 0; left: 0; cursor: nwse-resize; }
+.handle-ne{ top: 0; left: 100%; cursor: nesw-resize; }
+.handle-se{ top: 100%; left: 100%; cursor: nwse-resize; }
+.handle-sw{ top: 100%; left: 0; cursor: nesw-resize; }
+
+.handle-edge{
+  background: #fff;
+  border: 2px solid var(--accent);
+  border-radius: 2px;
+}
+.handle-n{ top: 0; left: 50%; width: 12px; height: 8px; margin: -4px 0 0 -6px; cursor: ns-resize; }
+.handle-s{ top: 100%; left: 50%; width: 12px; height: 8px; margin: -4px 0 0 -6px; cursor: ns-resize; }
+.handle-e{ top: 50%; left: 100%; width: 8px; height: 12px; margin: -6px 0 0 -4px; cursor: ew-resize; }
+.handle-w{ top: 50%; left: 0; width: 8px; height: 12px; margin: -6px 0 0 -4px; cursor: ew-resize; }
+
+.handle-rotate{
+  top: 0; left: 50%;
+  width: 14px; height: 14px;
+  margin: -38px 0 0 -7px;
+  background: #fff;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  cursor: grab;
+}
+.handle-rotate-stem{
+  position: absolute;
+  top: -26px; left: 50%;
+  width: 2px; height: 26px;
+  margin-left: -1px;
+  background: var(--accent);
+  pointer-events: none;
+}
+
+/* Bigger touch targets on coarse-pointer (touch) devices without
+   changing the visual size much, so fingers can actually grab them. */
+@media (pointer: coarse){
+  .handle-corner{ width: 22px; height: 22px; margin: -11px 0 0 -11px; }
+  .handle-edge.handle-n, .handle-edge.handle-s{ width: 24px; height: 16px; margin-top: -8px; margin-left: -12px; }
+  .handle-edge.handle-e, .handle-edge.handle-w{ width: 16px; height: 24px; margin-top: -12px; margin-left: -8px; }
+  .handle-rotate{ width: 22px; height: 22px; margin: -46px 0 0 -11px; }
+}
+
+/* ===================== EDIT PATH (Phase 5) ===================== */
+/* Real anchor points (filled circles) and real Bézier control points
+   (small diamonds, joined to their anchor by a dashed guide line) for
+   a glyph's actual SVG path data — dragging these rewrites `d`
+   directly (see scene.js's applyPathPointLive/commitPathPointEdit),
+   never a CSS transform standing in for a geometry change. */
+.path-edit-anchor{
+  position: absolute;
+  width: 10px; height: 10px;
+  margin: -5px 0 0 -5px;
+  background: var(--accent);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--accent);
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+}
+.path-edit-control{
+  position: absolute;
+  width: 9px; height: 9px;
+  margin: -5px 0 0 -5px;
+  background: #fff;
+  border: 2px solid #e5484d;
+  transform: rotate(45deg);
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+}
+.path-edit-guide{
+  position: absolute;
+  height: 0;
+  border-top: 1px dashed #e5484d;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+@media (pointer: coarse){
+  .path-edit-anchor{ width: 18px; height: 18px; margin: -9px 0 0 -9px; }
+  .path-edit-control{ width: 16px; height: 16px; margin: -8px 0 0 -8px; }
+}
+
+/* Fine Edit mode indicator (Phase 5, point 1): make it visually
+   obvious the user has drilled past patch-level selection into
+   individual glyph/mark editing, rather than relying on the selection
+   frame shrinking as the only cue. */
+#artboard.fine-edit-active{
+  box-shadow: 0 0 0 3px var(--accent), 0 0 0 1px rgba(0,0,0,0.06), 0 20px 60px rgba(0,0,0,0.18);
+}
+.fine-edit-badge{
+  position: absolute;
+  top: 14px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  z-index: 45;
+  pointer-events: none;
+  letter-spacing: .02em;
+}
+
+.marquee{
+  position: absolute;
+  border: 1px solid var(--accent);
+  background: rgba(59,110,246,0.12);
+  pointer-events: none;
+  z-index: 25;
+}
+
+/* ===================== CONTEXTUAL POPOVERS (align / distribute) ===================== */
+.ctx-popover-wrap{ position: relative; display: inline-flex; }
+.ctx-popover{
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-panel);
+  padding: 5px;
+}
+.ctx-popover button{
+  width: 30px; height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.ctx-popover button svg{ width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+.ctx-popover button:hover{ background: rgba(0,0,0,0.06); }
+
+.icon-btn.active{ background: var(--accent); color: #fff; }
+
+/* ===================== FLOATING INSPECTOR (Phase 3) ===================== */
+.panel-inspector{
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px;
+  width: 190px;
+}
+.inspector-row{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* Same bug (and same fix) as .floating-panel[hidden] above: an author
+   rule setting display:flex unconditionally beats the browser's own
+   [hidden]{display:none} regardless of source order, so every row
+   inspector-panel.js sets .hidden = true on (stroke controls for a
+   glyph, composition/edit-path/change-font outside their exact
+   context) was rendering in full anyway — the opposite of "only shown
+   when it genuinely applies" that Phase 3/5 both depend on. Found by
+   measuring the mobile inspector strip's scrollWidth (~1961px for a
+   single plain rectangle, caused by four Phase-5 rows that should
+   have contributed 0) rather than trusting the hidden property alone. */
+.inspector-row[hidden]{ display: none; }
+.inspector-color{
+  width: 30px; height: 30px;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+.inspector-hex{
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12.5px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  text-transform: lowercase;
+}
+.inspector-label{ font-size: 11.5px; color: var(--ink-soft); white-space: nowrap; }
+.inspector-opacity{ flex: 1; min-width: 0; }
+.inspector-opacity-value{ font-size: 11.5px; color: var(--ink-soft); width: 34px; text-align: right; }
+.inspector-actions{ justify-content: space-between; }
+.inspector-row :disabled{ opacity: .4; cursor: default; }
+.inspector-select{
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 5px 6px;
+  font-size: 11.5px;
+  background: #fff;
+  color: var(--ink);
+}
+.inspector-editpath-btn{
+  flex: 1;
+  appearance: none;
+  border: 1px solid var(--panel-border);
+  background: #fff;
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.inspector-editpath-btn:hover{ border-color: var(--accent); }
+.inspector-editpath-btn.active{ background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* On a narrow (mobile) viewport the artboard occupies most of the
+   screen width, so the inspector's normal right-side/vertically-centered
+   position sits directly on top of the canvas — genuinely blocking taps
+   and drags on whatever object it's showing controls for (found via
+   real mobile-viewport testing). Move it to a horizontal strip under the
+   top bar instead, out of the canvas's way, same contextual-only
+   behavior (still hidden entirely with nothing selected). */
+@media (max-width: 820px){
+  .panel-inspector{
+    left: 50%;
+    right: auto;
+    top: calc(var(--bar-h) + 10px);
+    bottom: auto;
+    transform: translateX(-50%);
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    max-width: calc(100vw - 24px);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .panel-inspector::-webkit-scrollbar{ display: none; }
+  .panel-inspector .inspector-row{ flex: 0 0 auto; }
+  .panel-inspector .inspector-hex{ width: 74px; }
+}
+
+/* ===========================================================
+   Phase 31 (deployment hardening): classes that replace what used
+   to be inline style="..." attributes/assignments, so the app can
+   run under a Content-Security-Policy with no style-src exception.
+   Purely mechanical -- same visual result as before.
+   =========================================================== */
+.icon-rotate-90{ transform: rotate(90deg); }
+.library-chip-note-right{ text-align: right; }
+.trace-image-row-inline{ flex-direction: row; justify-content: space-between; align-items: center; }
+.boot-fatal-error-banner{
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: #fff; color: #161616; font: 15px/1.6 system-ui, sans-serif;
+  text-align: center; padding: 24px; z-index: 9999; direction: rtl;
+}
+.scene-object-hidden{ display: none; }

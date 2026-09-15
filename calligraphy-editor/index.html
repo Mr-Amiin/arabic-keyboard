@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>محرر الخط العربي — Calligraphy Editor</title>
+<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./editor.css">
+<meta name="google-adsense-account" content="ca-pub-2057098005458261">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="app" dir="ltr">
+
+  <!-- ===== TOP BAR ===== -->
+  <header id="top-bar">
+    <div class="bar-group bar-left">
+      <button class="icon-btn" id="btn-menu" title="Menu (Edit, Transform, Arrange, View, Insert)" aria-haspopup="true" aria-expanded="false" data-action="menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="bar-sep"></div>
+      <button class="icon-btn" id="btn-undo" title="Undo (Ctrl+Z)" disabled>
+        <svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-2"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-redo" title="Redo (Ctrl+Y)" disabled>
+        <svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h2"/></svg>
+      </button>
+    </div>
+
+    <div class="bar-group bar-center">
+      <span id="project-name" contenteditable="false" title="تكوين بدون عنوان">تكوين بدون عنوان</span>
+    </div>
+
+    <div class="bar-group bar-right">
+      <button class="text-btn" id="btn-export" data-action="export">تصدير <span class="lang-secondary">• Export</span> ▾</button>
+      <button class="text-btn" id="btn-project" data-action="project">المشروع <span class="lang-secondary">• Project</span></button>
+    </div>
+  </header>
+
+  <!-- ===== MAIN WORKSPACE ===== -->
+  <main id="workspace" class="tool-select">
+    <div id="world">
+      <div id="artboard">
+        <svg id="scene" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000">
+          <!-- glyph / shape objects render here (Phase 2+) -->
+        </svg>
+        <svg id="draw-preview" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000">
+          <!-- live drag-to-draw preview (Phase 4) — owned entirely by
+               tools.js, never touched by scene.js's render(), so an
+               in-progress pen/line/arrow/shape gesture survives every
+               scene re-render that happens while dragging. -->
+        </svg>
+        <svg id="grid-overlay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" hidden>
+          <!-- Phase 7, View menu "Show/Hide grid": a real, purely visual
+               alignment aid — a sibling of #scene (never inside it, and
+               never touched by scene.js's render() or export.js's
+               cloneArtworkOnly), so it can never appear in an exported
+               file and never affects the actual object model. -->
+          <defs>
+            <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#000000" stroke-opacity="0.08" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect x="0" y="0" width="1600" height="1000" fill="url(#grid-pattern)" pointer-events="none"/>
+        </svg>
+        <div id="selection-overlay"></div>
+        <!-- Phase 6, point 13: a subtle hint shown only while the
+             canvas is truly empty -- a sibling of #scene (never inside
+             it), so it is never picked up by export.js's clone of
+             #scene and can never appear in an exported file. Purely
+             decorative text, no pointer-events, so it can never block
+             a click meant for the canvas underneath it. -->
+        <div id="empty-state-hint" class="empty-state-hint" hidden>أضف نصًا أو اختر أداة للبدء</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== BOTTOM-LEFT: ZOOM CONTROLS ===== -->
+  <div class="floating-panel panel-zoom" id="zoom-controls">
+    <button class="icon-btn sm" id="zoom-out" title="Zoom out">
+      <svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+    </button>
+    <button class="zoom-readout" id="zoom-level" title="Reset zoom">100%</button>
+    <button class="icon-btn sm" id="zoom-in" title="Zoom in">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <div class="panel-sep-v"></div>
+    <button class="icon-btn sm" id="zoom-fit" title="Fit to screen">
+      <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+    </button>
+  </div>
+
+  <!-- ===== BOTTOM-CENTER: TOOL DOCK ===== -->
+  <nav class="floating-panel panel-dock" id="tool-dock">
+    <button class="dock-btn active" data-tool="select" title="Select (V)">
+      <svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 1.5L11 19z"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="text" title="Add Text (T)">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M12 6v14M9 20h6"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="hand" title="Hand / Pan (H)">
+      <svg viewBox="0 0 24 24"><path d="M8 12V6a1.5 1.5 0 0 1 3 0v5M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11.5V6a1.5 1.5 0 0 1 3 0v8M8 12l-1.6-1.6a1.5 1.5 0 0 0-2.4 1.8L7 18a5 5 0 0 0 5 3h1a6 6 0 0 0 6-6v-3"/></svg>
+    </button>
+
+    <div class="dock-sep"></div>
+
+    <button class="dock-btn" data-tool="pen" title="Pen (P)">
+      <svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="line" title="Line (L)">
+      <svg viewBox="0 0 24 24"><path d="M5 19L19 5"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="arrow" title="Arrow">
+      <svg viewBox="0 0 24 24"><path d="M5 19L19 5M19 5h-6M19 5v6"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="rectangle" title="Rectangle (R)">
+      <svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="circle" title="Circle (C)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="triangle" title="Triangle">
+      <svg viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="diamond" title="Diamond">
+      <svg viewBox="0 0 24 24"><path d="M12 3l9 9-9 9-9-9z"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="decoration" title="زخارف • Decorations">
+      <svg viewBox="0 0 24 24"><path d="M12 2l2.4 5.5L20 9l-4.5 3.9L16.8 19 12 15.8 7.2 19l1.3-6.1L4 9l5.6-1.5z"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="tashkeel" title="تشكيل • Tashkeel">
+      <svg viewBox="0 0 24 24"><path d="M5 8h14M9 8V4M15 8V4"/><circle cx="12" cy="16" r="1.6" fill="currentColor"/><path d="M9 19c0-2 6-2 6 0"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="elements" title="عناصر • Elements">
+      <svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><rect x="14" y="4" width="6" height="6" rx="1" fill="none"/><path d="M5 18l4-7 4 7z"/><circle cx="18" cy="17" r="3" fill="none"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="designs" title="تصاميم • Designs">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1" fill="none"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="trace" title="تتبّع الصورة • Trace Image">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="1" fill="none"/><circle cx="9" cy="10" r="2"/><path d="M3 16l5-4 4 3 4-5 5 6" fill="none"/></svg>
+    </button>
+
+    <div class="dock-sep"></div>
+
+    <button class="dock-btn" data-tool="color" title="Color">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="13" cy="8.5" r="1.2" fill="currentColor"/><circle cx="16" cy="11.5" r="1.2" fill="currentColor"/><circle cx="10.5" cy="14.5" r="1.2" fill="currentColor"/></svg>
+    </button>
+    <button class="dock-btn" data-tool="background" title="Background">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></svg>
+    </button>
+    <button class="dock-btn dock-btn-danger" data-action="delete" title="Delete (Del)">
+      <svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
+    </button>
+  </nav>
+
+  <!-- ===== BOTTOM-RIGHT: CONTEXTUAL OBJECT CONTROLS ===== -->
+  <div class="floating-panel panel-context" id="context-panel">
+    <button class="icon-btn sm" data-ctx="front" title="Bring to front" disabled>
+      <svg viewBox="0 0 24 24"><rect x="7" y="3" width="14" height="14" rx="1"/><rect x="3" y="7" width="14" height="14" rx="1" fill="none"/></svg>
+    </button>
+    <button class="icon-btn sm" data-ctx="forward" title="Bring forward" disabled>
+      <svg viewBox="0 0 24 24"><rect x="7" y="3" width="14" height="14" rx="1"/><rect x="3" y="7" width="14" height="14" rx="1" fill="none"/><path d="M10 20h4" stroke-width="1"/></svg>
+    </button>
+    <button class="icon-btn sm" data-ctx="backward" title="Send backward" disabled>
+      <svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="14" rx="1"/><rect x="7" y="3" width="14" height="14" rx="1" fill="none"/><path d="M10 20h4" stroke-width="1"/></svg>
+    </button>
+    <button class="icon-btn sm" data-ctx="back" title="Send to back" disabled>
+      <svg viewBox="0 0 24 24"><rect x="3" y="7" width="14" height="14" rx="1"/><rect x="7" y="3" width="14" height="14" rx="1" fill="none"/></svg>
+    </button>
+    <div class="panel-sep-v"></div>
+    <div class="ctx-popover-wrap">
+      <button class="icon-btn sm" data-ctx="align" title="Align" disabled>
+        <svg viewBox="0 0 24 24"><path d="M4 3v18"/><rect x="7" y="6" width="10" height="4"/><rect x="7" y="14" width="6" height="4"/></svg>
+      </button>
+      <div class="ctx-popover" id="align-popover" hidden>
+        <button data-align="left" title="Align left"><svg viewBox="0 0 24 24"><path d="M4 3v18"/><rect x="7" y="6" width="10" height="4"/><rect x="7" y="14" width="6" height="4"/></svg></button>
+        <button data-align="centerX" title="Align center (horizontal)"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><rect x="6" y="6" width="12" height="4"/><rect x="8" y="14" width="8" height="4"/></svg></button>
+        <button data-align="right" title="Align right"><svg viewBox="0 0 24 24"><path d="M20 3v18"/><rect x="7" y="6" width="10" height="4"/><rect x="11" y="14" width="6" height="4"/></svg></button>
+        <button data-align="top" title="Align top"><svg viewBox="0 0 24 24"><path d="M3 4h18"/><rect x="6" y="7" width="4" height="10"/><rect x="14" y="7" width="4" height="6"/></svg></button>
+        <button data-align="centerY" title="Align middle (vertical)"><svg viewBox="0 0 24 24"><path d="M3 12h18"/><rect x="6" y="6" width="4" height="12"/><rect x="14" y="8" width="4" height="8"/></svg></button>
+        <button data-align="bottom" title="Align bottom"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><rect x="6" y="7" width="4" height="10"/><rect x="14" y="11" width="4" height="6"/></svg></button>
+      </div>
+    </div>
+    <div class="ctx-popover-wrap">
+      <button class="icon-btn sm" data-ctx="distribute" title="Distribute" disabled>
+        <svg viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="8"/><rect x="10" y="8" width="4" height="8"/><rect x="17" y="8" width="4" height="8"/></svg>
+      </button>
+      <div class="ctx-popover" id="distribute-popover" hidden>
+        <button data-distribute="x" title="Distribute horizontally"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="8"/><rect x="10" y="8" width="4" height="8"/><rect x="17" y="8" width="4" height="8"/></svg></button>
+        <button data-distribute="y" title="Distribute vertically"><svg class="icon-rotate-90" viewBox="0 0 24 24"><rect x="3" y="8" width="4" height="8"/><rect x="10" y="8" width="4" height="8"/><rect x="17" y="8" width="4" height="8"/></svg></button>
+      </div>
+    </div>
+    <button class="icon-btn sm" data-ctx="center" title="Center in view" disabled>
+      <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" fill="none"/><circle cx="12" cy="12" r="2.5"/></svg>
+    </button>
+    <div class="panel-sep-v"></div>
+    <button class="icon-btn sm" data-ctx="lock" title="Lock" disabled>
+      <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </button>
+  </div>
+
+  <!-- ===== FLOATING INSPECTOR (Phase 3): color, opacity, flip — shows only when something is selected ===== -->
+  <div class="floating-panel panel-inspector" id="inspector-panel" hidden>
+    <div class="inspector-row" id="inspector-fill-row">
+      <span class="inspector-label" id="inspector-fill-label">Fill</span>
+      <input type="color" id="inspector-color" class="inspector-color" value="#161616" title="Fill color">
+      <input type="text" id="inspector-hex" class="inspector-hex" value="#161616" spellcheck="false" title="Fill hex">
+    </div>
+    <div class="inspector-row" id="inspector-stroke-row" hidden>
+      <span class="inspector-label" id="inspector-stroke-label">Stroke</span>
+      <input type="color" id="inspector-stroke-color" class="inspector-color" value="#161616" title="Stroke color">
+      <input type="text" id="inspector-stroke-hex" class="inspector-hex" value="#161616" spellcheck="false" title="Stroke hex">
+    </div>
+    <div class="inspector-row" id="inspector-stroke-width-row" hidden>
+      <span class="inspector-label">Stroke width</span>
+      <input type="range" id="inspector-stroke-width" class="inspector-opacity" min="0" max="40" value="3">
+      <span class="inspector-opacity-value" id="inspector-stroke-width-value">3px</span>
+    </div>
+    <div class="inspector-row" id="inspector-stroke-style-row" hidden>
+      <select id="inspector-stroke-cap" class="inspector-select" title="Stroke cap">
+        <option value="butt">Butt cap</option>
+        <option value="round">Round cap</option>
+        <option value="square">Square cap</option>
+      </select>
+      <select id="inspector-stroke-join" class="inspector-select" title="Stroke join">
+        <option value="miter">Miter join</option>
+        <option value="round">Round join</option>
+        <option value="bevel">Bevel join</option>
+      </select>
+    </div>
+    <div class="inspector-row">
+      <span class="inspector-label">Opacity</span>
+      <input type="range" id="inspector-opacity" class="inspector-opacity" min="0" max="100" value="100">
+      <span class="inspector-opacity-value" id="inspector-opacity-value">100%</span>
+    </div>
+    <div class="inspector-row" id="inspector-composition-row" hidden>
+      <span class="inspector-label">Spacing</span>
+      <input type="range" id="inspector-patch-spacing" class="inspector-opacity" min="50" max="200" value="100">
+      <span class="inspector-opacity-value" id="inspector-patch-spacing-value">100%</span>
+    </div>
+    <div class="inspector-row" id="inspector-baseline-row" hidden>
+      <span class="inspector-label">Baseline</span>
+      <input type="range" id="inspector-patch-baseline" class="inspector-opacity" min="-60" max="60" value="0">
+      <span class="inspector-opacity-value" id="inspector-patch-baseline-value">0px</span>
+    </div>
+    <div class="inspector-row" id="inspector-editpath-row" hidden>
+      <button class="inspector-editpath-btn" id="inspector-edit-path">Edit Path</button>
+    </div>
+    <div class="inspector-row" id="inspector-changefont-row" hidden>
+      <button class="inspector-editpath-btn" id="inspector-change-font">Change Font / Variation</button>
+    </div>
+    <div class="inspector-row" id="inspector-extend-row" hidden>
+      <button class="inspector-editpath-btn" id="inspector-extend" title="Genuine kashida/tatweel-based extension, where the current font supports it">Extend</button>
+    </div>
+    <div class="inspector-row inspector-actions">
+      <button class="icon-btn sm" id="inspector-flip-h" title="Flip horizontal">
+        <svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 7l-3 5 3 5"/><path d="M17 7l3 5-3 5"/></svg>
+      </button>
+      <button class="icon-btn sm" id="inspector-flip-v" title="Flip vertical">
+        <svg class="icon-rotate-90" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7 7l-3 5 3 5"/><path d="M17 7l3 5-3 5"/></svg>
+      </button>
+      <div class="panel-sep-v"></div>
+      <button class="icon-btn sm" id="inspector-duplicate" title="Duplicate (Ctrl/Cmd+D)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="13" height="13" rx="1"/><path d="M8 21h10a2 2 0 0 0 2-2V9" fill="none"/></svg>
+      </button>
+      <button class="icon-btn sm" id="inspector-lock" title="Lock / unlock">
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      </button>
+      <button class="icon-btn sm dock-btn-danger" id="inspector-delete" title="Delete (Del)">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- toast -->
+  <div id="toast" class="toast" hidden></div>
+</div>
+
+<!--
+  The real, audited font/family/variation registry
+  (../assets/js/calligraphy-data.js), shared with the rest of the site.
+  Loaded as a classic script so it can set window.CalligraphyData before
+  the ES modules below read it. This editor is one level deep under the
+  site root, so the asset base path (../assets/...) is relative to that.
+-->
+<script src="./js/asset-base.js"></script>
+<script src="../assets/js/calligraphy-data.js"></script>
+
+<!--
+  Phase 7, point 10 (Download menu -> PDF): vendored jsPDF 2.5.1 (MIT)
+  + svg2pdf.js 2.2.1 (MIT), same vendoring convention as
+  vendor/harfbuzz/ — classic/UMD builds, loaded before the ES module
+  graph so window.jspdf.jsPDF (with svg2pdf's real .svg() method
+  patched onto its prototype) is ready by the time js/export.js needs
+  it. See vendor/jspdf/LICENSE and vendor/svg2pdf/LICENSE.
+-->
+<script src="./vendor/jspdf/jspdf.umd.min.js"></script>
+<script src="./vendor/svg2pdf/svg2pdf.umd.min.js"></script>
+
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
