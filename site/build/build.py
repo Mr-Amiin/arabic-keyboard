@@ -90,6 +90,9 @@ def header_html(current_path, depth):
         <div class="dropdown">{tools_links}</div>
       </div>
       <div class="nav-item">
+        <a href="{r}calligraphy-editor/">محرر الخط العربي</a>
+      </div>
+      <div class="nav-item">
         <button type="button" aria-haspopup="true">تعلّم <span aria-hidden="true">▾</span></button>
         <div class="dropdown">{learn_links}</div>
       </div>
@@ -113,6 +116,7 @@ def header_html(current_path, depth):
   <div class="mobile-panel">
     <div class="close-x"><button class="icon-btn" id="mobileNavClose" aria-label="إغلاق القائمة">✕</button></div>
     {link("/", "الرئيسية")}
+    {link("/calligraphy-editor/", "محرر الخط العربي")}
     <div class="grp-label lang-en">Tools</div>
     {"".join(f'<a href="{r}{p.strip("/")}/">{l}</a>' for p, l in NAV_TOOLS)}
     <div class="grp-label lang-en">Learn</div>
