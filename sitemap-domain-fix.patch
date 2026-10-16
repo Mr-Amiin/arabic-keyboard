@@ -1,0 +1,835 @@
+diff --git a/about/index.html b/about/index.html
+index acb1b14..52a9e3f 100644
+--- a/about/index.html
++++ b/about/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>من نحن — لوحة عربي</title>
+ <meta name="description" content="تعرّف على فريق ورؤية لوحة عربي، منصة أدوات الكتابة العربية المجانية التي تعمل بالكامل داخل المتصفح.">
+-<link rel="canonical" href="https://example.com/about/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/about/">
+ <meta property="og:title" content="من نحن — لوحة عربي">
+ <meta property="og:description" content="تعرّف على فريق ورؤية لوحة عربي، منصة أدوات الكتابة العربية المجانية التي تعمل بالكامل داخل المتصفح.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/about/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/about/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/arabic-alphabet/index.html b/arabic-alphabet/index.html
+index e1fa5f2..b825d27 100644
+--- a/arabic-alphabet/index.html
++++ b/arabic-alphabet/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>الأبجدية العربية التفاعلية — الحروف وأشكالها ونطقها</title>
+ <meta name="description" content="تعلّم حروف الأبجدية العربية الـ٢٨ بشكل تفاعلي: استمع للنطق، وشاهد أشكال كل حرف المتصلة (بداية، وسط، نهاية) مع أمثلة.">
+-<link rel="canonical" href="https://example.com/arabic-alphabet/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/arabic-alphabet/">
+ <meta property="og:title" content="الأبجدية العربية التفاعلية — الحروف وأشكالها ونطقها">
+ <meta property="og:description" content="تعلّم حروف الأبجدية العربية الـ٢٨ بشكل تفاعلي: استمع للنطق، وشاهد أشكال كل حرف المتصلة (بداية، وسط، نهاية) مع أمثلة.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/arabic-alphabet/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/arabic-alphabet/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/arabic-keyboard/index.html b/arabic-keyboard/index.html
+index 8c73d7e..ac86ee3 100644
+--- a/arabic-keyboard/index.html
++++ b/arabic-keyboard/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>لوحة المفاتيح العربية الافتراضية — اكتب بالعربية أونلاين</title>
+ <meta name="description" content="لوحة مفاتيح عربية افتراضية مجانية تعمل في المتصفح. اكتب بالعربية بالنقر أو باللمس أو بالتحويل الصوتي، بدون تثبيت أي برنامج.">
+-<link rel="canonical" href="https://example.com/arabic-keyboard/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/arabic-keyboard/">
+ <meta property="og:title" content="لوحة المفاتيح العربية الافتراضية — اكتب بالعربية أونلاين">
+ <meta property="og:description" content="لوحة مفاتيح عربية افتراضية مجانية تعمل في المتصفح. اكتب بالعربية بالنقر أو باللمس أو بالتحويل الصوتي، بدون تثبيت أي برنامج.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/arabic-keyboard/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/arabic-keyboard/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/arabic-typing-test/index.html b/arabic-typing-test/index.html
+index b382001..37915fb 100644
+--- a/arabic-typing-test/index.html
++++ b/arabic-typing-test/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>اختبار الطباعة العربي — تدرّب على الكتابة بالفصحى</title>
+ <meta name="description" content="اختبار طباعة مخصّص للعربية الفصحى: قِس عدد الكلمات في الدقيقة والدقة، وتدرّب على الكتابة السريعة بنصوص عربية متنوعة.">
+-<link rel="canonical" href="https://example.com/arabic-typing-test/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/arabic-typing-test/">
+ <meta property="og:title" content="اختبار الطباعة العربي — تدرّب على الكتابة بالفصحى">
+ <meta property="og:description" content="اختبار طباعة مخصّص للعربية الفصحى: قِس عدد الكلمات في الدقيقة والدقة، وتدرّب على الكتابة السريعة بنصوص عربية متنوعة.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/arabic-typing-test/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/arabic-typing-test/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/contact/index.html b/contact/index.html
+index 734afaf..acd8ac8 100644
+--- a/contact/index.html
++++ b/contact/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>تواصل معنا — لوحة عربي</title>
+ <meta name="description" content="تواصل مع فريق لوحة عربي للاستفسارات والاقتراحات والدعم الفني.">
+-<link rel="canonical" href="https://example.com/contact/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/contact/">
+ <meta property="og:title" content="تواصل معنا — لوحة عربي">
+ <meta property="og:description" content="تواصل مع فريق لوحة عربي للاستفسارات والاقتراحات والدعم الفني.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/contact/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/contact/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/editor/index.html b/editor/index.html
+index 7481f8d..0cd726a 100644
+--- a/editor/index.html
++++ b/editor/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>المحرر العربي — اكتب وحرّر نصوصك العربية أونلاين</title>
+ <meta name="description" content="محرر نصوص عربي كامل مع دعم RTL/LTR، تحكم بحجم الخط، تراجع وإعادة، تنزيل وطباعة، وإحصائيات حية للأحرف والكلمات.">
+-<link rel="canonical" href="https://example.com/editor/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/editor/">
+ <meta property="og:title" content="المحرر العربي — اكتب وحرّر نصوصك العربية أونلاين">
+ <meta property="og:description" content="محرر نصوص عربي كامل مع دعم RTL/LTR، تحكم بحجم الخط، تراجع وإعادة، تنزيل وطباعة، وإحصائيات حية للأحرف والكلمات.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/editor/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/editor/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/faq/index.html b/faq/index.html
+index 985b870..5a05972 100644
+--- a/faq/index.html
++++ b/faq/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>الأسئلة الشائعة — لوحة عربي</title>
+ <meta name="description" content="إجابات شاملة عن الكتابة العربية أونلاين، لوحة المفاتيح الافتراضية، التحويل الصوتي، التشكيل، والخصوصية.">
+-<link rel="canonical" href="https://example.com/faq/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/faq/">
+ <meta property="og:title" content="الأسئلة الشائعة — لوحة عربي">
+ <meta property="og:description" content="إجابات شاملة عن الكتابة العربية أونلاين، لوحة المفاتيح الافتراضية، التحويل الصوتي، التشكيل، والخصوصية.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/faq/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/faq/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/index.html b/index.html
+index 0f0be22..72792a7 100644
+--- a/index.html
++++ b/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title> Arabic Keyboard | Write in Arabic and Arabic Calligraphy | لوحة المفاتيح العربية| اكتب بالعربية والمحرر الخط العربي </title>
+ <meta name="description" content="اكتب بالعربية أونلاين مباشرة من متصفحك: لوحة مفاتيح افتراضية، تحويل صوتي، تشكيل، محرر نصوص، واختبار سرعة الطباعة — كل ذلك في مكان واحد ومجانًا.">
+-<link rel="canonical" href="https://example.com/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/">
+ <meta property="og:title" content="لوحة عربي | اكتب بالعربية أونلاين بدون لوحة مفاتيح">
+ <meta property="og:description" content="اكتب بالعربية أونلاين مباشرة من متصفحك: لوحة مفاتيح افتراضية، تحويل صوتي، تشكيل، محرر نصوص، واختبار سرعة الطباعة — كل ذلك في مكان واحد ومجانًا.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="./manifest.json">
+ <link rel="icon" href="./assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/learn-arabic/index.html b/learn-arabic/index.html
+index f3d002c..19aaf35 100644
+--- a/learn-arabic/index.html
++++ b/learn-arabic/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>تعلّم العربية — دروس ومسار منظّم للمبتدئين</title>
+ <meta name="description" content="مسار تعلّم منظّم للغة العربية يشمل الأبجدية والحركات والتحويل الصوتي ولوحة المفاتيح واختبار الطباعة — بطاقات مرتبطة بأدوات حقيقية.">
+-<link rel="canonical" href="https://example.com/learn-arabic/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/learn-arabic/">
+ <meta property="og:title" content="تعلّم العربية — دروس ومسار منظّم للمبتدئين">
+ <meta property="og:description" content="مسار تعلّم منظّم للغة العربية يشمل الأبجدية والحركات والتحويل الصوتي ولوحة المفاتيح واختبار الطباعة — بطاقات مرتبطة بأدوات حقيقية.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/learn-arabic/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/learn-arabic/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/privacy/index.html b/privacy/index.html
+index 204efec..2e775aa 100644
+--- a/privacy/index.html
++++ b/privacy/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>سياسة الخصوصية — لوحة عربي</title>
+ <meta name="description" content="سياسة الخصوصية الخاصة بمنصة لوحة عربي وكيفية التعامل مع بياناتك.">
+-<link rel="canonical" href="https://example.com/privacy/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/privacy/">
+ <meta property="og:title" content="سياسة الخصوصية — لوحة عربي">
+ <meta property="og:description" content="سياسة الخصوصية الخاصة بمنصة لوحة عربي وكيفية التعامل مع بياناتك.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/privacy/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/privacy/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/robots.txt b/robots.txt
+index 54a57c2..a9ed360 100644
+--- a/robots.txt
++++ b/robots.txt
+@@ -1,4 +1,4 @@
+ User-agent: *
+ Allow: /
+ 
+-Sitemap: https://example.com/sitemap.xml
++Sitemap: https://www.arabic-keyboard.live/sitemap.xml
+diff --git a/site/README.md b/site/README.md
+index 0b732ae..d21f64c 100644
+--- a/site/README.md
++++ b/site/README.md
+@@ -45,9 +45,12 @@ the files directly via `file://` will not resolve the root-relative
+ `/assets/...` and `/manifest.json` paths.
+ 
+ Before going live:
+-- Update `SITE_URL` in `build/build.py` (currently a placeholder) and rebuild,
+-  so canonical URLs, Open Graph tags, and sitemap.xml point at your real domain.
+-- Update the `Sitemap:` line in `robots.txt` to match.
++- `SITE_URL` in `build/build.py` is set to the production origin
++  (`https://www.arabic-keyboard.live`) and drives canonical URLs, Open Graph tags and sitemap.xml.
++- `robots.txt` must carry the matching `Sitemap:` line.
++- The deployed repo root has hand edits that `pages.py` would overwrite. To refresh the
++  deployed sitemap from the real pages instead, run `python3 site/build/sitemap_tool.py`
++  (and `--check` to validate).
+ 
+ ## Known intentional limitations (see chat for full list)
+ 
+diff --git a/site/build/build.py b/site/build/build.py
+index c6dd67a..36186be 100644
+--- a/site/build/build.py
++++ b/site/build/build.py
+@@ -16,7 +16,10 @@ import shutil
+ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ DIST = os.path.join(ROOT, "dist")
+ SITE_NAME = "لوحة عربي"
+-SITE_URL = "https://example.com"  # placeholder — update to the real deployed domain
++SITE_URL = "https://www.arabic-keyboard.live"  # production origin (no trailing slash); matches /CNAME
++# Guard: never let a placeholder/invalid origin reach canonicals, og:url or sitemap.xml again.
++assert SITE_URL.startswith("https://") and not SITE_URL.endswith("/") and "example.com" not in SITE_URL, \
++    "SITE_URL must be the real production origin without a trailing slash"
+ 
+ # ---------------------------------------------------------------------------
+ # NAV / FOOTER DATA (single source of truth)
+diff --git a/site/build/sitemap_tool.py b/site/build/sitemap_tool.py
+new file mode 100644
+index 0000000..fb87e63
+--- /dev/null
++++ b/site/build/sitemap_tool.py
+@@ -0,0 +1,132 @@
++#!/usr/bin/env python3
++"""
++Sitemap generator + validator for the DEPLOYED site (repo root).
++
++The deployed root has diverged from what site/build/pages.py would regenerate
++(hand-edited titles, a different /calligraphy-editor/ page), so re-running the
++generator would overwrite live content. This tool therefore builds sitemap.xml
++from the pages that actually exist on disk instead of from a hard-coded list.
++
++  python3 site/build/sitemap_tool.py            # write sitemap.xml (repo root)
++  python3 site/build/sitemap_tool.py --check    # validate only, exit 1 on problems
++  python3 site/build/sitemap_tool.py --root DIR # operate on another site root
++
++Rules:
++  * A page is a top-level folder containing index.html (plus "/" for the root).
++  * Pages with <meta name="robots" content="...noindex..."> are excluded.
++  * assets/, site/, vendor/, hidden folders and non-page folders are ignored.
++  * Every <loc> is SITE_ORIGIN + route, with a trailing slash (folder URLs).
++  * No <lastmod> is written: there is no reliable per-page modification date.
++"""
++import argparse
++import os
++import re
++import sys
++import xml.etree.ElementTree as ET
++
++SITE_ORIGIN = "https://www.arabic-keyboard.live"
++NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
++SKIP_DIRS = {"assets", "site", "node_modules", "vendor", "js", "css", "fonts", "build", "dist"}
++# Routes that must never be listed (removed from the site).
++FORBIDDEN_ROUTES = {"/calligraphy/"}
++
++NOINDEX_RE = re.compile(r'<meta[^>]+name=["\']robots["\'][^>]*content=["\'][^"\']*noindex', re.I)
++CANON_RE = re.compile(r'<link[^>]+rel=["\']canonical["\'][^>]*href=["\']([^"\']+)["\']', re.I)
++
++
++def read(path):
++    with open(path, encoding="utf-8", errors="replace") as f:
++        return f.read()
++
++
++def discover(root):
++    """Return (indexable_routes, noindex_routes), home first, then alphabetical."""
++    found, noindex = [], []
++    if os.path.isfile(os.path.join(root, "index.html")):
++        (noindex if NOINDEX_RE.search(read(os.path.join(root, "index.html"))) else found).append("/")
++    for name in sorted(os.listdir(root)):
++        d = os.path.join(root, name)
++        if name.startswith(".") or name in SKIP_DIRS or not os.path.isdir(d):
++            continue
++        idx = os.path.join(d, "index.html")
++        if os.path.isfile(idx):
++            route = f"/{name}/"
++            (noindex if NOINDEX_RE.search(read(idx)) else found).append(route)
++    return found, noindex
++
++
++def build_xml(routes):
++    lines = ['<?xml version="1.0" encoding="UTF-8"?>', f'<urlset xmlns="{NS}">']
++    lines += [f"  <url><loc>{SITE_ORIGIN}{r}</loc></url>" for r in routes]
++    lines.append("</urlset>")
++    return "\n".join(lines) + "\n"
++
++
++def check(root):
++    problems = []
++    sm = os.path.join(root, "sitemap.xml")
++    if not os.path.isfile(sm):
++        return ["sitemap.xml missing"]
++    try:
++        tree = ET.parse(sm)
++    except ET.ParseError as e:
++        return [f"sitemap.xml is not valid XML: {e}"]
++    locs = [e.text.strip() for e in tree.getroot().iter(f"{{{NS}}}loc")]
++    if tree.getroot().tag != f"{{{NS}}}urlset":
++        problems.append("root element is not sitemap <urlset>")
++    if len(locs) != len(set(locs)):
++        problems.append("duplicate <loc> entries: " + ", ".join(sorted({l for l in locs if locs.count(l) > 1})))
++    expected, noindex = discover(root)
++    for loc in locs:
++        if "example.com" in loc:
++            problems.append(f"placeholder domain: {loc}")
++        if not loc.startswith(SITE_ORIGIN + "/"):
++            problems.append(f"wrong origin: {loc}")
++            continue
++        route = loc[len(SITE_ORIGIN):]
++        if route in FORBIDDEN_ROUTES:
++            problems.append(f"removed route listed: {loc}")
++        if route != "/" and not route.endswith("/"):
++            problems.append(f"missing trailing slash: {loc}")
++        page = os.path.join(root, route.strip("/"), "index.html")
++        if not os.path.isfile(page):
++            problems.append(f"no such page on disk: {loc}")
++        elif route in noindex:
++            problems.append(f"page is noindex: {loc}")
++        else:
++            m = CANON_RE.search(read(page))
++            if m and m.group(1) != loc:
++                problems.append(f"canonical mismatch for {loc}: {m.group(1)}")
++    for r in expected:
++        if SITE_ORIGIN + r not in locs:
++            problems.append(f"indexable page missing from sitemap: {r}")
++    rb = os.path.join(root, "robots.txt")
++    if not os.path.isfile(rb):
++        problems.append("robots.txt missing")
++    else:
++        sm_lines = [l.split(":", 1)[1].strip() for l in read(rb).splitlines() if l.lower().startswith("sitemap:")]
++        if sm_lines != [SITE_ORIGIN + "/sitemap.xml"]:
++            problems.append(f"robots.txt Sitemap line(s) wrong: {sm_lines}")
++    return problems
++
++
++def main():
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--root", default=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
++    ap.add_argument("--check", action="store_true")
++    a = ap.parse_args()
++    root = os.path.abspath(a.root)
++    if not a.check:
++        routes, noindex = discover(root)
++        with open(os.path.join(root, "sitemap.xml"), "w", encoding="utf-8", newline="\n") as f:
++            f.write(build_xml(routes))
++        print(f"wrote sitemap.xml with {len(routes)} URLs; excluded noindex: {noindex or 'none'}")
++    problems = check(root)
++    for p in problems:
++        print("PROBLEM:", p)
++    print("OK" if not problems else f"{len(problems)} problem(s)")
++    sys.exit(1 if problems else 0)
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/site/dist/about/index.html b/site/dist/about/index.html
+index acb1b14..52a9e3f 100644
+--- a/site/dist/about/index.html
++++ b/site/dist/about/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>من نحن — لوحة عربي</title>
+ <meta name="description" content="تعرّف على فريق ورؤية لوحة عربي، منصة أدوات الكتابة العربية المجانية التي تعمل بالكامل داخل المتصفح.">
+-<link rel="canonical" href="https://example.com/about/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/about/">
+ <meta property="og:title" content="من نحن — لوحة عربي">
+ <meta property="og:description" content="تعرّف على فريق ورؤية لوحة عربي، منصة أدوات الكتابة العربية المجانية التي تعمل بالكامل داخل المتصفح.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/about/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/about/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/arabic-alphabet/index.html b/site/dist/arabic-alphabet/index.html
+index e1fa5f2..b825d27 100644
+--- a/site/dist/arabic-alphabet/index.html
++++ b/site/dist/arabic-alphabet/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>الأبجدية العربية التفاعلية — الحروف وأشكالها ونطقها</title>
+ <meta name="description" content="تعلّم حروف الأبجدية العربية الـ٢٨ بشكل تفاعلي: استمع للنطق، وشاهد أشكال كل حرف المتصلة (بداية، وسط، نهاية) مع أمثلة.">
+-<link rel="canonical" href="https://example.com/arabic-alphabet/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/arabic-alphabet/">
+ <meta property="og:title" content="الأبجدية العربية التفاعلية — الحروف وأشكالها ونطقها">
+ <meta property="og:description" content="تعلّم حروف الأبجدية العربية الـ٢٨ بشكل تفاعلي: استمع للنطق، وشاهد أشكال كل حرف المتصلة (بداية، وسط، نهاية) مع أمثلة.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/arabic-alphabet/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/arabic-alphabet/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/arabic-keyboard/index.html b/site/dist/arabic-keyboard/index.html
+index 8c73d7e..ac86ee3 100644
+--- a/site/dist/arabic-keyboard/index.html
++++ b/site/dist/arabic-keyboard/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>لوحة المفاتيح العربية الافتراضية — اكتب بالعربية أونلاين</title>
+ <meta name="description" content="لوحة مفاتيح عربية افتراضية مجانية تعمل في المتصفح. اكتب بالعربية بالنقر أو باللمس أو بالتحويل الصوتي، بدون تثبيت أي برنامج.">
+-<link rel="canonical" href="https://example.com/arabic-keyboard/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/arabic-keyboard/">
+ <meta property="og:title" content="لوحة المفاتيح العربية الافتراضية — اكتب بالعربية أونلاين">
+ <meta property="og:description" content="لوحة مفاتيح عربية افتراضية مجانية تعمل في المتصفح. اكتب بالعربية بالنقر أو باللمس أو بالتحويل الصوتي، بدون تثبيت أي برنامج.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/arabic-keyboard/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/arabic-keyboard/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/arabic-typing-test/index.html b/site/dist/arabic-typing-test/index.html
+index b382001..37915fb 100644
+--- a/site/dist/arabic-typing-test/index.html
++++ b/site/dist/arabic-typing-test/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>اختبار الطباعة العربي — تدرّب على الكتابة بالفصحى</title>
+ <meta name="description" content="اختبار طباعة مخصّص للعربية الفصحى: قِس عدد الكلمات في الدقيقة والدقة، وتدرّب على الكتابة السريعة بنصوص عربية متنوعة.">
+-<link rel="canonical" href="https://example.com/arabic-typing-test/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/arabic-typing-test/">
+ <meta property="og:title" content="اختبار الطباعة العربي — تدرّب على الكتابة بالفصحى">
+ <meta property="og:description" content="اختبار طباعة مخصّص للعربية الفصحى: قِس عدد الكلمات في الدقيقة والدقة، وتدرّب على الكتابة السريعة بنصوص عربية متنوعة.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/arabic-typing-test/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/arabic-typing-test/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/build/build.py b/site/dist/build/build.py
+index e093e65..8882304 100644
+--- a/site/dist/build/build.py
++++ b/site/dist/build/build.py
+@@ -16,7 +16,7 @@ import shutil
+ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ DIST = os.path.join(ROOT, "dist")
+ SITE_NAME = "لوحة عربي"
+-SITE_URL = "https://example.com"  # placeholder — update to the real deployed domain
++SITE_URL = "https://www.arabic-keyboard.live"  # production origin (no trailing slash); matches /CNAME
+ 
+ # ---------------------------------------------------------------------------
+ # NAV / FOOTER DATA (single source of truth)
+diff --git a/site/dist/contact/index.html b/site/dist/contact/index.html
+index 734afaf..acd8ac8 100644
+--- a/site/dist/contact/index.html
++++ b/site/dist/contact/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>تواصل معنا — لوحة عربي</title>
+ <meta name="description" content="تواصل مع فريق لوحة عربي للاستفسارات والاقتراحات والدعم الفني.">
+-<link rel="canonical" href="https://example.com/contact/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/contact/">
+ <meta property="og:title" content="تواصل معنا — لوحة عربي">
+ <meta property="og:description" content="تواصل مع فريق لوحة عربي للاستفسارات والاقتراحات والدعم الفني.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/contact/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/contact/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/editor/index.html b/site/dist/editor/index.html
+index 7481f8d..0cd726a 100644
+--- a/site/dist/editor/index.html
++++ b/site/dist/editor/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>المحرر العربي — اكتب وحرّر نصوصك العربية أونلاين</title>
+ <meta name="description" content="محرر نصوص عربي كامل مع دعم RTL/LTR، تحكم بحجم الخط، تراجع وإعادة، تنزيل وطباعة، وإحصائيات حية للأحرف والكلمات.">
+-<link rel="canonical" href="https://example.com/editor/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/editor/">
+ <meta property="og:title" content="المحرر العربي — اكتب وحرّر نصوصك العربية أونلاين">
+ <meta property="og:description" content="محرر نصوص عربي كامل مع دعم RTL/LTR، تحكم بحجم الخط، تراجع وإعادة، تنزيل وطباعة، وإحصائيات حية للأحرف والكلمات.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/editor/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/editor/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/faq/index.html b/site/dist/faq/index.html
+index 985b870..5a05972 100644
+--- a/site/dist/faq/index.html
++++ b/site/dist/faq/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>الأسئلة الشائعة — لوحة عربي</title>
+ <meta name="description" content="إجابات شاملة عن الكتابة العربية أونلاين، لوحة المفاتيح الافتراضية، التحويل الصوتي، التشكيل، والخصوصية.">
+-<link rel="canonical" href="https://example.com/faq/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/faq/">
+ <meta property="og:title" content="الأسئلة الشائعة — لوحة عربي">
+ <meta property="og:description" content="إجابات شاملة عن الكتابة العربية أونلاين، لوحة المفاتيح الافتراضية، التحويل الصوتي، التشكيل، والخصوصية.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/faq/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/faq/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/index.html b/site/dist/index.html
+index 0a8e17e..b1e3f09 100644
+--- a/site/dist/index.html
++++ b/site/dist/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>لوحة عربي | اكتب بالعربية أونلاين بدون لوحة مفاتيح</title>
+ <meta name="description" content="اكتب بالعربية أونلاين مباشرة من متصفحك: لوحة مفاتيح افتراضية، تحويل صوتي، تشكيل، محرر نصوص، واختبار سرعة الطباعة — كل ذلك في مكان واحد ومجانًا.">
+-<link rel="canonical" href="https://example.com/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/">
+ <meta property="og:title" content="لوحة عربي | اكتب بالعربية أونلاين بدون لوحة مفاتيح">
+ <meta property="og:description" content="اكتب بالعربية أونلاين مباشرة من متصفحك: لوحة مفاتيح افتراضية، تحويل صوتي، تشكيل، محرر نصوص، واختبار سرعة الطباعة — كل ذلك في مكان واحد ومجانًا.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="./manifest.json">
+ <link rel="icon" href="./assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/learn-arabic/index.html b/site/dist/learn-arabic/index.html
+index f3d002c..19aaf35 100644
+--- a/site/dist/learn-arabic/index.html
++++ b/site/dist/learn-arabic/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>تعلّم العربية — دروس ومسار منظّم للمبتدئين</title>
+ <meta name="description" content="مسار تعلّم منظّم للغة العربية يشمل الأبجدية والحركات والتحويل الصوتي ولوحة المفاتيح واختبار الطباعة — بطاقات مرتبطة بأدوات حقيقية.">
+-<link rel="canonical" href="https://example.com/learn-arabic/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/learn-arabic/">
+ <meta property="og:title" content="تعلّم العربية — دروس ومسار منظّم للمبتدئين">
+ <meta property="og:description" content="مسار تعلّم منظّم للغة العربية يشمل الأبجدية والحركات والتحويل الصوتي ولوحة المفاتيح واختبار الطباعة — بطاقات مرتبطة بأدوات حقيقية.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/learn-arabic/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/learn-arabic/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/privacy/index.html b/site/dist/privacy/index.html
+index 204efec..2e775aa 100644
+--- a/site/dist/privacy/index.html
++++ b/site/dist/privacy/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>سياسة الخصوصية — لوحة عربي</title>
+ <meta name="description" content="سياسة الخصوصية الخاصة بمنصة لوحة عربي وكيفية التعامل مع بياناتك.">
+-<link rel="canonical" href="https://example.com/privacy/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/privacy/">
+ <meta property="og:title" content="سياسة الخصوصية — لوحة عربي">
+ <meta property="og:description" content="سياسة الخصوصية الخاصة بمنصة لوحة عربي وكيفية التعامل مع بياناتك.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/privacy/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/privacy/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/robots.txt b/site/dist/robots.txt
+index 54a57c2..a9ed360 100644
+--- a/site/dist/robots.txt
++++ b/site/dist/robots.txt
+@@ -1,4 +1,4 @@
+ User-agent: *
+ Allow: /
+ 
+-Sitemap: https://example.com/sitemap.xml
++Sitemap: https://www.arabic-keyboard.live/sitemap.xml
+diff --git a/site/dist/sitemap.xml b/site/dist/sitemap.xml
+index a44e6b8..b3353bc 100644
+--- a/site/dist/sitemap.xml
++++ b/site/dist/sitemap.xml
+@@ -1,18 +1,19 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+-  <url><loc>https://example.com/</loc></url>
+-  <url><loc>https://example.com/arabic-keyboard/</loc></url>
+-  <url><loc>https://example.com/transliteration/</loc></url>
+-  <url><loc>https://example.com/tashkeel/</loc></url>
+-  <url><loc>https://example.com/editor/</loc></url>
+-  <url><loc>https://example.com/typing-test/</loc></url>
+-  <url><loc>https://example.com/arabic-alphabet/</loc></url>
+-  <url><loc>https://example.com/learn-arabic/</loc></url>
+-  <url><loc>https://example.com/faq/</loc></url>
+-  <url><loc>https://example.com/about/</loc></url>
+-  <url><loc>https://example.com/contact/</loc></url>
+-  <url><loc>https://example.com/tools/</loc></url>
+-  <url><loc>https://example.com/arabic-typing-test/</loc></url>
+-  <url><loc>https://example.com/privacy/</loc></url>
+-  <url><loc>https://example.com/terms/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/about/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/arabic-alphabet/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/arabic-keyboard/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/arabic-typing-test/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/calligraphy-editor/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/contact/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/editor/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/faq/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/learn-arabic/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/privacy/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/tashkeel/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/terms/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/tools/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/transliteration/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/typing-test/</loc></url>
+ </urlset>
+diff --git a/site/dist/tashkeel/index.html b/site/dist/tashkeel/index.html
+index 18f380b..e714a6a 100644
+--- a/site/dist/tashkeel/index.html
++++ b/site/dist/tashkeel/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>أداة التشكيل العربي — إضافة الحركات الإعرابية</title>
+ <meta name="description" content="أضف الحركات الإعرابية (الفتحة، الضمة، الكسرة، الشدة، التنوين) إلى نصك العربي عبر معاينة تجريبية داخل المتصفح، مع شرح كامل لأنواع الحركات.">
+-<link rel="canonical" href="https://example.com/tashkeel/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/tashkeel/">
+ <meta property="og:title" content="أداة التشكيل العربي — إضافة الحركات الإعرابية">
+ <meta property="og:description" content="أضف الحركات الإعرابية (الفتحة، الضمة، الكسرة، الشدة، التنوين) إلى نصك العربي عبر معاينة تجريبية داخل المتصفح، مع شرح كامل لأنواع الحركات.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/tashkeel/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/tashkeel/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/terms/index.html b/site/dist/terms/index.html
+index cee520a..504027a 100644
+--- a/site/dist/terms/index.html
++++ b/site/dist/terms/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>الشروط والأحكام — لوحة عربي</title>
+ <meta name="description" content="الشروط والأحكام الخاصة باستخدام منصة لوحة عربي وأدواتها.">
+-<link rel="canonical" href="https://example.com/terms/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/terms/">
+ <meta property="og:title" content="الشروط والأحكام — لوحة عربي">
+ <meta property="og:description" content="الشروط والأحكام الخاصة باستخدام منصة لوحة عربي وأدواتها.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/terms/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/terms/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/tools/index.html b/site/dist/tools/index.html
+index f371a03..3f26c36 100644
+--- a/site/dist/tools/index.html
++++ b/site/dist/tools/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>كل أدوات الكتابة العربية — لوحة عربي</title>
+ <meta name="description" content="دليل شامل لكل أدوات لوحة عربي: لوحة المفاتيح، التحويل الصوتي، التشكيل، المحرر، اختبار الطباعة، والأبجدية التفاعلية.">
+-<link rel="canonical" href="https://example.com/tools/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/tools/">
+ <meta property="og:title" content="كل أدوات الكتابة العربية — لوحة عربي">
+ <meta property="og:description" content="دليل شامل لكل أدوات لوحة عربي: لوحة المفاتيح، التحويل الصوتي، التشكيل، المحرر، اختبار الطباعة، والأبجدية التفاعلية.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/tools/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/tools/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/transliteration/index.html b/site/dist/transliteration/index.html
+index f4a7a33..6fbb051 100644
+--- a/site/dist/transliteration/index.html
++++ b/site/dist/transliteration/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>التحويل الصوتي العربي (Arabizi) — تحويل فوري إلى العربية</title>
+ <meta name="description" content="حوّل الكتابة اللاتينية العربية (Arabizi) إلى نص عربي فوريًا، مع جدول تعيين كامل وموثّق لأرقام وأحرف Arabizi.">
+-<link rel="canonical" href="https://example.com/transliteration/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/transliteration/">
+ <meta property="og:title" content="التحويل الصوتي العربي (Arabizi) — تحويل فوري إلى العربية">
+ <meta property="og:description" content="حوّل الكتابة اللاتينية العربية (Arabizi) إلى نص عربي فوريًا، مع جدول تعيين كامل وموثّق لأرقام وأحرف Arabizi.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/transliteration/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/transliteration/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/dist/typing-test/index.html b/site/dist/typing-test/index.html
+index 67f87d2..0c8852b 100644
+--- a/site/dist/typing-test/index.html
++++ b/site/dist/typing-test/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>اختبار سرعة الطباعة العربية — قِس WPM ودقتك</title>
+ <meta name="description" content="اختبر سرعة طباعتك بالعربية ودقّتك مع مؤقت قابل للتخصيص (15، 30، 60 ثانية) ونتائج فورية لعدد الكلمات في الدقيقة والأخطاء.">
+-<link rel="canonical" href="https://example.com/typing-test/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/typing-test/">
+ <meta property="og:title" content="اختبار سرعة الطباعة العربية — قِس WPM ودقتك">
+ <meta property="og:description" content="اختبر سرعة طباعتك بالعربية ودقّتك مع مؤقت قابل للتخصيص (15، 30، 60 ثانية) ونتائج فورية لعدد الكلمات في الدقيقة والأخطاء.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/typing-test/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/typing-test/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/site/robots.txt b/site/robots.txt
+index 54a57c2..a9ed360 100644
+--- a/site/robots.txt
++++ b/site/robots.txt
+@@ -1,4 +1,4 @@
+ User-agent: *
+ Allow: /
+ 
+-Sitemap: https://example.com/sitemap.xml
++Sitemap: https://www.arabic-keyboard.live/sitemap.xml
+diff --git a/sitemap.xml b/sitemap.xml
+index a44e6b8..b3353bc 100644
+--- a/sitemap.xml
++++ b/sitemap.xml
+@@ -1,18 +1,19 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+-  <url><loc>https://example.com/</loc></url>
+-  <url><loc>https://example.com/arabic-keyboard/</loc></url>
+-  <url><loc>https://example.com/transliteration/</loc></url>
+-  <url><loc>https://example.com/tashkeel/</loc></url>
+-  <url><loc>https://example.com/editor/</loc></url>
+-  <url><loc>https://example.com/typing-test/</loc></url>
+-  <url><loc>https://example.com/arabic-alphabet/</loc></url>
+-  <url><loc>https://example.com/learn-arabic/</loc></url>
+-  <url><loc>https://example.com/faq/</loc></url>
+-  <url><loc>https://example.com/about/</loc></url>
+-  <url><loc>https://example.com/contact/</loc></url>
+-  <url><loc>https://example.com/tools/</loc></url>
+-  <url><loc>https://example.com/arabic-typing-test/</loc></url>
+-  <url><loc>https://example.com/privacy/</loc></url>
+-  <url><loc>https://example.com/terms/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/about/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/arabic-alphabet/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/arabic-keyboard/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/arabic-typing-test/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/calligraphy-editor/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/contact/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/editor/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/faq/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/learn-arabic/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/privacy/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/tashkeel/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/terms/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/tools/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/transliteration/</loc></url>
++  <url><loc>https://www.arabic-keyboard.live/typing-test/</loc></url>
+ </urlset>
+diff --git a/tashkeel/index.html b/tashkeel/index.html
+index 18f380b..e714a6a 100644
+--- a/tashkeel/index.html
++++ b/tashkeel/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>أداة التشكيل العربي — إضافة الحركات الإعرابية</title>
+ <meta name="description" content="أضف الحركات الإعرابية (الفتحة، الضمة، الكسرة، الشدة، التنوين) إلى نصك العربي عبر معاينة تجريبية داخل المتصفح، مع شرح كامل لأنواع الحركات.">
+-<link rel="canonical" href="https://example.com/tashkeel/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/tashkeel/">
+ <meta property="og:title" content="أداة التشكيل العربي — إضافة الحركات الإعرابية">
+ <meta property="og:description" content="أضف الحركات الإعرابية (الفتحة، الضمة، الكسرة، الشدة، التنوين) إلى نصك العربي عبر معاينة تجريبية داخل المتصفح، مع شرح كامل لأنواع الحركات.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/tashkeel/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/tashkeel/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/terms/index.html b/terms/index.html
+index cee520a..504027a 100644
+--- a/terms/index.html
++++ b/terms/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>الشروط والأحكام — لوحة عربي</title>
+ <meta name="description" content="الشروط والأحكام الخاصة باستخدام منصة لوحة عربي وأدواتها.">
+-<link rel="canonical" href="https://example.com/terms/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/terms/">
+ <meta property="og:title" content="الشروط والأحكام — لوحة عربي">
+ <meta property="og:description" content="الشروط والأحكام الخاصة باستخدام منصة لوحة عربي وأدواتها.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/terms/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/terms/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/tools/index.html b/tools/index.html
+index f371a03..3f26c36 100644
+--- a/tools/index.html
++++ b/tools/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>كل أدوات الكتابة العربية — لوحة عربي</title>
+ <meta name="description" content="دليل شامل لكل أدوات لوحة عربي: لوحة المفاتيح، التحويل الصوتي، التشكيل، المحرر، اختبار الطباعة، والأبجدية التفاعلية.">
+-<link rel="canonical" href="https://example.com/tools/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/tools/">
+ <meta property="og:title" content="كل أدوات الكتابة العربية — لوحة عربي">
+ <meta property="og:description" content="دليل شامل لكل أدوات لوحة عربي: لوحة المفاتيح، التحويل الصوتي، التشكيل، المحرر، اختبار الطباعة، والأبجدية التفاعلية.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/tools/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/tools/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/transliteration/index.html b/transliteration/index.html
+index f4a7a33..6fbb051 100644
+--- a/transliteration/index.html
++++ b/transliteration/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>التحويل الصوتي العربي (Arabizi) — تحويل فوري إلى العربية</title>
+ <meta name="description" content="حوّل الكتابة اللاتينية العربية (Arabizi) إلى نص عربي فوريًا، مع جدول تعيين كامل وموثّق لأرقام وأحرف Arabizi.">
+-<link rel="canonical" href="https://example.com/transliteration/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/transliteration/">
+ <meta property="og:title" content="التحويل الصوتي العربي (Arabizi) — تحويل فوري إلى العربية">
+ <meta property="og:description" content="حوّل الكتابة اللاتينية العربية (Arabizi) إلى نص عربي فوريًا، مع جدول تعيين كامل وموثّق لأرقام وأحرف Arabizi.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/transliteration/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/transliteration/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+diff --git a/typing-test/index.html b/typing-test/index.html
+index 67f87d2..0c8852b 100644
+--- a/typing-test/index.html
++++ b/typing-test/index.html
+@@ -5,11 +5,11 @@
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>اختبار سرعة الطباعة العربية — قِس WPM ودقتك</title>
+ <meta name="description" content="اختبر سرعة طباعتك بالعربية ودقّتك مع مؤقت قابل للتخصيص (15، 30، 60 ثانية) ونتائج فورية لعدد الكلمات في الدقيقة والأخطاء.">
+-<link rel="canonical" href="https://example.com/typing-test/">
++<link rel="canonical" href="https://www.arabic-keyboard.live/typing-test/">
+ <meta property="og:title" content="اختبار سرعة الطباعة العربية — قِس WPM ودقتك">
+ <meta property="og:description" content="اختبر سرعة طباعتك بالعربية ودقّتك مع مؤقت قابل للتخصيص (15، 30، 60 ثانية) ونتائج فورية لعدد الكلمات في الدقيقة والأخطاء.">
+ <meta property="og:type" content="website">
+-<meta property="og:url" content="https://example.com/typing-test/">
++<meta property="og:url" content="https://www.arabic-keyboard.live/typing-test/">
+ <meta name="theme-color" content="#1F6F53">
+ <link rel="manifest" href="../manifest.json">
+ <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
