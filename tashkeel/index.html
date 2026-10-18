@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>أداة التشكيل العربي — إضافة الحركات الإعرابية</title>
-<meta name="description" content="أضف الحركات الإعرابية (الفتحة، الضمة، الكسرة، الشدة، التنوين) إلى نصك العربي عبر معاينة تجريبية داخل المتصفح، مع شرح كامل لأنواع الحركات.">
+<meta name="description" content="شكّل نصك العربي تلقائيًا: يضيف الفتحة والضمة والكسرة والسكون والشدة والتنوين بنموذج ذكي يعمل داخل متصفحك دون إرسال النص إلى أي خادم، مع شرح لأنواع الحركات.">
 <link rel="canonical" href="https://www.arabic-keyboard.live/tashkeel/">
 <meta property="og:title" content="أداة التشكيل العربي — إضافة الحركات الإعرابية">
-<meta property="og:description" content="أضف الحركات الإعرابية (الفتحة، الضمة، الكسرة، الشدة، التنوين) إلى نصك العربي عبر معاينة تجريبية داخل المتصفح، مع شرح كامل لأنواع الحركات.">
+<meta property="og:description" content="شكّل نصك العربي تلقائيًا: يضيف الفتحة والضمة والكسرة والسكون والشدة والتنوين بنموذج ذكي يعمل داخل متصفحك دون إرسال النص إلى أي خادم، مع شرح لأنواع الحركات.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.arabic-keyboard.live/tashkeel/">
 <meta name="theme-color" content="#1F6F53">
@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/styles.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "هل التشكيل التلقائي دقيق لغويًا 100%؟", "acceptedAnswer": {"@type": "Answer", "text": "لا. التشكيل العربي الصحيح يعتمد على السياق النحوي والصرفي الكامل للجملة، وهو ما يحتاج فعليًا محرك معالجة لغة طبيعية متخصصًا. المعاينة الحالية على هذه الصفحة تجريبية وتوضّح الفكرة فقط."}}, {"@type": "Question", "name": "ما هي الحركات العربية الأساسية؟", "acceptedAnswer": {"@type": "Answer", "text": "الفتحة، الضمة، الكسرة، السكون، الشدة، والتنوين بأنواعه الثلاثة (تنوين الفتح والضم والكسر)."}}, {"@type": "Question", "name": "متى أحتاج إلى تشكيل النص؟", "acceptedAnswer": {"@type": "Answer", "text": "التشكيل مفيد في تعليم القراءة، والنصوص الدينية، والشعر، وأي سياق يتطلب نطقًا دقيقًا لا لبس فيه."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "هل التشكيل التلقائي دقيق لغويًا 100%؟", "acceptedAnswer": {"@type": "Answer", "text": "لا. التشكيل العربي الصحيح يعتمد على السياق النحوي والصرفي الكامل للجملة، والنموذج الآلي المستخدم هنا يخطئ أحيانًا، خصوصًا في حركة آخر الكلمة (الإعراب) وفي الأسماء النادرة. راجع النتيجة قبل استخدامها في نصوص مهمة."}}, {"@type": "Question", "name": "ما هي الحركات العربية الأساسية؟", "acceptedAnswer": {"@type": "Answer", "text": "الفتحة، الضمة، الكسرة، السكون، الشدة، والتنوين بأنواعه الثلاثة (تنوين الفتح والضم والكسر)."}}, {"@type": "Question", "name": "متى أحتاج إلى تشكيل النص؟", "acceptedAnswer": {"@type": "Answer", "text": "التشكيل مفيد في تعليم القراءة، والنصوص الدينية، والشعر، وأي سياق يتطلب نطقًا دقيقًا لا لبس فيه."}}, {"@type": "Question", "name": "هل يُرسل نصي إلى خادم عند التشكيل؟", "acceptedAnswer": {"@type": "Answer", "text": "لا. يُحمَّل نموذج التشكيل مرة واحدة إلى متصفحك (نحو 19 ميغابايت) ثم تتم المعالجة بالكامل على جهازك؛ لا يُرسل النص الذي تكتبه إلى أي خادم."}}]}</script>
 
 <meta name="google-adsense-account" content="ca-pub-2057098005458261">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
@@ -75,19 +75,32 @@
 <section class="hero compact">
   <span class="eyebrow lang-en">Diacritics</span>
   <h1>أداة التشكيل</h1>
-  <p class="lead">أضف الحركات الإعرابية إلى نصك العربي.</p>
-  <div style="margin-top:14px;"><span class="badge preview">⚠️ معاينة تجريبية داخل المتصفح</span></div>
+  <p class="lead">أضف الحركات الإعرابية إلى نصك العربي تلقائيًا — يعمل داخل متصفحك ولا يُرسل نصك إلى أي خادم.</p>
+  <div style="margin-top:14px;"><span class="badge live">✓ تشكيل آلي بنموذج لغوي مفتوح المصدر</span></div>
 </section>
 
-<section class="demo-box wrap-narrow">
-  <label for="tashkeelIn" style="font-size:13px; font-weight:600; display:block; margin-bottom:8px;">النص بدون تشكيل</label>
-  <textarea class="demo-in editor" id="tashkeelIn" dir="rtl" placeholder="اكتب نصًا عربيًا بدون تشكيل…"></textarea>
-  <div style="text-align:center; margin-top:14px;">
-    <button class="tb-btn primary" id="tashkeelRun">تشكيل النص ✨</button>
+<section class="demo-box wrap-narrow tk-app">
+  <label for="tashkeelIn" class="tk-label">النص بدون تشكيل</label>
+  <textarea class="demo-in editor tk-in" id="tashkeelIn" dir="rtl" lang="ar" spellcheck="false" autocomplete="off" placeholder="اكتب أو الصق نصًا عربيًا بدون تشكيل…"></textarea>
+  <div class="editor-meta"><span id="tashkeelCounts">٠ حرف · ٠ كلمة</span></div>
+  <div class="tk-actions">
+    <button class="tb-btn primary" id="tashkeelRun" type="button">تشكيل النص ✨</button>
+    <button class="tb-btn" id="tashkeelExample" type="button">مثال</button>
+    <button class="tb-btn" id="tashkeelClear" type="button">مسح</button>
   </div>
-  <label for="tashkeelOut" style="font-size:13px; font-weight:600; display:block; margin:14px 0 8px;">الناتج</label>
-  <div class="demo-out" id="tashkeelOut" dir="rtl" aria-live="polite">—</div>
-  <div class="notice">⚠️ <span>هذه معاينة تقريبية تضيف حركة الفتحة بشكل مبسّط فوق الحروف الساكنة، ولا تعكس قواعد الإعراب الكاملة. النتائج قد تكون غير دقيقة لغويًا في بعض السياقات — راجع النصوص الرسمية بشريًا.</span></div>
+  <div class="tk-status" id="tashkeelStatus" role="status" aria-live="polite" hidden></div>
+  <div class="tk-progress" id="tashkeelProgress" role="progressbar" aria-label="تقدّم المعالجة" aria-valuemin="0" aria-valuemax="100" hidden><div class="tk-bar" id="tashkeelBar"></div></div>
+  <div class="tk-error" id="tashkeelError" role="alert" hidden>
+    <span id="tashkeelErrorMsg"></span>
+    <button class="tb-btn" id="tashkeelRetry" type="button">إعادة المحاولة</button>
+  </div>
+  <label for="tashkeelOut" class="tk-label tk-label-out">الناتج</label>
+  <div class="demo-out tk-out" id="tashkeelOut" dir="rtl" lang="ar" tabindex="0">—</div>
+  <div class="tk-actions">
+    <button class="tb-btn" id="tashkeelCopy" type="button" disabled>نسخ النص المشكول</button>
+  </div>
+  <noscript><div class="notice">تحتاج هذه الأداة إلى تفعيل JavaScript.</div></noscript>
+  <div class="notice info">ℹ️ <span>التشكيل آلي وقد يخطئ، خصوصًا في حركة آخر الكلمة (الإعراب) وفي الأسماء النادرة والشعر. الحروف التي شكّلتَها بنفسك تبقى كما كتبتها. راجع النصوص المهمة (القرآن الكريم، الوثائق الرسمية، المواد التعليمية) بشريًا.</span></div>
 </section>
 
 <article class="content-block wrap-narrow" style="padding:32px 20px 0;">
@@ -102,8 +115,10 @@
     <li><strong>الشدة (ّ)</strong> — تدل على تضعيف الحرف (نطقه مرتين).</li>
     <li><strong>التنوين</strong> — إضافة نون ساكنة في النطق عند وقف الاسم عن الإعراب (فتح، ضم، كسر).</li>
   </ul>
+  <h3>كيف تعمل هذه الأداة؟</h3>
+  <p>تستخدم الأداة نموذج <strong>Ichkil</strong> المفتوح المصدر (رخصة MIT)، وهو شبكة عصبية صغيرة (نحو 5 ميغابايت) تتوقع حركة كل حرف من سياق الجملة. يُحمَّل النموذج مرة واحدة إلى متصفحك (نحو 19 ميغابايت مع مكوّن التشغيل) ثم يُحفظ للاستخدام لاحقًا، وتتم المعالجة بالكامل على جهازك دون إرسال النص إلى أي خادم. تُقسَّم النصوص الطويلة تلقائيًا عند حدود الجمل مع الحفاظ على الفقرات والأسطر وعلامات الترقيم والكلمات غير العربية.</p>
   <h3>حدود هذه الأداة</h3>
-  <p>نظام التشكيل الآلي الدقيق يتطلب تحليلًا نحويًا وصرفيًا كاملًا للجملة عبر خدمة معالجة لغة طبيعية متخصصة. النسخة الحالية على هذه الصفحة هي <strong>معاينة تجريبية بسيطة</strong> تعمل بالكامل داخل المتصفح دون اتصال بخادم، وهي مخصّصة لتوضيح الفكرة فقط. ندرس دمج خدمة تشكيل حقيقية عبر واجهة برمجية (API) في تحديث قادم — إن توفر ذلك سيظهر بوضوح كميزة "مدعومة بالذكاء الاصطناعي" منفصلة عن هذه المعاينة.</p>
+  <p>التشكيل الآلي لا يضمن الصحة النحوية الكاملة: قد تخطئ الأداة في حركة آخر الكلمة (الإعراب) أو في الأسماء النادرة أو النصوص الشعرية. لا تعتمد عليها وحدها في المصاحف أو الوثائق الرسمية أو المواد التعليمية.</p>
 </article>
 
 <section class="section">
@@ -119,7 +134,7 @@
   <div class="wrap-narrow" style="padding:0;"><div id="pageFaq" data-faq-list>
       <div class="faq-item">
         <button class="faq-q" aria-expanded="false">هل التشكيل التلقائي دقيق لغويًا 100%؟ <span class="chev" aria-hidden="true">⌄</span></button>
-        <div class="faq-a">لا. التشكيل العربي الصحيح يعتمد على السياق النحوي والصرفي الكامل للجملة، وهو ما يحتاج فعليًا محرك معالجة لغة طبيعية متخصصًا. المعاينة الحالية على هذه الصفحة تجريبية وتوضّح الفكرة فقط.</div>
+        <div class="faq-a">لا. التشكيل العربي الصحيح يعتمد على السياق النحوي والصرفي الكامل للجملة، والنموذج الآلي المستخدم هنا يخطئ أحيانًا، خصوصًا في حركة آخر الكلمة (الإعراب) وفي الأسماء النادرة. راجع النتيجة قبل استخدامها في نصوص مهمة.</div>
       </div>
       <div class="faq-item">
         <button class="faq-q" aria-expanded="false">ما هي الحركات العربية الأساسية؟ <span class="chev" aria-hidden="true">⌄</span></button>
@@ -128,6 +143,10 @@
       <div class="faq-item">
         <button class="faq-q" aria-expanded="false">متى أحتاج إلى تشكيل النص؟ <span class="chev" aria-hidden="true">⌄</span></button>
         <div class="faq-a">التشكيل مفيد في تعليم القراءة، والنصوص الدينية، والشعر، وأي سياق يتطلب نطقًا دقيقًا لا لبس فيه.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">هل يُرسل نصي إلى خادم عند التشكيل؟ <span class="chev" aria-hidden="true">⌄</span></button>
+        <div class="faq-a">لا. يُحمَّل نموذج التشكيل مرة واحدة إلى متصفحك (نحو 19 ميغابايت) ثم تتم المعالجة بالكامل على جهازك؛ لا يُرسل النص الذي تكتبه إلى أي خادم.</div>
       </div></div></div>
 </section>
 
@@ -155,6 +174,7 @@
 
 <div class="toast" id="toast" role="status"></div>
 <script src="../assets/js/app.js" defer></script>
+  <script src="../assets/js/tashkeel-engine.js" defer></script>
   <script src="../assets/js/tashkeel-tool.js" defer></script>
   <script src="../assets/js/tashkeel-init.js" defer></script>
 </body>

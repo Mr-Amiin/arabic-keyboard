@@ -580,3 +580,36 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
   .cally-variation-card .var-sample-box{ height:64px; }
   .cally-variation-card .var-sample{ font-size:40px; }
 }
+
+/* ===== Tashkeel tool (/tashkeel/) — scoped to .tk-* ===== */
+.tk-label{ font-size:13px; font-weight:600; display:block; margin-bottom:8px; }
+.tk-label-out{ margin-top:20px; }
+.tk-in{ min-height:150px; line-height:2; }
+.tk-app .editor-meta{ margin-top:6px; }
+.tk-app .editor-meta .over{ color:var(--danger); font-weight:700; }
+.tk-actions{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:14px; }
+.tk-actions .tb-btn{ min-height:44px; padding:10px 18px; justify-content:center; border:1px solid var(--border); background:var(--surface); color:var(--ink); }
+.tk-actions .tb-btn:hover{ border-color:var(--emerald); }
+.tk-actions .tb-btn.primary{ background:var(--emerald); border-color:var(--emerald); color:#fff; }
+.tk-actions .tb-btn.primary:hover{ background:var(--emerald-deep); border-color:var(--emerald-deep); }
+.tk-actions .tb-btn:disabled, .tk-error .tb-btn:disabled{ opacity:.55; cursor:not-allowed; }
+.tk-status{ margin-top:14px; padding:11px 14px; border-radius:var(--radius-sm); font-size:14px; line-height:1.7; background:var(--surface-2); color:var(--ink-soft); }
+.tk-status[data-kind="ok"]{ background:color-mix(in srgb, var(--emerald) 14%, transparent); color:var(--emerald-deep); }
+html[data-theme="dark"] .tk-status[data-kind="ok"]{ color:var(--emerald); }
+.tk-status[data-kind="warn"]{ background:var(--gold-soft); color:var(--ink); }
+.tk-progress{ margin-top:10px; height:8px; border-radius:999px; background:var(--surface-2); overflow:hidden; position:relative; }
+.tk-bar{ height:100%; width:0; background:var(--emerald); border-radius:999px; transition:width .2s ease; }
+.tk-progress.indeterminate .tk-bar{ width:35%; position:absolute; inset-inline-start:0; animation:tk-slide 1.2s ease-in-out infinite alternate; }
+@keyframes tk-slide{ from{ inset-inline-start:0; } to{ inset-inline-start:65%; } }
+.tk-error{ margin-top:14px; padding:12px 14px; border-radius:var(--radius-sm); border:1px solid var(--danger); color:var(--danger); font-size:14px; line-height:1.7; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; background:color-mix(in srgb, var(--danger) 8%, transparent); }
+.tk-error .tb-btn{ min-height:40px; padding:8px 16px; border:1px solid var(--danger); color:var(--danger); background:transparent; }
+.tk-error .tb-btn:hover{ background:var(--danger); color:#fff; }
+.tk-out{ white-space:pre-wrap; overflow-wrap:anywhere; font-family:var(--arabic-font); font-size:23px; line-height:2.3; min-height:120px; margin-top:0; color:var(--ink-soft); }
+.tk-out.has-result{ color:var(--emerald-deep); }
+html[data-theme="dark"] .tk-out.has-result{ color:var(--emerald); }
+.tk-out:focus-visible{ outline:2px solid var(--emerald); outline-offset:2px; }
+@media (max-width:560px){
+  .tk-actions .tb-btn{ flex:1 1 40%; }
+  .tk-out{ font-size:21px; }
+}
+.tk-app [hidden]{ display:none !important; }

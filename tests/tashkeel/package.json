@@ -1,0 +1,16 @@
+{
+  "name": "tashkeel-tests",
+  "private": true,
+  "type": "module",
+  "description": "Automated tests for the /tashkeel/ tool. Not deployed logic; run locally: npm install && npm test",
+  "scripts": {
+    "test": "node --test unit.test.mjs model.test.mjs ui.test.mjs",
+    "e2e": "node e2e.mjs"
+  },
+  "devDependencies": {
+    "@sparticuz/chromium": "^138.0.2",
+    "jsdom": "^26.1.0",
+    "onnxruntime-web": "^1.30.0",
+    "puppeteer-core": "^24.43.1"
+  }
+}

@@ -3,9 +3,11 @@
    Arabic keyboard, transliteration, and editor keep working
    offline once the site has been visited once. Everything else
    (fonts, new pages) falls back to the network and is cached
-   opportunistically.
+   opportunistically. The Tashkeel model + WASM runtime (~19 MB, under
+   /assets/vendor/) are deliberately NOT precached: they are fetched and
+   cached on first use of /tashkeel/ only.
 */
-const CACHE_NAME = "arabic-keyboard-shell-v3";
+const CACHE_NAME = "arabic-keyboard-shell-v4";
 const CORE_ASSETS = [
   "/",
   "/arabic-keyboard/",
@@ -18,6 +20,7 @@ const CORE_ASSETS = [
   "/assets/js/app.js",
   "/assets/js/keyboard-tool.js",
   "/assets/js/typing-test.js",
+  "/assets/js/tashkeel-engine.js",
   "/assets/js/tashkeel-tool.js",
   "/assets/js/alphabet.js",
   "/assets/icons/icon-192.png",
@@ -53,7 +56,12 @@ self.addEventListener("fetch", (event) => {
           }
           return response;
         })
-        .catch(() => caches.match("/"));
+        .catch(() => {
+          // Offline fallback only for page navigations. Other requests (the Tashkeel
+          // model / WASM runtime) must fail honestly instead of receiving the home page.
+          if (event.request.mode === "navigate") return caches.match("/");
+          return Response.error();
+        });
     })
   );
 });

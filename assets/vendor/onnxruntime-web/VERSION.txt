@@ -1,0 +1,4 @@
+onnxruntime-web 1.30.0 (MIT, Microsoft Corporation), published 2026-09-14.
+Files copied unmodified from the npm package's dist/ folder:
+  ort.wasm.min.js, ort-wasm-simd-threaded.mjs, ort-wasm-simd-threaded.wasm
+Single-threaded WebAssembly build (no SharedArrayBuffer / COOP-COEP needed).
