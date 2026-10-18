@@ -5,7 +5,7 @@
    (fonts, new pages) falls back to the network and is cached
    opportunistically.
 */
-const CACHE_NAME = "arabic-keyboard-shell-v2";
+const CACHE_NAME = "arabic-keyboard-shell-v3";
 const CORE_ASSETS = [
   "/",
   "/arabic-keyboard/",
