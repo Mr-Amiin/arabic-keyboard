@@ -17,6 +17,14 @@
        the user already vocalized are left exactly as written
      - a post-condition check that stripping all marks from the result
        gives back exactly the input
+     - invisible format characters (RLM/LRM, ZWNJ/ZWJ, ALM, bidi controls,
+       BOM) are never fed to the model, so they cannot change its output
+     - Arabic Presentation Forms (what copying from a PDF produces) are
+       mapped to their base letters for the model only; the user's own
+       characters are emitted unchanged
+     - letters already carrying a vowel state (including the Quranic sukun
+       U+06E1) are left alone; a letter carrying only a shadda receives just
+       the vowel
    ============================================================ */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
@@ -39,7 +47,16 @@
   const RE_LETTER = /[\u0621-\u064A]/;                      // letters the model decorates
   const RE_MARK = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]/; // any Arabic mark
   const RE_MARKS_G = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]/g;
-  const RE_HARAKAT = /[\u064B-\u0652]/;                     // fathatan .. sukun (incl. shadda)
+  // A letter that already carries any of these has a vowel state of its own: fathatan..kasra,
+  // sukun, subscript alef / inverted damma (Quranic), and the Quranic sukun U+06E1. Shadda
+  // (U+0651) is deliberately NOT in this set: a letter with only a shadda still needs its vowel.
+  const RE_VOWEL_STATE = /[\u064B-\u0650\u0652\u0656\u0657\u06E1]/;
+  const SHADDA = "\u0651";
+  // Never fed to the model (they are invisible, so they must not influence its prediction):
+  // ALM, RLM/LRM/ZWNJ/ZWJ (not ZWSP, which separates words), bidi embeddings/isolates, WJ, BOM.
+  const RE_INVISIBLE = /[\u061C\u200C-\u200F\u202A-\u202E\u2060\u2066-\u2069\uFEFF]/;
+  // Arabic Presentation Forms-A/-B: what PDF/Word copy-paste usually produces.
+  const RE_PRESENTATION = /[\uFB50-\uFDFF\uFE70-\uFEFF]/;
   const TATWEEL = "\u0640";
   const SENT_END = new Set([".", "!", "?", "\u061F", "\u061B", "\u2026", "\u06D4"]);
   const SOFT_BREAK = new Set(["\u060C", ",", ":", ";"]);
@@ -49,10 +66,12 @@
   const DEFAULT_CHUNK = 1024;
 
   class TashkeelError extends Error {
-    constructor(code, message, cause) {
+    constructor(code, message, cause, corrupt) {
       super(message);
       this.name = "TashkeelError";
       this.code = code;
+      // true when a downloaded/cached file is unusable: retrying must not reuse the cached copy
+      this.corrupt = !!corrupt;
       if (cause) this.cause = cause;
     }
   }
@@ -60,15 +79,34 @@
   const isSpace = (s) => /^\s$/u.test(s);
   const stripMarks = (s) => String(s).replace(RE_MARKS_G, "");
 
+  /* ---------- presentation forms ---------- */
+  const presCache = new Map();
+  // Plain Arabic letters a presentation-form character stands for, or "" if it is not a pure
+  // letter form (marks such as U+FE70, the ﷺ phrase ligature, ... are left exactly as they are).
+  function presentationLetters(ch) {
+    if (!RE_PRESENTATION.test(ch)) return "";
+    let r = presCache.get(ch);
+    if (r === undefined) {
+      const n = ch.normalize("NFKC");
+      r = n !== ch && /^[\u0621-\u064A]+$/.test(n) ? n : "";
+      presCache.set(ch, r);
+    }
+    return r;
+  }
+
   /* ---------- parsing: one unit = one base code point + its marks ---------- */
   function parseUnits(text) {
     const units = [];
     for (const cp of Array.from(String(text))) {
       if (units.length && RE_MARK.test(cp)) { units[units.length - 1].marks += cp; continue; }
+      const exp = cp.length === 1 ? presentationLetters(cp) : "";
       units.push({
         base: cp,
         marks: "",
-        letter: cp.length === 1 && RE_LETTER.test(cp)
+        // plain letters, and presentation forms of exactly one letter, receive marks;
+        // a multi-letter ligature (e.g. lam-alef) is fed to the model but not decorated
+        letter: cp.length === 1 && (RE_LETTER.test(cp) || exp.length === 1),
+        exp
       });
     }
     // A leading orphan mark becomes its own (non-letter) unit; it is never
@@ -76,11 +114,13 @@
     return units;
   }
   const unitString = (u) => u.base + u.marks;
-  // The model is never fed marks or tatweel (same as the reference package).
+  // What the model sees for a unit: null (nothing: marks, tatweel, invisible format characters),
+  // or the plain character(s). Presentation forms are fed as their base letters.
   function modelChar(u) {
-    if (u.base === TATWEEL || RE_MARK.test(u.base)) return null;
-    return u.base;
+    if (u.base === TATWEEL || RE_MARK.test(u.base) || RE_INVISIBLE.test(u.base)) return null;
+    return u.exp ? u.exp : u.base;
   }
+  const weight = (u) => { const c = modelChar(u); return c === null ? 0 : (u.exp ? u.exp.length : 1); };
   const isNewline = (u) => NEWLINES.has(u.base);
 
   /* ---------- chunk planning ---------- */
@@ -88,12 +128,12 @@
     maxLen = Math.max(8, maxLen | 0);
     const pieces = [];
     const n = units.length;
-    const len = (a, b) => { let c = 0; for (let i = a; i < b; i++) if (modelChar(units[i]) !== null) c++; return c; };
+    const len = (a, b) => { let c = 0; for (let i = a; i < b; i++) c += weight(units[i]); return c; };
 
     function pushSplitLong(a, b) {
       let s = a, count = 0, lastBreak = -1;
       for (let u = a; u < b; u++) {
-        const w = modelChar(units[u]) !== null ? 1 : 0;
+        const w = weight(units[u]);
         if (count + w > maxLen) {
           const cut = lastBreak > s ? lastBreak : u;  // prefer a word/clause boundary
           pieces.push({ from: s, to: cut, model: true });
@@ -141,6 +181,27 @@
       i = j;
     }
     return pieces;
+  }
+
+  /* ---------- keeping the page responsive ---------- */
+  // Inference runs on the page's main thread (GitHub Pages cannot send the headers a worker
+  // with threads needs). Between chunks we hand control back so the browser can paint the
+  // progress bar and handle input. Timers are throttled in background tabs, so use a message
+  // channel there.
+  function yieldToUI() {
+    if (typeof document !== "undefined" && document.hidden && typeof MessageChannel === "function") {
+      return new Promise((resolve) => {
+        const ch = new MessageChannel();
+        ch.port1.onmessage = () => { ch.port1.close(); resolve(); };
+        ch.port2.postMessage(0);
+      });
+    }
+    return new Promise((resolve) => setTimeout(resolve, 0));
+  }
+
+  /** True when the text has at least one letter the model can vocalize (plain or presentation form). */
+  function hasArabicLetters(text) {
+    return parseUnits(text).some((u) => u.letter || u.exp);
   }
 
   /* ---------- engine ---------- */
@@ -197,6 +258,8 @@
       const work = pieces.filter((p) => p.model && units.slice(p.from, p.to).some((u) => u.letter));
       let done = 0, added = 0;
       const out = [];
+      const now = () => (typeof performance !== "undefined" && performance.now ? performance.now() : Date.now());
+      let lastYield = now();
 
       for (const p of pieces) {
         let lo = p.from, hi = p.to;
@@ -207,16 +270,27 @@
         }
         for (let i = p.from; i < lo; i++) out.push(unitString(units[i]));
         if (isWork) {
+          // Hand control back about every 40 ms (not every chunk): enough for smooth progress,
+          // negligible overhead. opts.yieldEveryMs = 0 yields before every chunk (used by tests).
+          if (work.length > 1 && opts.yieldToUI !== false && now() - lastYield >= (opts.yieldEveryMs == null ? 40 : opts.yieldEveryMs)) {
+            await yieldToUI(); lastYield = now();
+          }
           const idx = [], chars = [];
-          for (let i = lo; i < hi; i++) { const c = modelChar(units[i]); if (c !== null) { idx.push(i); chars.push(c); } }
+          for (let i = lo; i < hi; i++) {
+            const c = modelChar(units[i]);
+            if (c === null) continue;
+            for (const ch of c) { idx.push(i); chars.push(ch); }   // a ligature contributes several chars
+          }
           const labels = await predictIds(chars);
           const labelAt = new Map();
           for (let k = 0; k < idx.length; k++) labelAt.set(idx[k], labels[k]);
           for (let i = lo; i < hi; i++) {
             const u = units[i];
             let s = unitString(u);
-            if (u.letter && !RE_HARAKAT.test(u.marks)) {          // respect the user's own vowels
-              const combo = LABEL_TO_COMBO[labelAt.get(i)] || "";
+            if (u.letter && !RE_VOWEL_STATE.test(u.marks)) {       // respect the user's own vowel states
+              let combo = LABEL_TO_COMBO[labelAt.get(i)] || "";
+              // The user already typed the shadda: add only the vowel, never a second shadda.
+              if (combo && u.marks.indexOf(SHADDA) !== -1) combo = combo.split(SHADDA).join("");
               if (combo) { s = u.base + u.marks + combo; added++; }
             }
             out.push(s);
@@ -298,7 +372,7 @@
     if (opts.wasmUrl) {                       // fetch the runtime ourselves: real progress, one download
       const wasm = await fetchBytes(opts.wasmUrl, "runtime", status, fetchFn, sizes.runtime);
       if (!(wasm.length > 4 && wasm[0] === 0 && wasm[1] === 0x61 && wasm[2] === 0x73 && wasm[3] === 0x6d)) {
-        throw new TashkeelError("FETCH_FAILED", "runtime: file is not a valid WebAssembly binary");
+        throw new TashkeelError("FETCH_FAILED", "runtime: file is not a valid WebAssembly binary", null, true);
       }
       ort.env.wasm.wasmBinary = wasm;
     }
@@ -306,8 +380,8 @@
     const cfgBytes = await fetchBytes(opts.configUrl, "config", status, fetchFn);
     let config;
     try { config = JSON.parse(new TextDecoder("utf-8").decode(cfgBytes)); }
-    catch (e) { throw new TashkeelError("CONFIG_INVALID", "config.json is not valid JSON", e); }
-    if (!config || !config.sym2id || config.num_tags !== 13) throw new TashkeelError("CONFIG_INVALID", "config.json has an unexpected format");
+    catch (e) { throw new TashkeelError("CONFIG_INVALID", "config.json is not valid JSON", e, true); }
+    if (!config || !config.sym2id || config.num_tags !== 13) throw new TashkeelError("CONFIG_INVALID", "config.json has an unexpected format", null, true);
 
     const model = await fetchBytes(opts.modelUrl, "model", status, fetchFn, sizes.model);
     status({ phase: "verify" });
@@ -315,7 +389,7 @@
     if (subtle) {
       const got = hex(await subtle.digest("SHA-256", model));
       if (got !== EXPECTED_MODEL_SHA256) {
-        throw new TashkeelError("CHECKSUM_FAILED", "model file failed its SHA-256 check (got " + got.slice(0, 12) + "…)");
+        throw new TashkeelError("CHECKSUM_FAILED", "model file failed its SHA-256 check (got " + got.slice(0, 12) + "…)", null, true);
       }
     } else if (typeof console !== "undefined") {
       console.warn("[tashkeel] crypto.subtle unavailable (insecure context); skipping model checksum");
@@ -340,7 +414,7 @@
   }
 
   return {
-    load, createEngine, TashkeelError, EXPECTED_MODEL_SHA256,
+    load, createEngine, hasArabicLetters, TashkeelError, EXPECTED_MODEL_SHA256,
     // exposed for unit tests
     _internal: { parseUnits, planChunks, stripMarks, modelChar, LABEL_TO_COMBO, DEFAULT_CHUNK }
   };

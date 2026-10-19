@@ -22,8 +22,8 @@ window.ArabicTashkeel = (function () {
     tooLong: "النص أطول من الحد المسموح (" + MAX_CHARS.toLocaleString("ar-EG") + " حرف). قسّمه إلى أجزاء أصغر — لن نقصّه بصمت.",
     FETCH_FAILED: "تعذّر تحميل نموذج التشكيل. تحقّق من اتصالك بالإنترنت ثم أعد المحاولة.",
     RUNTIME_LOAD_FAILED: "تعذّر تحميل مكوّن التشغيل. تحقّق من اتصالك بالإنترنت ثم أعد المحاولة.",
-    CHECKSUM_FAILED: "ملف النموذج المحمَّل تالف أو غير مطابق. أعد المحاولة؛ وإن تكرر الخطأ فحدّث الصفحة (Ctrl+F5).",
-    CONFIG_INVALID: "ملف إعدادات النموذج غير صالح. أعد المحاولة أو حدّث الصفحة.",
+    CHECKSUM_FAILED: "ملف النموذج المحمَّل تالف أو غير مطابق. اضغط «إعادة المحاولة» لتنزيل نسخة جديدة.",
+    CONFIG_INVALID: "ملف إعدادات النموذج غير صالح. اضغط «إعادة المحاولة» لتنزيل نسخة جديدة.",
     SESSION_FAILED: "تعذّر تشغيل النموذج في هذا المتصفح. جرّب متصفحًا حديثًا (Chrome أو Edge أو Firefox أو Safari).",
     INFERENCE_FAILED: "حدث خطأ أثناء معالجة النص. أعد المحاولة.",
     INTEGRITY: "أوقفنا العملية لأن الناتج كان سيغيّر النص الأصلي. لم يُعرض أي ناتج. أعد المحاولة.",
@@ -31,6 +31,12 @@ window.ArabicTashkeel = (function () {
   };
 
   const nf = (n) => Number(n).toLocaleString("ar-EG");
+  // Plain Arabic letters, plus Arabic Presentation Forms (what copying from a PDF produces).
+  const RE_ARABIC_FALLBACK = /[\u0621-\u064A\uFB50-\uFDFF\uFE70-\uFEFC]/;
+  const hasArabic = (text) =>
+    window.IchkilTashkeel && typeof window.IchkilTashkeel.hasArabicLetters === "function"
+      ? window.IchkilTashkeel.hasArabicLetters(text)
+      : RE_ARABIC_FALLBACK.test(text);
 
   function countOf(text) {
     const chars = Array.from(text).length;
@@ -123,22 +129,62 @@ window.ArabicTashkeel = (function () {
     }
 
     /* ---------- engine loading (once, retry-safe) ---------- */
+    const assetUrls = [cfg.wasmUrl, cfg.modelUrl, cfg.configUrl];
+
+    // true: model + runtime are already in this browser's cache; false: they are not; null: unknown
+    async function modelIsCached() {
+      try {
+        if (!("caches" in window)) return null;
+        const hits = await Promise.all([cfg.wasmUrl, cfg.modelUrl].map((u) => caches.match(u)));
+        return hits.every(Boolean);
+      } catch (e) { return null; }
+    }
+    // A file that failed validation must not be served from the cache again on retry.
+    async function purgeCachedAssets() {
+      try {
+        if (!("caches" in window)) return;
+        for (const key of await caches.keys()) {
+          const c = await caches.open(key);
+          for (const u of assetUrls) await c.delete(u);
+        }
+      } catch (e) { /* nothing more we can do; the retry will simply try again */ }
+    }
+
+    // After a corrupt download the retry must also bypass the browser's HTTP cache (GitHub Pages
+    // sends max-age=600), otherwise the same bad bytes could come straight back.
+    let forceFresh = false;
+    const fetchFn = (url, o) => fetch(url, forceFresh ? Object.assign({}, o, { cache: "reload" }) : o);
+
     function getEngine() {
       if (enginePromise) return enginePromise;
-      const dl = { runtime: 0, model: 0 };
-      const p = window.IchkilTashkeel.load(Object.assign({}, cfg, {
-        onStatus: (s) => {
-          if (s.phase === "runtime") { setStatus("جارٍ تحميل مكوّن التشغيل…", "info"); setProgress(-1); }
-          else if (s.phase === "download" && (s.label === "runtime" || s.label === "model")) {
-            dl[s.label] = s.loaded;
-            const frac = (dl.runtime + dl.model) / (SIZES.runtime + SIZES.model);
-            const mb = ((dl.runtime + dl.model) / 1048576).toFixed(1);
-            setStatus("جارٍ تحميل نموذج التشكيل لأول مرة (نحو 19 ميغابايت، يُحفظ بعدها في متصفحك)… " + mb + " م.ب", "info");
-            setProgress(Math.min(0.99, frac));
-          } else if (s.phase === "verify") { setStatus("جارٍ التحقق من سلامة النموذج…", "info"); setProgress(-1); }
-          else if (s.phase === "init") { setStatus("جارٍ تهيئة النموذج…", "info"); setProgress(-1); }
+      const p = (async () => {
+        const cached = await modelIsCached();
+        const dl = { runtime: 0, model: 0 };
+        try {
+          const engine = await window.IchkilTashkeel.load(Object.assign({}, cfg, {
+            fetch: fetchFn,
+            onStatus: (s) => {
+              if (s.phase === "runtime") { setStatus("جارٍ تحميل مكوّن التشغيل…", "info"); setProgress(-1); }
+              else if (s.phase === "download" && (s.label === "runtime" || s.label === "model")) {
+                dl[s.label] = s.loaded;
+                const frac = (dl.runtime + dl.model) / (SIZES.runtime + SIZES.model);
+                const mb = ((dl.runtime + dl.model) / 1048576).toFixed(1);
+                setStatus(
+                  cached === true ? "جارٍ تحميل النموذج المحفوظ في متصفحك…"
+                  : cached === false ? "جارٍ تحميل نموذج التشكيل لأول مرة (نحو 19 ميغابايت، يُحفظ بعدها في متصفحك)… " + mb + " م.ب"
+                  : "جارٍ تحميل نموذج التشكيل (نحو 19 ميغابايت)… " + mb + " م.ب", "info");
+                setProgress(Math.min(0.99, frac));
+              } else if (s.phase === "verify") { setStatus("جارٍ التحقق من سلامة النموذج…", "info"); setProgress(-1); }
+              else if (s.phase === "init") { setStatus("جارٍ تهيئة النموذج…", "info"); setProgress(-1); }
+            }
+          }));
+          forceFresh = false;
+          return engine;
+        } catch (e) {
+          if (e && e.corrupt) { forceFresh = true; await purgeCachedAssets(); }   // done before the error surfaces
+          throw e;
         }
-      }));
+      })();
       enginePromise = p;
       p.catch(() => { if (enginePromise === p) enginePromise = null; });   // allow a clean retry
       return p;
@@ -151,7 +197,7 @@ window.ArabicTashkeel = (function () {
       const text = el.input.value;
       if (!text.trim()) { setStatus(MSG.empty, "warn"); setProgress(null); el.input.focus(); return; }
       if (Array.from(text).length > MAX_CHARS) { setStatus(MSG.tooLong, "warn"); setProgress(null); return; }
-      if (!/[\u0621-\u064A]/.test(text)) { setStatus(MSG.noArabic, "warn"); setProgress(null); return; }
+      if (!hasArabic(text)) { setStatus(MSG.noArabic, "warn"); setProgress(null); return; }
       if (!window.IchkilTashkeel) { showError(MSG.generic); setStatus("", ""); return; }
 
       setBusy(true);

@@ -9,13 +9,15 @@ const html = fs.readFileSync(new URL("../../tashkeel/index.html", import.meta.ur
 const toolJs = fs.readFileSync(new URL("../../assets/js/tashkeel-tool.js", import.meta.url), "utf8");
 const tick = (ms = 0) => new Promise((r) => setTimeout(r, ms));
 
-function setup({ load, clipboard } = {}) {
+function setup({ load, clipboard, caches, fetch, engine } = {}) {
   const dom = new JSDOM(html, { runScripts: "outside-only", url: "https://www.arabic-keyboard.live/tashkeel/" });
   const w = dom.window;
   Object.defineProperty(w, "isSecureContext", { value: true });
   const calls = { load: 0, toasts: [], clip: [] };
   w.showToast = (m) => calls.toasts.push(m);
-  w.IchkilTashkeel = { load: async (cfg) => { calls.load++; calls.cfg = cfg; return load ? load(cfg, calls) : okEngine(); } };
+  w.IchkilTashkeel = Object.assign({ load: async (cfg) => { calls.load++; calls.cfg = cfg; return load ? load(cfg, calls) : okEngine(); } }, engine || {});
+  if (caches !== undefined) Object.defineProperty(w, "caches", { value: caches, configurable: true });
+  if (fetch) w.fetch = fetch;
   Object.defineProperty(w.navigator, "clipboard", { value: clipboard || { writeText: async (t) => { calls.clip.push(t); } }, configurable: true });
   w.eval(toolJs);
   w.ArabicTashkeel.init({});
@@ -152,4 +154,88 @@ test("example button fills Arabic sample text and cycles through different examp
   const t = setup(); const seen = new Set();
   for (let i = 0; i < 3; i++) { t.$("tashkeelExample").click(); seen.add(t.$("tashkeelIn").value); assert.match(t.$("tashkeelIn").value, /[\u0621-\u064A]/); }
   assert.equal(seen.size, 3);
+});
+
+/* ---------- Ichkil fixes: loading honesty, self-healing retry, presentation forms ---------- */
+const settle = async () => { for (let i = 0; i < 8; i++) await tick(); };
+function fakeCaches(storeUrls) {                // a minimal CacheStorage: which URLs are cached, and what gets deleted
+  const deleted = [];
+  return {
+    deleted,
+    match: async (u) => (storeUrls.includes(u) ? {} : undefined),
+    keys: async () => ["shell", "vendor"],
+    open: async (k) => ({ delete: async (u) => { deleted.push(k + ":" + u.split("/").pop()); return true; } })
+  };
+}
+const downloadStatus = async (t) => {          // run once; report the status text shown while the model downloads
+  let seen = "";
+  const load = async (cfg) => { cfg.onStatus({ phase: "download", label: "model", loaded: 1048576, total: 5068871 }); seen = t.$("tashkeelStatus").textContent; return okEngine(); };
+  return { load, get seen() { return seen; } };
+};
+
+test("loading message: model already in this browser's cache -> says so, never 'first time'", async () => {
+  let probe;
+  const t = setup({ caches: undefined, load: (cfg) => probe.load(cfg) });
+  const urls = []; const c = fakeCaches([]);
+  Object.defineProperty(t.w, "caches", { value: Object.assign(c, { match: async () => ({}) }), configurable: true });
+  probe = await downloadStatus(t);
+  t.type("محمد"); t.$("tashkeelRun").click(); await settle();
+  assert.match(probe.seen, /المحفوظ في متصفحك/);
+  assert.doesNotMatch(probe.seen, /لأول مرة/);
+});
+
+test("loading message: nothing cached -> 'first time'; Cache API unavailable -> neutral wording (no false claim)", async () => {
+  let probe;
+  const t1 = setup({ caches: fakeCaches([]), load: (cfg) => probe.load(cfg) });
+  probe = await downloadStatus(t1); t1.type("محمد"); t1.$("tashkeelRun").click(); await settle();
+  assert.match(probe.seen, /لأول مرة/);
+  let probe2;
+  const t2 = setup({ load: (cfg) => probe2.load(cfg) });                  // jsdom has no CacheStorage
+  probe2 = await downloadStatus(t2); t2.type("محمد"); t2.$("tashkeelRun").click(); await settle();
+  assert.match(probe2.seen, /جارٍ تحميل نموذج التشكيل/);
+  assert.doesNotMatch(probe2.seen, /لأول مرة/);
+});
+
+test("corrupt file: cached copies of all three files are purged and the retry bypasses the HTTP cache", async () => {
+  const caches = fakeCaches([]);
+  const fetched = [];
+  let attempt = 0, cfgSeen, duringRetry;
+  const t = setup({
+    caches, fetch: async (u, o) => { fetched.push(o && o.cache); return {}; },
+    load: async (cfg) => {
+      cfgSeen = cfg;
+      if (++attempt === 1) throw Object.assign(new Error("bad hash"), { code: "CHECKSUM_FAILED", corrupt: true });
+      await cfg.fetch("https://x/model.onnx", { cache: "default" });      // a download made DURING the retry
+      duringRetry = fetched.at(-1);
+      return okEngine();
+    }
+  });
+  t.type("محمد"); t.$("tashkeelRun").click(); await settle();
+  assert.equal(t.$("tashkeelError").hidden, false);
+  assert.match(t.$("tashkeelErrorMsg").textContent, /تالف أو غير مطابق/);
+  for (const f of ["model.onnx", "config.json", "ort-wasm-simd-threaded.wasm"]) {
+    for (const k of ["shell", "vendor"]) assert.ok(caches.deleted.includes(k + ":" + f), "purged " + k + ":" + f);
+  }
+  t.$("tashkeelRetry").click(); await settle();                          // retry: second load succeeds
+  assert.equal(attempt, 2);
+  assert.equal(duringRetry, "reload", "retry bypasses the HTTP cache");
+  assert.equal(t.$("tashkeelOut").textContent.length > 1, true);
+  await cfgSeen.fetch("https://x/model.onnx", { cache: "default" });      // after success: back to normal caching
+  assert.equal(fetched.at(-1), "default");
+});
+
+test("ordinary failures (network down) never purge the cache", async () => {
+  const caches = fakeCaches([]);
+  const t = setup({ caches, load: async () => { throw err("FETCH_FAILED"); } });
+  t.type("محمد"); t.$("tashkeelRun").click(); await settle();
+  assert.equal(t.$("tashkeelError").hidden, false);
+  assert.deepEqual(caches.deleted, []);
+});
+
+test("Arabic detection understands presentation forms (PDF text), and defers to the engine when it can", async () => {
+  const t1 = setup(); t1.type("ﻣﺤﻤﺪ"); t1.$("tashkeelRun").click(); await settle();
+  assert.equal(t1.calls.load, 1, "presentation-form text is accepted (fallback regex)");
+  const t2 = setup({ engine: { hasArabicLetters: () => false } }); t2.type("ﻣﺤﻤﺪ"); t2.$("tashkeelRun").click(); await settle();
+  assert.equal(t2.calls.load, 0);
+  assert.match(t2.$("tashkeelStatus").textContent, /لم أجد حروفًا عربية/);
 });

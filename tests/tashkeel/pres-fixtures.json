@@ -1,0 +1,21 @@
+{
+ "_note": "[plain, PDF-style Arabic Presentation Forms]; generated from Unicode decompositions; NFKC(presentation)==plain is asserted by the tests",
+ "pairs": [
+  [
+   "محمد قرأ الكتاب في المدرسة",
+   "ﻣﺤﻤﺪ ﻗﺮﺃ ﺍﻟﻜﺘﺎﺏ ﻓﻲ ﺍﻟﻤﺪﺭﺳﺔ"
+  ],
+  [
+   "العلم نور والجهل ظلمة",
+   "ﺍﻟﻌﻠﻢ ﻧﻮﺭ ﻭﺍﻟﺠﻬﻞ ﻇﻠﻤﺔ"
+  ],
+  [
+   "ذهب الولد إلى المدرسة صباحا",
+   "ﺫﻫﺐ ﺍﻟﻮﻟﺪ ﺇﻟﻰ ﺍﻟﻤﺪﺭﺳﺔ ﺻﺒﺎﺣﺎ"
+  ],
+  [
+   "يدرس الطلاب في الجامعة كل يوم",
+   "ﻳﺪﺭﺱ ﺍﻟﻄﻠﺎﺏ ﻓﻲ ﺍﻟﺠﺎﻣﻌﺔ ﻛﻞ ﻳﻮﻡ"
+  ]
+ ]
+}

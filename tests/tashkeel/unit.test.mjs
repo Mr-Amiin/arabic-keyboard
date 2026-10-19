@@ -154,3 +154,164 @@ test("errors: inference failure and malformed output surface typed errors, never
   const rel = await engine(); await rel.e.release();
   await assert.rejects(rel.e.diacritize("قرأ"), (e) => e.code === "RELEASED");
 });
+
+/* ============================================================
+   Ichkil text-layer fixes (scripted fake model: every assertion is about OUR code, not model quality)
+   ============================================================ */
+const id2sym = Object.fromEntries(Object.entries(config.sym2id).map(([s, i]) => [i, s]));
+function scripted(labelFor) {            // labelFor(char) -> label id; records every char fed to the model
+  const fed = [], calls = [];
+  class Tensor { constructor(t, d, dims) { this.type = t; this.data = d; this.dims = dims; } }
+  const session = {
+    async run(feeds) {
+      const ids = feeds.input_ids.data, n = ids.length;
+      calls.push(n);
+      const out = new Float32Array(n * 13);
+      for (let i = 0; i < n; i++) {
+        const ch = id2sym[Number(ids[i])] ?? "<unk>";
+        fed.push(ch);
+        out[i * 13 + labelFor(ch)] = 1;
+      }
+      return { logits: { data: out, dims: [1, n, 13] } };
+    },
+    async release() {}
+  };
+  const ort = { Tensor, InferenceSession: { create: async () => session } };
+  return { fed, calls, make: () => E.createEngine(ort, new Uint8Array(1), config) };
+}
+const FATHA = 2, SHADDA_ONLY = 6, SHADDA_FATHA = 7, SHADDA_KASRA = 9;
+const unitsOf = (s) => parseUnits(s).map((u) => u.base + u.marks);
+
+test("Quranic sukun U+06E1 / U+0656 / U+0657 count as an existing vowel state: such letters are left exactly as typed", async () => {
+  const s = scripted(() => FATHA);
+  const e = await s.make();
+  const input = "يجۡعل مِنۡ بِسۡمِ هٖ لهٗ بسم";
+  const out = await e.diacritize(input);
+  const a = unitsOf(input), b = unitsOf(out);
+  assert.equal(a.length, b.length);
+  for (let i = 0; i < a.length; i++) {
+    if (/[\u064B-\u0650\u0652\u0656\u0657\u06E1]/.test(a[i])) assert.equal(b[i], a[i], "unit " + i + " must be unchanged: " + a[i]);
+  }
+  assert.ok(!/\u06E1[\u064B-\u0652]/.test(out), "no vowel may be stacked on the Quranic sukun");
+});
+
+test("shadda-only letter receives just the vowel (never a second shadda); shadda+vowel already present is untouched", async () => {
+  const cases = [
+    ["دّ", SHADDA_FATHA, "د\u0651\u064E"],       // vowel completed
+    ["دّ", SHADDA_KASRA, "د\u0651\u0650"],
+    ["دّ", SHADDA_ONLY, "د\u0651"],               // model says "shadda only": nothing to add
+    ["دّ", FATHA, "د\u0651\u064E"],               // plain vowel label also completes it
+    ["د", SHADDA_FATHA, "د\u0651\u064E"],         // bare letter: full combo, as before
+    ["دَّ", SHADDA_KASRA, "دَّ"],                 // user already gave shadda+fatha: untouched
+    ["دُ", SHADDA_FATHA, "دُ"]                    // user's vowel kept, model's shadda NOT added
+  ];
+  for (const [input, label, expected] of cases) {
+    const e = await scripted(() => label).make();
+    assert.equal(await e.diacritize(input), expected, JSON.stringify(input) + " label " + label);
+  }
+});
+
+test("invisible format characters are never fed to the model and are emitted exactly where they were", async () => {
+  const plain = "ذهب الولد إلى المدرسة";
+  const noisy = "ذ\u200Fهب\u200C ال\u200Dولد إلى\u061C المد\uFEFFرسة\u202B";
+  const a = scripted(() => FATHA), b = scripted(() => FATHA);
+  const ea = await a.make(), eb = await b.make();
+  await ea.diacritize(plain);
+  const out = await eb.diacritize(noisy);
+  assert.deepEqual(b.fed, a.fed, "the model must see the same characters with or without invisible characters");
+  for (const inv of ["\u200F", "\u200C", "\u200D", "\u061C", "\uFEFF", "\u202B"]) assert.ok(out.includes(inv), "kept " + inv.codePointAt(0).toString(16));
+  assert.equal(out.replace(/[\u064B-\u0652]/g, ""), noisy);
+});
+
+test("zero-width SPACE is still treated as a word separator (it is not made invisible to the model)", async () => {
+  const s = scripted(() => 0);
+  await (await s.make()).diacritize("ذهب\u200Bالولد");
+  assert.ok(s.fed.includes("<unk>"), "ZWSP reaches the model as an unknown separator");
+});
+
+test("presentation forms (PDF copy-paste): fed as their base letters, decorated in place, user's characters kept", async () => {
+  const pairs = JSON.parse(fs.readFileSync(new URL("pres-fixtures.json", import.meta.url), "utf8")).pairs;
+  for (const [plain, pres] of pairs) {
+    assert.equal(pres.normalize("NFKC"), plain, "fixture sanity");
+    const a = scripted((c) => ((c.codePointAt(0) % 3) + 2)), b = scripted((c) => ((c.codePointAt(0) % 3) + 2));
+    const ep = await a.make(), eq = await b.make();
+    const outPlain = await ep.diacritize(plain);
+    const outPres = await eq.diacritize(pres);
+    assert.deepEqual(b.fed, a.fed, "identical model input for " + plain);
+    assert.equal(stripMarks(outPres), pres, "the user's presentation-form characters are untouched");
+    const canon = (s) => parseUnits(s).map((u) => u.base.normalize("NFKC") + [...u.marks].sort().join("")).join("|");
+    assert.equal(canon(outPres), canon(outPlain), "same marks on the same letters as the plain text");
+  }
+});
+
+test("multi-letter ligature (lam-alef) is fed as two letters but not decorated; non-letter presentation forms are left alone", async () => {
+  const s = scripted(() => FATHA);
+  const out = await (await s.make()).diacritize("ب \uFEFB \uFDFA \uFE70");
+  assert.deepEqual(s.fed.slice(2, 4), ["ل", "ا"]);                 // the ligature contributes both letters
+  assert.equal(out, "بَ \uFEFB \uFDFA \uFE70");                    // only the plain letter is decorated
+  const only = scripted(() => FATHA);                               // nothing decoratable -> model never called
+  assert.equal(await (await only.make()).diacritize("\uFEFB \uFDFA"), "\uFEFB \uFDFA");
+  assert.equal(only.calls.length, 0);
+});
+
+test("ligatures count as two model characters: no call ever exceeds the 1,024 limit", async () => {
+  for (const text of ["بﻻ".repeat(2500), ("بﻻ ").repeat(1500), ("ﻻ".repeat(7) + "ب ").repeat(500), "ﻻ".repeat(1500) + "ب" + "ﻻ".repeat(1500)]) {
+    const s = scripted(() => 0);
+    const e = await s.make();
+    const out = await e.diacritize(text);
+    assert.equal(out, text);
+    assert.ok(Math.max(...s.calls) <= 1024, "max call " + Math.max(...s.calls));
+    const ligatures = [...text].filter((c) => c === "\uFEFB").length;
+    if (text !== "ﻻ".repeat(1500) + "ب" + "ﻻ".repeat(1500)) assert.equal(s.fed.filter((c) => c === "ل").length, ligatures, "every ligature reached the model as lam + alef");
+  }
+});
+
+test("hasArabicLetters: plain and presentation-form letters yes; Latin, digits, marks, symbols-only no", () => {
+  const has = E.hasArabicLetters;
+  for (const t of ["محمد", "ﻣﺤﻤﺪ", "abc ب", "ﻻ", "ﷲ"]) assert.equal(has(t), true, t);
+  for (const t of ["", "hello 123", "\u064E\u064F", "ﷺ", "\uFE70", "😀 ... ؟"]) assert.equal(has(t), false, t);
+});
+
+test("long texts yield to the event loop between chunks (so the progress bar can paint); opt-out works; default is time-sliced", async () => {
+  const text = ("ذهب الولد إلى المدرسة. ").repeat(300);                // several chunks at chunkSize 300
+  async function turns(opts) {
+    let n = 0, stop = false;
+    const pump = () => { if (!stop) { n++; setImmediate(pump); } };
+    pump();
+    const seen = [];
+    const e = await scripted(() => FATHA).make();
+    await e.diacritize(text, Object.assign({ chunkSize: 300, yieldEveryMs: 0, onProgress: () => seen.push(n) }, opts));
+    stop = true;
+    return { seen, total: seen.length };
+  }
+  const withYield = await turns({});
+  assert.ok(withYield.total > 3);
+  assert.ok(withYield.seen.at(-1) - withYield.seen[0] >= withYield.total - 1, "event loop turned between chunks");
+  const sliced = await turns({ yieldEveryMs: undefined });               // default: ~every 40 ms, so a fast fake model rarely yields
+  assert.ok(sliced.seen.at(-1) - sliced.seen[0] <= withYield.seen.at(-1) - withYield.seen[0]);
+  const without = await turns({ yieldToUI: false });
+  assert.ok(without.seen.at(-1) - without.seen[0] < withYield.seen.at(-1) - withYield.seen[0], "opt-out does not yield");
+});
+
+test("fuzz (new character classes): never throws, text preserved, user's vowel states untouched, no call over the limit", async () => {
+  const pool = ["ب", "ت", "م", "ل", "ا", "أ", "ة", "ى", "ﻣ", "ﺤ", "ﻻ", "ﷲ", "ﷺ", "\uFE70", " ", " ", "\n", "\r\n", "\t", ".", "،", "؟",
+    "\u064E", "\u064F", "\u0651", "\u0652", "\u06E1", "\u0656", "\u0657", "\u0670", "\u0640", "\u200F", "\u200C", "\u200D", "\u061C", "\uFEFF",
+    "\u200B", "😀", "𝒜", "a", "1", "ٱ", "پ"];
+  let seed = 20260619;
+  const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+  for (let iter = 0; iter < 400; iter++) {
+    let t = ""; const len = 1 + Math.floor(rnd() * (iter % 40 === 0 ? 1800 : 60));
+    for (let k = 0; k < len; k++) t += pool[Math.floor(rnd() * pool.length)];
+    const s = scripted((c) => (c.codePointAt(0) % 12) + 1);
+    const e = await s.make();
+    const out = await e.diacritize(t);                              // would throw INTEGRITY / SEQ_TOO_LONG on any breach
+    assert.equal(stripMarks(out), stripMarks(t));
+    if (s.calls.length) assert.ok(Math.max(...s.calls) <= 1024);
+    const a = parseUnits(t), b = parseUnits(out);
+    assert.equal(a.length, b.length);
+    for (let i = 0; i < a.length; i++) {
+      assert.ok((b[i].base + b[i].marks).startsWith(a[i].base + a[i].marks), "marks only ever appended");
+      if (/[\u064B-\u0650\u0652\u0656\u0657\u06E1]/.test(a[i].marks)) assert.equal(b[i].marks, a[i].marks);
+    }
+  }
+});

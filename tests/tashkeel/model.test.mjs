@@ -94,3 +94,64 @@ test("chunking does not change quality much: 1024-char vs 150-char chunks agree 
   console.log(`  [info] chunk-size agreement: ${(agree * 100).toFixed(1)}%`);
   assert.ok(agree > 0.9);
 });
+
+/* ============================================================
+   Real-model checks for the Ichkil text-layer fixes
+   ============================================================ */
+const { parseUnits } = E._internal;
+const PLAIN = ["محمد قرأ الكتاب في المدرسة", "العلم نور والجهل ظلمة", "ذهب الولد إلى المدرسة صباحا وقرأ الكتاب في المكتبة", "اللغة العربية من أقدم اللغات الحية في العالم"];
+const INVISIBLES = ["\u200F", "\u200C", "\u200D", "\u061C", "\uFEFF", "\u200E", "\u202B"];
+const VOWEL_STATE = /[\u064B-\u0650\u0652\u0656\u0657\u06E1]/;
+
+test("real model: invisible format characters do not change the vocalization of the visible text", async () => {
+  let seed = 7;
+  const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+  for (const plain of PLAIN) {
+    const expected = await eng.diacritize(plain);
+    for (let round = 0; round < 6; round++) {
+      const chars = Array.from(plain); let noisy = "";
+      for (const ch of chars) { noisy += ch; if (rnd() < 0.25) noisy += INVISIBLES[Math.floor(rnd() * INVISIBLES.length)]; }
+      const out = await eng.diacritize(noisy);
+      assert.equal(out.replace(/[\u061C\u200C-\u200F\u202A-\u202E\uFEFF]/g, ""), expected, JSON.stringify(noisy));
+    }
+  }
+});
+
+test("real model: PDF-style presentation forms get the same marks on the same letters as the plain text", async () => {
+  const pairs = JSON.parse(fs.readFileSync(new URL("pres-fixtures.json", import.meta.url), "utf8")).pairs;
+  const canon = (s) => parseUnits(s).map((u) => u.base.normalize("NFKC") + [...u.marks].sort().join("")).join("|");
+  for (const [plain, pres] of pairs) {
+    assert.equal(pres.normalize("NFKC"), plain);
+    const outPlain = await eng.diacritize(plain), outPres = await eng.diacritize(pres);
+    assert.equal(stripMarks(outPres), pres, "the user's characters are preserved");
+    assert.equal(canon(outPres), canon(outPlain));
+    assert.ok(HAS_MARK.test(outPres), "marks were actually added");
+  }
+});
+
+test("real model: Quranic sukun and other existing vowel states are never overwritten or stacked", async () => {
+  const input = "يجۡعل مِنۡ بِسۡمِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ هٖ يَجْعَل";
+  const out = await eng.diacritize(input);
+  const a = parseUnits(input), b = parseUnits(out);
+  assert.equal(a.length, b.length);
+  for (let i = 0; i < a.length; i++) if (VOWEL_STATE.test(a[i].marks)) assert.equal(b[i].marks, a[i].marks, "unit " + i);
+  assert.equal(stripMarks(out), stripMarks(input));
+});
+
+test("real model: a letter typed with only a shadda gets exactly one shadda and a vowel", async () => {
+  const out = await eng.diacritize("الطّلاب يدرّسون");
+  for (const u of parseUnits(out)) assert.ok(((u.marks.match(/\u0651/g) || []).length) <= 1, "single shadda: " + u.base + u.marks);
+  const tah = parseUnits(out).find((u) => u.base === "ط");
+  assert.ok(tah.marks.includes("\u0651"), "the user's shadda is kept");
+});
+
+test("real model: large input (20,000 chars, many paragraphs) is fully processed: nothing dropped, order kept", async () => {
+  const para = "ذهب الولد إلى المدرسة صباحا وقرأ الكتاب في المكتبة. عاد إلى البيت مساء ولعب مع أصدقائه.";
+  const text = Array.from({ length: 230 }, (_, i) => para + " (" + i + ")").join("\n");
+  assert.ok(text.length > 20000);
+  const out = await eng.diacritize(text);
+  assert.equal(stripMarks(out), text);
+  const lines = out.split("\n");
+  assert.equal(lines.length, 230);
+  lines.forEach((l, i) => { assert.ok(l.endsWith("(" + i + ")"), "line " + i + " in order"); assert.ok(HAS_MARK.test(l)); });
+});

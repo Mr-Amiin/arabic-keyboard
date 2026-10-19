@@ -10,9 +10,11 @@ const ROOT = path.resolve(new URL("../..", import.meta.url).pathname);
 const PORT = 8124, ORIGIN = `http://localhost:${PORT}`;
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".json": "application/json", ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml", ".xml": "application/xml", ".txt": "text/plain", ".onnx": "application/octet-stream", ".webmanifest": "application/manifest+json" };
 let throttleBps = 0;   // bytes/second for /assets/vendor/ files when > 0 (slow-network test)
+const hits = [];            // every path requested from the server (proves what was / was not downloaded)
+const overrides = {};       // path -> absolute file, to simulate deploying a different file (e.g. a new sw.js)
 const server = http.createServer((req, res) => {
-  let p = decodeURIComponent(new URL(req.url, ORIGIN).pathname);
-  let f = path.join(ROOT, p); if (!f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
+  let p = decodeURIComponent(new URL(req.url, ORIGIN).pathname); hits.push(p);
+  let f = overrides[p] || path.join(ROOT, p); if (!overrides[p] && !f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
   if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, "index.html");
   if (!fs.existsSync(f)) { res.writeHead(404); return res.end("not found"); }
   const hdr = { "content-type": MIME[path.extname(f)] || "application/octet-stream", "cache-control": "max-age=600" };
@@ -221,12 +223,132 @@ try {
   await page.reload({ waitUntil: "domcontentloaded" });                    // now controlled by the SW
   const ctl = await page.evaluate(() => !!navigator.serviceWorker.controller);
   await run(page, "محمد قرأ الكتاب");
-  const cached = await page.evaluate(async () => { const ks = await caches.keys(); const names = []; for (const k of ks) for (const r of await (await caches.open(k)).keys()) names.push(new URL(r.url).pathname); return { ks, hasModel: names.some((n) => n.endsWith("model.onnx")), hasWasm: names.some((n) => n.endsWith(".wasm")) }; });
-  check("12e. service worker (v4) controls the page and cached the model + runtime", ctl && cached.ks.some((k) => k.endsWith("v4")) && cached.hasModel && cached.hasWasm, JSON.stringify(cached));
+  const cached = await page.evaluate(async () => {
+    const out = { ks: await caches.keys(), vendorHas: [], shellHasVendor: false };
+    for (const k of out.ks) for (const r of await (await caches.open(k)).keys()) {
+      const n = new URL(r.url).pathname;
+      if (/\/assets\/vendor\//.test(n)) { if (k.includes("vendor")) out.vendorHas.push(n.split("/").pop()); else out.shellHasVendor = true; }
+    }
+    return out;
+  });
+  check("12e. service worker controls the page; model + runtime are in the separate vendor cache (not the versioned shell cache)", ctl && cached.ks.some((k) => /shell-v\d+$/.test(k)) && cached.vendorHas.includes("model.onnx") && cached.vendorHas.includes("ort-wasm-simd-threaded.wasm") && !cached.shellHasVendor, JSON.stringify(cached));
   await page.setOfflineMode(true);
   await page.reload({ waitUntil: "domcontentloaded" });
   o = await run(page, "العلم نور والجهل ظلمة");
   check("12e. fully OFFLINE reload: tool still vocalizes using cached files", o === M("الْعِلْمِ نُورٌ وَالْجَهْلُ ظُلْمَةُ"), o);
+  await ctx.close();
+
+  /* ---- 13: Ichkil fixes in a real browser ---- */
+  const SW_NEXT = "/tmp/e2e-sw-next.js";                 // the production sw.js with a bumped shell version = "next deploy"
+  fs.writeFileSync(SW_NEXT, fs.readFileSync(path.join(ROOT, "sw.js"), "utf8").replace(/shell-v(\d+)/, (m, n) => "shell-v" + (Number(n) + 1)));
+  const SW_V4 = path.join(ROOT, "tests/tashkeel/fixtures/sw-v4-original.js");   // the previously deployed worker, verbatim
+  const vendorHits = (from) => hits.slice(from).filter((h) => h.includes("/assets/vendor/"));
+  const watchStatus = async (page, name) => {
+    const seen = []; await page.exposeFunction(name, (t) => seen.push(t));
+    await page.evaluate((name) => { const el = document.getElementById("tashkeelStatus"); new MutationObserver(() => window[name](el.textContent)).observe(el, { childList: true, characterData: true, subtree: true }); }, name);
+    return seen;
+  };
+  const cacheReport = (page) => page.evaluate(async () => {
+    const r = {}; for (const k of await caches.keys()) r[k] = (await (await caches.open(k)).keys()).map((q) => new URL(q.url).pathname.split("/").pop()).filter((n) => /model\.onnx|\.wasm|config\.json/.test(n));
+    return r;
+  });
+  const modelsIn = (rep) => Object.entries(rep).filter(([k, v]) => v.includes("model.onnx") && v.includes("ort-wasm-simd-threaded.wasm")).map(([k]) => k);
+  const waitForCache = (page, re) => page.waitForFunction(async (src) => (await caches.keys()).some((k) => new RegExp(src).test(k)), { timeout: 15000 }, re.source);
+
+  // 13a/b: loading message is truthful; progress paints; then a SW upgrade keeps the model
+  ({ ctx, page } = await fresh({ intercept: false }));
+  await page.goto(ORIGIN + "/tashkeel/", { waitUntil: "domcontentloaded" });
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await page.reload({ waitUntil: "domcontentloaded" });
+  let seen = await watchStatus(page, "__s1");
+  await run(page, "العلم نور");
+  check("13a. first visit (nothing cached): says it is downloading for the first time", seen.some((t) => /لأول مرة/.test(t)), JSON.stringify([...new Set(seen)].slice(0, 2)));
+  await page.reload({ waitUntil: "domcontentloaded" });
+  seen = await watchStatus(page, "__s2");
+  let h0 = hits.length;
+  await run(page, "العلم نور");
+  check("13a. cached visit: does NOT claim a first-time download; says it loads the saved model", !seen.some((t) => /لأول مرة/.test(t)) && seen.some((t) => /المحفوظ في متصفحك/.test(t)), JSON.stringify([...new Set(seen)].slice(0, 2)));
+  check("13a. cached visit: model + runtime come from the cache, 0 requests to the server", vendorHits(h0).length === 0, JSON.stringify(vendorHits(h0)));
+
+  const long = "ذهب الولد إلى المدرسة صباحا وقرأ الكتاب في المكتبة. عاد إلى البيت مساء ولعب مع أصدقائه.\n".repeat(150);
+  await setText(page, long);
+  await page.evaluate(() => { window.__frames = 0; window.__w = new Set(); const t = () => { window.__frames++; window.__w.add(document.getElementById("tashkeelBar").style.width); window.__raf = requestAnimationFrame(t); }; t(); });
+  const tLong = Date.now(); await page.click("#tashkeelRun");
+  await page.waitForFunction(() => !document.getElementById("tashkeelRun").disabled, { timeout: 120000 });
+  const paint = await page.evaluate(() => { cancelAnimationFrame(window.__raf); return { frames: window.__frames, widths: window.__w.size }; });
+  check("13b. long text (13k chars): UI stays alive and the progress bar visibly advances", paint.frames >= 10 && paint.widths >= 4, `${long.length} chars in ${Date.now() - tLong} ms, frames=${paint.frames}, distinct bar widths=${paint.widths} (was 6 frames / 1 width before the fix)`);
+  check("13b. long text result is complete", (await out(page)).replace(/[\u064B-\u0652]/g, "") === long.trim() || (await out(page)).replace(/[\u064B-\u0652]/g, "").trim() === long.trim());
+
+  overrides["/sw.js"] = SW_NEXT;                                           // "deploy" a new shell version
+  await page.evaluate(async () => { await (await navigator.serviceWorker.getRegistration()).update(); });
+  await waitForCache(page, /shell-v6$/);
+  await page.waitForFunction(async () => !(await caches.keys()).some((k) => /shell-v5$/.test(k)), { timeout: 15000 });   // new worker finished activating
+  let rep = await cacheReport(page);
+  check("13c. next deploy (shell bumped): the 19 MB model + runtime survive in the vendor cache; old shell cache removed", modelsIn(rep).join() === "arabic-keyboard-vendor-v1" && !Object.keys(rep).some((k) => /shell-v5$/.test(k)), JSON.stringify(rep));
+  await page.setOfflineMode(true); await page.reload({ waitUntil: "domcontentloaded" });
+  h0 = hits.length;
+  o = await run(page, "العلم نور والجهل ظلمة");
+  check("13c. after the bump, fully OFFLINE: the tool still vocalizes", o === M("الْعِلْمِ نُورٌ وَالْجَهْلُ ظُلْمَةُ"), o);
+  delete overrides["/sw.js"]; await ctx.close();
+
+  // 13d: upgrade from the ORIGINAL deployed worker (v4, model inside the shell cache) -> migrated, no re-download
+  ({ ctx, page } = await fresh({ intercept: false }));
+  overrides["/sw.js"] = SW_V4;
+  await page.goto(ORIGIN + "/tashkeel/", { waitUntil: "domcontentloaded" });
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await run(page, "محمد قرأ الكتاب");
+  rep = await cacheReport(page);
+  check("13d. (setup) original v4 worker stored the model inside its shell cache", modelsIn(rep).join() === "arabic-keyboard-shell-v4", JSON.stringify(rep));
+  delete overrides["/sw.js"];                                              // deploy THIS repo's sw.js
+  await page.evaluate(async () => { await (await navigator.serviceWorker.getRegistration()).update(); });
+  await waitForCache(page, /vendor-v1$/);
+  await page.waitForFunction(async () => !(await caches.keys()).some((k) => /shell-v4$/.test(k)), { timeout: 15000 });
+  rep = await cacheReport(page);
+  check("13d. upgrade from v4: model + runtime migrated to the vendor cache, v4 cache deleted", modelsIn(rep).join() === "arabic-keyboard-vendor-v1" && !rep["arabic-keyboard-shell-v4"], JSON.stringify(rep));
+  await page.setOfflineMode(true); await page.reload({ waitUntil: "domcontentloaded" });
+  o = await run(page, "العلم نور والجهل ظلمة");
+  check("13d. upgraded visitor works OFFLINE without ever re-downloading the model", o === M("الْعِلْمِ نُورٌ وَالْجَهْلُ ظُلْمَةُ"), o);
+  await ctx.close();
+
+  // 13e: a bad cached model must not trap the user: error -> cache purged -> Retry fetches a good copy
+  ({ ctx, page } = await fresh({ intercept: false }));
+  await page.goto(ORIGIN + "/tashkeel/", { waitUntil: "domcontentloaded" });
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await run(page, "محمد قرأ الكتاب");
+  await page.evaluate(async () => {                                        // corrupt the cached copy (one flipped byte)
+    const c = await caches.open("arabic-keyboard-vendor-v1"); const key = (await c.keys()).find((r) => /model\.onnx$/.test(r.url));
+    const b = new Uint8Array(await (await c.match(key)).arrayBuffer()); b[100000] ^= 0xff; await c.put(key, new Response(b));
+  });
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await setText(page, "محمد قرأ الكتاب"); await page.click("#tashkeelRun");
+  await page.waitForFunction(() => !document.getElementById("tashkeelError").hidden, { timeout: 60000 });
+  const e3 = await page.$eval("#tashkeelErrorMsg", (e) => e.textContent);
+  rep = await cacheReport(page);
+  check("13e. corrupt cached model is rejected, and the bad copy is removed from the cache", /تالف أو غير مطابق/.test(e3) && !JSON.stringify(rep).includes("model.onnx"), e3 + " " + JSON.stringify(rep));
+  h0 = hits.length;
+  await page.click("#tashkeelRetry");
+  await page.waitForFunction(() => !document.getElementById("tashkeelRun").disabled && document.getElementById("tashkeelOut").textContent !== "—", { timeout: 90000 });
+  check("13e. Retry (no page reload) downloads a fresh copy from the server and succeeds", (await out(page)) === M("مُحَمَّدٌ قَرَأَ الْكِتَابِ") && vendorHits(h0).some((x) => x.endsWith("model.onnx")), JSON.stringify(vendorHits(h0).map((x) => x.split("/").pop())));
+  rep = await cacheReport(page);
+  check("13e. the good copy is cached again", modelsIn(rep).length === 1, JSON.stringify(rep));
+  await ctx.close();
+
+  // 13f/g: input integrity features through the real page
+  ({ ctx, page } = await fresh());
+  await open(page);
+  const pairs = JSON.parse(fs.readFileSync(path.join(ROOT, "tests/tashkeel/pres-fixtures.json"), "utf8")).pairs;
+  const [plainT, presT] = pairs[0];
+  const pres = await run(page, presT);
+  check("13f. PDF-style presentation-form text is vocalized (not rejected as 'no Arabic'), original characters kept", strip(pres) === presT && /[\u064B-\u0652]/.test(pres) && (await status(page)).kind === "ok", pres);
+  const plainOut = await run(page, plainT);
+  check("13f. ...with the same marks as the equivalent plain text", pres.normalize("NFKC") === plainOut.normalize("NFKC"), pres.normalize("NFKC") + " | " + plainOut.normalize("NFKC"));
+  const quran = await run(page, "يجۡعل مِنۡ بِسۡمِ");
+  check("13g. Quranic sukun (U+06E1) kept exactly; no extra vowel stacked on it", /ج\u06E1/.test(quran) && !/\u06E1[\u064B-\u0652]/.test(quran) && quran.includes("مِنۡ") && quran.includes("بِسۡمِ"), quran);
+  const rlm = await run(page, "ذهب\u200F الولد إلى المدرسة");
+  const noRlm = await run(page, "ذهب الولد إلى المدرسة");
+  check("13h. an invisible RLM inside the text does not change the vocalization", rlm.replace("\u200F", "") === noRlm, rlm + " | " + noRlm);
   await ctx.close();
 
   /* ---- regression: unrelated pages still load ---- */

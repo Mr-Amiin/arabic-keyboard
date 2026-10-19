@@ -5,9 +5,14 @@
    (fonts, new pages) falls back to the network and is cached
    opportunistically. The Tashkeel model + WASM runtime (~19 MB, under
    /assets/vendor/) are deliberately NOT precached: they are fetched and
-   cached on first use of /tashkeel/ only.
+   cached on first use of /tashkeel/ only. They live in their own cache
+   (VENDOR_CACHE) so that bumping CACHE_NAME for a normal site update does
+   not throw away a visitor's 19 MB download. Bump VENDOR_CACHE only when
+   the files under /assets/vendor/ themselves change.
 */
-const CACHE_NAME = "arabic-keyboard-shell-v4";
+const CACHE_NAME = "arabic-keyboard-shell-v5";
+const VENDOR_CACHE = "arabic-keyboard-vendor-v1";
+const isVendor = (url) => new URL(url).pathname.startsWith("/assets/vendor/");
 const CORE_ASSETS = [
   "/",
   "/arabic-keyboard/",
@@ -29,17 +34,30 @@ const CORE_ASSETS = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS)).catch(() => {})
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS.map((u) => new Request(u, { cache: "reload" })))).catch(() => {})
   );
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    // One-time migration: shell caches up to v4 also held the Tashkeel model + runtime.
+    // Move them to VENDOR_CACHE so returning visitors do not download ~19 MB again.
+    try {
+      const vendor = await caches.open(VENDOR_CACHE);
+      for (const k of keys) {
+        if (k === CACHE_NAME || k === VENDOR_CACHE) continue;
+        const old = await caches.open(k);
+        for (const req of await old.keys()) {
+          if (!isVendor(req.url) || (await vendor.match(req))) continue;
+          const res = await old.match(req);
+          if (res) await vendor.put(req, res);
+        }
+      }
+    } catch (e) { /* migration is best-effort; the files are simply fetched again if it fails */ }
+    await Promise.all(keys.filter((k) => k !== CACHE_NAME && k !== VENDOR_CACHE).map((k) => caches.delete(k)));
+  })());
   self.clients.claim();
 });
 
@@ -52,7 +70,7 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           if (response && response.status === 200 && response.type === "basic") {
             const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+            caches.open(isVendor(event.request.url) ? VENDOR_CACHE : CACHE_NAME).then((cache) => cache.put(event.request, copy));
           }
           return response;
         })
