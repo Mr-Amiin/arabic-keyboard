@@ -129,6 +129,7 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 }
 .mobile-panel .close-x{ display:flex; justify-content:flex-end; margin-bottom:14px; }
 .mobile-panel a{ display:block; padding:12px 6px; text-decoration:none; font-size:15.5px; border-bottom:1px solid var(--border); color:var(--ink); }
+.mobile-panel a[href*="tashkeel"][aria-current="page"]{ color:var(--emerald); font-weight:700; }
 .mobile-panel .grp-label{ font-family:var(--font-ui); font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin:16px 0 6px; }
 
 /* ---------------- BREADCRUMBS ---------------- */
