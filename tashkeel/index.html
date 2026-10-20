@@ -22,6 +22,7 @@
 <meta name="google-adsense-account" content="ca-pub-2057098005458261">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
      crossorigin="anonymous"></script>
+<script src="../assets/js/i18n.js"></script>
 </head>
 <body>
 
@@ -99,7 +100,7 @@
     <button class="tb-btn" id="tashkeelRetry" type="button">إعادة المحاولة</button>
   </div>
   <label for="tashkeelOut" class="tk-label tk-label-out">الناتج</label>
-  <div class="demo-out tk-out" id="tashkeelOut" dir="rtl" lang="ar" tabindex="0">—</div>
+  <div data-i18n-skip class="demo-out tk-out" id="tashkeelOut" dir="rtl" lang="ar" tabindex="0">—</div>
   <div class="tk-actions">
     <button class="tb-btn" id="tashkeelCopy" type="button" disabled>نسخ النص المشكول</button>
   </div>
@@ -112,15 +113,15 @@
   <p>التشكيل هو مجموعة العلامات التي تُضاف فوق الحروف العربية أو تحتها لتوضيح النطق الصحيح للكلمة.</p>
   <h3>أنواع الحركات</h3>
   <ul>
-    <li><strong>الفتحة (َ)</strong> — تدل على صوت "أ" قصير.</li>
-    <li><strong>الضمة (ُ)</strong> — تدل على صوت "أُ" قصير.</li>
-    <li><strong>الكسرة (ِ)</strong> — تدل على صوت "إ" قصير.</li>
-    <li><strong>السكون (ْ)</strong> — يدل على عدم وجود حركة بعد الحرف.</li>
-    <li><strong>الشدة (ّ)</strong> — تدل على تضعيف الحرف (نطقه مرتين).</li>
-    <li><strong>التنوين</strong> — إضافة نون ساكنة في النطق عند وقف الاسم عن الإعراب (فتح، ضم، كسر).</li>
+    <li data-i18n-html="tk.fatha"><strong>الفتحة (َ)</strong> — تدل على صوت "أ" قصير.</li>
+    <li data-i18n-html="tk.damma"><strong>الضمة (ُ)</strong> — تدل على صوت "أُ" قصير.</li>
+    <li data-i18n-html="tk.kasra"><strong>الكسرة (ِ)</strong> — تدل على صوت "إ" قصير.</li>
+    <li data-i18n-html="tk.sukun"><strong>السكون (ْ)</strong> — يدل على عدم وجود حركة بعد الحرف.</li>
+    <li data-i18n-html="tk.shadda"><strong>الشدة (ّ)</strong> — تدل على تضعيف الحرف (نطقه مرتين).</li>
+    <li data-i18n-html="tk.tanween"><strong>التنوين</strong> — إضافة نون ساكنة في النطق عند وقف الاسم عن الإعراب (فتح، ضم، كسر).</li>
   </ul>
   <h3>كيف تعمل هذه الأداة؟</h3>
-  <p>تستخدم الأداة نموذج <strong>Ichkil</strong> المفتوح المصدر (رخصة MIT)، وهو شبكة عصبية صغيرة (نحو 5 ميغابايت) تتوقع حركة كل حرف من سياق الجملة. يُحمَّل النموذج مرة واحدة إلى متصفحك (نحو 19 ميغابايت مع مكوّن التشغيل) ثم يُحفظ للاستخدام لاحقًا، وتتم المعالجة بالكامل على جهازك دون إرسال النص إلى أي خادم. تُقسَّم النصوص الطويلة تلقائيًا عند حدود الجمل مع الحفاظ على الفقرات والأسطر وعلامات الترقيم والكلمات غير العربية.</p>
+  <p data-i18n-html="tk.how">تستخدم الأداة نموذج <strong>Ichkil</strong> المفتوح المصدر (رخصة MIT)، وهو شبكة عصبية صغيرة (نحو 5 ميغابايت) تتوقع حركة كل حرف من سياق الجملة. يُحمَّل النموذج مرة واحدة إلى متصفحك (نحو 19 ميغابايت مع مكوّن التشغيل) ثم يُحفظ للاستخدام لاحقًا، وتتم المعالجة بالكامل على جهازك دون إرسال النص إلى أي خادم. تُقسَّم النصوص الطويلة تلقائيًا عند حدود الجمل مع الحفاظ على الفقرات والأسطر وعلامات الترقيم والكلمات غير العربية.</p>
   <h3>حدود هذه الأداة</h3>
   <p>التشكيل الآلي لا يضمن الصحة النحوية الكاملة: قد تخطئ الأداة في حركة آخر الكلمة (الإعراب) أو في الأسماء النادرة أو النصوص الشعرية. لا تعتمد عليها وحدها في المصاحف أو الوثائق الرسمية أو المواد التعليمية.</p>
 </article>

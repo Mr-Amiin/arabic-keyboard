@@ -5,7 +5,10 @@
   "description": "Automated tests for the /tashkeel/ tool. Not deployed logic; run locally: npm install && npm test",
   "scripts": {
     "test": "node --test unit.test.mjs model.test.mjs ui.test.mjs",
-    "e2e": "node e2e.mjs"
+    "e2e": "node e2e.mjs",
+    "i18n": "node i18n.mjs",
+    "qa": "node qa-final.mjs",
+    "keyboard": "node keyboard-visible.mjs"
   },
   "devDependencies": {
     "@sparticuz/chromium": "^138.0.2",

@@ -59,7 +59,7 @@ export function createTextPanel({ canvas }) {
     <label class="text-panel-label">النمط</label>
     <div class="chip-row chip-row-variations"></div>
 
-    <div class="text-panel-preview" dir="rtl"><span class="text-panel-preview-text"></span></div>
+    <div class="text-panel-preview" dir="rtl" data-i18n-skip><span class="text-panel-preview-text"></span></div>
     <div class="text-panel-error" hidden></div>
 
     <button type="button" class="text-btn text-panel-submit"></button>

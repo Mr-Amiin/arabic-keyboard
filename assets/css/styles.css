@@ -70,10 +70,10 @@ button, input, textarea, select{font-family:inherit; color:inherit;}
 :focus-visible{ outline:3px solid var(--gold); outline-offset:2px; border-radius:6px; }
 
 .skip-link{
-  position:absolute; right:-999px; top:0; background:var(--emerald); color:#fff;
+  position:absolute; inset-inline-start:-999px; top:0; background:var(--emerald); color:#fff;
   padding:10px 16px; border-radius:0 0 0 10px; z-index:200;
 }
-.skip-link:focus{ right:0; }
+.skip-link:focus{ inset-inline-start:0; }
 
 .wrap{ max-width:1180px; margin:0 auto; padding:0 20px; }
 .wrap-narrow{ max-width:820px; margin:0 auto; padding:0 20px; }
@@ -401,7 +401,9 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
 @media (min-width:900px){
   .workspace{ flex-direction:row; align-items:stretch; }
   .editor-area{ flex:0 0 38%; max-width:38%; border-inline-end:1px solid var(--border); }
-  .kb-panel{ flex:1 1 62%; border-top:none; max-height:calc(100vh - 230px); overflow-y:auto; }
+/* The keys must never be squeezed into a tiny inner scroll box on short windows (laptops with 125-150% display
+     scaling, landscape phones): keep enough height for the whole keyboard and let the PAGE scroll instead. */
+  .kb-panel{ flex:1 1 62%; border-top:none; max-height:max(calc(100vh - 230px), 560px); overflow-y:auto; }
 }
 
 @media (max-width:860px){
@@ -614,3 +616,29 @@ html[data-theme="dark"] .tk-out.has-result{ color:var(--emerald); }
   .tk-out{ font-size:21px; }
 }
 .tk-app [hidden]{ display:none !important; }
+
+/* ---------------- LANGUAGE SWITCHER (العربية | English) ---------------- */
+.lang-switch{ display:inline-flex; align-items:stretch; border:1px solid var(--border); border-radius:10px; background:var(--surface); overflow:hidden; flex:0 0 auto; }
+.lang-opt{
+  appearance:none; border:0; background:transparent; color:var(--ink-soft); cursor:pointer;
+  font-family:var(--font-ui); font-size:13px; font-weight:600; line-height:1; padding:0 12px; height:36px;
+  transition:background .15s, color .15s;
+}
+.lang-opt[lang="ar"]{ font-family:var(--font-ar-body); font-size:14px; }
+.lang-opt + .lang-opt{ border-inline-start:1px solid var(--border); }
+.lang-opt:hover{ background:var(--surface-2); color:var(--ink); }
+.lang-opt[aria-pressed="true"]{ background:var(--emerald); color:#fff; }
+.lang-opt:focus-visible{ outline:2px solid var(--gold); outline-offset:-3px; }
+.lang-switch-mobile{ display:flex; width:100%; margin:0 0 14px; }
+.lang-switch-mobile .lang-opt{ flex:1; height:42px; font-size:14.5px; }
+@media (max-width:860px){ .head-actions .lang-switch{ display:none; } }
+@media (min-width:861px){ .lang-switch-mobile{ display:none; } }
+
+/* ---------------- ENGLISH MODE (html[lang="en"], dir="ltr") ----------------
+   Layout already uses logical properties, so it mirrors by itself. These
+   rules only swap the Arabic UI typefaces for Latin ones and keep Arabic
+   CONTENT (keyboard keys, alphabet grid) in its natural right-to-left order. */
+html[lang="en"] body{ font-family:var(--font-ui), var(--arabic-font), sans-serif; }
+html[lang="en"] h1, html[lang="en"] h2, html[lang="en"] h3, html[lang="en"] .brand{ font-family:var(--font-ui), var(--arabic-font), sans-serif; letter-spacing:-.01em; }
+html[lang="en"] .lang-opt[lang="ar"]{ font-family:var(--font-ar-body); }
+.kb-row, .alpha-grid{ direction:rtl; }
