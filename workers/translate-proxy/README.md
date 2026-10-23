@@ -85,9 +85,8 @@ Also try `/languages?ui=en` (a list of 100 languages).
 1. Open `assets/js/translation-config.js` and put your address between the quotes:
    `window.AK_TRANSLATE_API = "https://ak-translate-proxy.myname.workers.dev";`
    (It is a public address, not a secret.)
-2. Open `sw.js`, find the line `const CACHE_NAME = "arabic-keyboard-shell-v8";` and **increase the number by one** (`v8` -> `v9`).
-   (The site caches its files for offline use. Without this, returning visitors keep the old settings.)
-3. Publish the website as you normally do (commit and push).
+2. Publish the website as you normally do (commit and push). No other file needs changing: `sw.js` serves
+   `translation-config.js` network-first, so returning visitors pick up the new address immediately.
 
 ### 8. Prove it really translates (recommended before announcing)
 From the project folder (needs Node 18+):
@@ -124,9 +123,9 @@ Add `PROBE=all` to test **all 100 languages** (takes 10+ minutes because of the 
 
 | Problem | What to do |
 |---|---|
-| The page says *"The translation service hasn't been connected to this site yet"* | `translation-config.js` is still empty, or you forgot to bump `CACHE_NAME` in `sw.js` (step 7). |
+| The page says *"The translation service hasn't been connected to this site yet"* | `translation-config.js` is still empty, or the change has not been pushed / published yet (step 7). |
 | The page says *"Couldn't load the language list"* | The Worker address is wrong, the Worker isn't deployed, or `ALLOWED_ORIGINS` doesn't exactly match the site's address (browsers hide the details; check the browser's Network tab for a 403 / CORS message). |
-| Live test: Arabic/English fail with `unsupported_language` | Cloudflare's docs describe language **codes** (`en`) but show names (`english`) in an example. In `src/core.js`, function `translateChunk`, try passing the lowercase English **name** (use the `LANGUAGE_NAMES` table in the same file) instead of the code, redeploy, rerun the test. |
+| Live test: Arabic/English fail with `unsupported_language` | Cloudflare's docs describe language **codes** (`en`) but show names (`english`) in an example. In `wrangler.toml` under `[vars]` add `LANG_FORMAT = "name"` (the Worker then sends `english`, `arabic`, ...), run `npx wrangler deploy`, and rerun the live test. No code edit is needed. |
 | *"The free daily translation quota is used up"* | You have used the free 10,000 Neurons today. It renews at 00:00 UTC. Nothing is charged. |
 | *"The translation model is busy"* (error 3040) | Temporary. Try again in a few seconds. |
 | `npx wrangler deploy` complains about `ratelimits` | Update Wrangler (`npx wrangler@latest deploy`). If it still fails, delete the two `[[ratelimits]]` blocks and add a rate-limiting rule in the Cloudflare dashboard (Security -> WAF -> Rate limiting rules) for `/translate`. |

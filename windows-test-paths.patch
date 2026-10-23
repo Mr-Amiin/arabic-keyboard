@@ -1,0 +1,53 @@
+diff --git a/tests/tashkeel/translation-ui.mjs b/tests/tashkeel/translation-ui.mjs
+index 4cdf423..3b09f44 100644
+--- a/tests/tashkeel/translation-ui.mjs
++++ b/tests/tashkeel/translation-ui.mjs
+@@ -4,11 +4,11 @@
+ // The REAL Worker code runs behind a local HTTP server; ONLY the Workers AI binding (env.AI) is stubbed (deterministic output tagged
+ // "⟦target⟧"), because Cloudflare Workers AI needs a Cloudflare account. This does NOT prove translation quality or the live model:
+ // run tests/translation/live-translation.mjs against the deployed Worker for that.
+-import http from "node:http"; import fs from "node:fs"; import path from "node:path";
++import http from "node:http"; import fs from "node:fs"; import path from "node:path"; import { fileURLToPath } from "node:url";
+ import chromium from "@sparticuz/chromium"; import puppeteer from "puppeteer-core";
+ import { handle, LANGUAGE_CODES } from "../../workers/translate-proxy/src/core.js";   // the REAL Worker logic
+ 
+-const ROOT = path.resolve(new URL("../..", import.meta.url).pathname);
++const ROOT = path.resolve(fileURLToPath(new URL("../..", import.meta.url)));
+ const SITE_PORT = 8190, API_PORT = 8191, SITE = `http://localhost:${SITE_PORT}`, API = `http://localhost:${API_PORT}`;
+ const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".xml": "application/xml", ".wasm": "application/wasm" };
+ 
+diff --git a/tests/translation/worker.test.mjs b/tests/translation/worker.test.mjs
+index 2bdf623..df8403c 100644
+--- a/tests/translation/worker.test.mjs
++++ b/tests/translation/worker.test.mjs
+@@ -3,6 +3,7 @@
+ // chunking, security, rate limiting and error mapping. They do NOT prove translation quality: that is what
+ // live-translation.mjs checks against the real, Cloudflare-hosted model.
+ import test from "node:test"; import assert from "node:assert/strict"; import fs from "node:fs"; import path from "node:path";
++import { fileURLToPath } from "node:url";
+ import { handle, MAX_CHARS, CHUNK_CHARS, MODEL, LANGUAGE_CODES, splitForTranslation } from "../../workers/translate-proxy/src/core.js";
+ 
+ const ORIGIN = "https://www.arabic-keyboard.live";
+@@ -22,7 +23,7 @@ test("the main module exports ONLY the default handler (Cloudflare rejects other
+   assert.deepEqual(Object.keys(m), ["default"]); assert.equal(typeof m.default.fetch, "function");
+ });
+ test("no Azure / Microsoft / API-key remnants anywhere in the Worker folder", () => {
+-  const dir = path.resolve(new URL("../../workers/translate-proxy", import.meta.url).pathname);
++  const dir = fileURLToPath(new URL("../../workers/translate-proxy", import.meta.url));
+   const files = fs.readdirSync(dir, { recursive: true }).filter(f => !f.includes("node_modules") && fs.statSync(path.join(dir, f)).isFile());
+   for (const f of files) assert.ok(!/azure|ocp-apim|cognitive|microsoft|subscription[-_ ]?key/i.test(fs.readFileSync(path.join(dir, f), "utf8")), "found in " + f);
+ });
+diff --git a/tests/translation/workerd-runtime.mjs b/tests/translation/workerd-runtime.mjs
+index 25fa788..8dd9ab8 100644
+--- a/tests/translation/workerd-runtime.mjs
++++ b/tests/translation/workerd-runtime.mjs
+@@ -1,7 +1,7 @@
+ // Runs the REAL Worker code inside Cloudflare's real runtime (workerd, via Miniflare) with real [[ratelimits]] bindings.
+ // Only the Workers AI binding is replaced by a tiny stub (it needs a Cloudflare account). Run: npm install && npm run workerd
+-import { Miniflare } from "miniflare"; import path from "node:path";
+-const here = path.dirname(new URL(import.meta.url).pathname);
++import { Miniflare } from "miniflare"; import path from "node:path"; import { fileURLToPath } from "node:url";
++const here = path.dirname(fileURLToPath(import.meta.url));
+ const srcDir = path.join(here, "../../workers/translate-proxy/src");
+ const ORIGIN = "https://www.arabic-keyboard.live";
+ let pass = 0, bad = [];

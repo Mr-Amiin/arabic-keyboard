@@ -2,5 +2,5 @@
    Leave empty until the Worker is deployed: the Translation page then shows a clear "not connected yet" message.
    Example:  window.AK_TRANSLATE_API = "https://translate.arabic-keyboard.live";
    This is a public URL, NOT a secret. There is no key anywhere: the Worker reaches Cloudflare Workers AI through its AI binding.
-   NOTE: the service worker caches this file; bump CACHE_NAME in sw.js after changing it. */
+   NOTE: sw.js serves this file network-first, so a change here reaches returning visitors without bumping CACHE_NAME. */
 window.AK_TRANSLATE_API = "";

@@ -4,11 +4,11 @@
 // The REAL Worker code runs behind a local HTTP server; ONLY the Workers AI binding (env.AI) is stubbed (deterministic output tagged
 // "⟦target⟧"), because Cloudflare Workers AI needs a Cloudflare account. This does NOT prove translation quality or the live model:
 // run tests/translation/live-translation.mjs against the deployed Worker for that.
-import http from "node:http"; import fs from "node:fs"; import path from "node:path";
+import http from "node:http"; import fs from "node:fs"; import path from "node:path"; import { fileURLToPath } from "node:url";
 import chromium from "@sparticuz/chromium"; import puppeteer from "puppeteer-core";
 import { handle, LANGUAGE_CODES } from "../../workers/translate-proxy/src/core.js";   // the REAL Worker logic
 
-const ROOT = path.resolve(new URL("../..", import.meta.url).pathname);
+const ROOT = path.resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const SITE_PORT = 8190, API_PORT = 8191, SITE = `http://localhost:${SITE_PORT}`, API = `http://localhost:${API_PORT}`;
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".xml": "application/xml", ".wasm": "application/wasm" };
 

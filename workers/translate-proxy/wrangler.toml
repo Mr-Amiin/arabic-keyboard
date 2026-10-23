@@ -13,6 +13,7 @@ binding = "AI"
 ALLOWED_ORIGINS = "https://www.arabic-keyboard.live,https://arabic-keyboard.live"
 # ALLOW_LOCALHOST = "true"          # local development only; remove for production
 # DISABLED_LANGUAGES = ""           # e.g. "ns,ff" to hide languages the live test showed do not work
+# LANG_FORMAT = "name"              # ONLY if the live test shows the model rejects language codes ("en"): send names ("english") instead
 
 # Rate limiting (public site). period must be 10 or 60 seconds. Counters are per Cloudflare location and best-effort.
 [[ratelimits]]

@@ -3,6 +3,7 @@
 // chunking, security, rate limiting and error mapping. They do NOT prove translation quality: that is what
 // live-translation.mjs checks against the real, Cloudflare-hosted model.
 import test from "node:test"; import assert from "node:assert/strict"; import fs from "node:fs"; import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { handle, MAX_CHARS, CHUNK_CHARS, MODEL, LANGUAGE_CODES, splitForTranslation } from "../../workers/translate-proxy/src/core.js";
 
 const ORIGIN = "https://www.arabic-keyboard.live";
@@ -22,7 +23,7 @@ test("the main module exports ONLY the default handler (Cloudflare rejects other
   assert.deepEqual(Object.keys(m), ["default"]); assert.equal(typeof m.default.fetch, "function");
 });
 test("no Azure / Microsoft / API-key remnants anywhere in the Worker folder", () => {
-  const dir = path.resolve(new URL("../../workers/translate-proxy", import.meta.url).pathname);
+  const dir = fileURLToPath(new URL("../../workers/translate-proxy", import.meta.url));
   const files = fs.readdirSync(dir, { recursive: true }).filter(f => !f.includes("node_modules") && fs.statSync(path.join(dir, f)).isFile());
   for (const f of files) assert.ok(!/azure|ocp-apim|cognitive|microsoft|subscription[-_ ]?key/i.test(fs.readFileSync(path.join(dir, f), "utf8")), "found in " + f);
 });
@@ -59,6 +60,18 @@ test("translate: calls env.AI.run with the exact model and {text, source_lang, t
 test("translate: every advertised language works as source and target (codes passed through unchanged, uppercase normalised)", async () => {
   for (const code of LANGUAGE_CODES) { if (code === "en") continue; calls.length = 0; const r = await tr({ text: "Hello", from: "EN", to: code.toUpperCase() }); assert.equal(r.res.status, 200, code); assert.deepEqual(calls[0].input, { text: "Hello", source_lang: "en", target_lang: code }); }
   for (const code of ["ar", "so", "sw", "ur"]) { calls.length = 0; assert.equal((await tr({ text: "x", from: code, to: "en" })).res.status, 200); assert.equal(calls[0].input.source_lang, code); }
+});
+test("LANG_FORMAT: default sends codes; LANG_FORMAT=name sends the lowercase English names; both still return the model's text", async () => {
+  let r = await tr({ text: "Hi", from: "ar", to: "en" });
+  assert.deepEqual(calls[0].input, { text: "Hi", source_lang: "ar", target_lang: "en" }); assert.equal(r.res.status, 200);
+  calls.length = 0;
+  r = await tr({ text: "Hi", from: "ar", to: "en" }, null, mkEnv({ LANG_FORMAT: "name" }));
+  assert.deepEqual(calls[0].input, { text: "Hi", source_lang: "arabic", target_lang: "english" }); assert.equal(r.res.status, 200);
+  assert.equal(r.body.from, "ar"); assert.equal(r.body.to, "en");                  // the API contract with the page stays codes
+  calls.length = 0; await tr({ text: "Hi", from: "so", to: "fy" }, null, mkEnv({ LANG_FORMAT: "name" }));
+  assert.deepEqual(calls[0].input, { text: "Hi", source_lang: "somali", target_lang: "western frisian" });
+  calls.length = 0; await tr({ text: "Hi", from: "ar", to: "en" }, null, mkEnv({ LANG_FORMAT: "bogus" }));   // anything else = codes
+  assert.equal(calls[0].input.source_lang, "ar");
 });
 test("translate: there is no auto-detect (the model cannot detect): 'from' is required", async () => {
   assert.equal((await tr({ text: "x", from: "auto", to: "en" })).body.error.code, "bad_request");

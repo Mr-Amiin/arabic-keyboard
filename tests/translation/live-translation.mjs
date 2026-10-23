@@ -72,7 +72,7 @@ try {
   let r = await tr("السلام عليكم، كيف حالك؟", "ar", "en"); show("ar→en", r);
   ok("2. Arabic → English is a REAL translation (Latin script, differs from input, several words)", real(r, "en", "السلام عليكم، كيف حالك؟") && words(out(r)).length >= 3, JSON.stringify(r.body));
   warn("2b. English output mentions peace/hello/how/you", /peace|hello|how|you|greet/i.test(out(r)));
-  if (!(r.status === 200) && r.body && /unsupported_language/.test(JSON.stringify(r.body))) console.log("\n     HINT: the model rejected the language CODES. Cloudflare's docs describe codes ('en') but show names ('english') in an example.\n     Open workers/translate-proxy/src/core.js, function translateChunk, and try passing the lowercase English NAME instead of the code, then redeploy.\n");
+  if (!(r.status === 200) && r.body && /unsupported_language/.test(JSON.stringify(r.body))) console.log("\n     HINT: the model rejected the language CODES. Cloudflare's docs describe codes ('en') but show names ('english') in an example.\n     In workers/translate-proxy/wrangler.toml under [vars] add  LANG_FORMAT = \"name\"  (the Worker then sends names such as 'english'), run `npx wrangler deploy` again, and rerun this test.\n");
   const enOut = out(r);
 
   r = await tr("Good morning, how are you today?", "en", "ar"); show("en→ar", r);

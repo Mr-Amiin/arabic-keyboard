@@ -23,6 +23,7 @@
      ALLOWED_ORIGINS        comma-separated origins (default: the two production origins)
      ALLOW_LOCALHOST        "true" only for local development
      DISABLED_LANGUAGES     comma-separated codes to hide (e.g. if the live test shows one does not work)
+     LANG_FORMAT            "code" (default) or "name": what is sent to the model as source_lang/target_lang
      RATE_LIMITER_IP / RATE_LIMITER_GLOBAL   rate-limit bindings (per IP, and per Cloudflare location)
 
    PRIVACY: request bodies are never logged or stored by this Worker.
@@ -160,9 +161,13 @@ function withTimeout(p, ms) {
   let t; const timeout = new Promise((_, rej) => { t = setTimeout(() => rej(new AiFailure("timeout", 504)), ms); });
   return Promise.race([p, timeout]).finally(() => clearTimeout(t));
 }
+// Cloudflare's schema documents language CODES ("en") but its own code sample passes lowercase NAMES ("english").
+// Default = codes. If the live test (tests/translation/live-translation.mjs) shows the model rejects codes, set
+// LANG_FORMAT = "name" in wrangler.toml and redeploy: no code change needed.
+function modelLang(env, code) { return String(env.LANG_FORMAT) === "name" ? LANGUAGE_NAMES[code].toLowerCase() : code; }
 async function translateChunk(env, chunk, from, to) {
   let out;
-  try { out = await withTimeout(env.AI.run(MODEL, { text: chunk, source_lang: from, target_lang: to }), Number(env.CALL_TIMEOUT_MS) || CALL_TIMEOUT_MS); }   // CALL_TIMEOUT_MS env: tests only
+  try { out = await withTimeout(env.AI.run(MODEL, { text: chunk, source_lang: modelLang(env, from), target_lang: modelLang(env, to) }), Number(env.CALL_TIMEOUT_MS) || CALL_TIMEOUT_MS); }   // CALL_TIMEOUT_MS env: tests only
   catch (e) { throw classify(e); }
   const text = out && typeof out.translated_text === "string" ? out.translated_text : null;
   if (text === null || !text.trim()) throw new AiFailure("bad_response", 502);

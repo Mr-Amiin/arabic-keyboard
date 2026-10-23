@@ -1,7 +1,7 @@
 // Runs the REAL Worker code inside Cloudflare's real runtime (workerd, via Miniflare) with real [[ratelimits]] bindings.
 // Only the Workers AI binding is replaced by a tiny stub (it needs a Cloudflare account). Run: npm install && npm run workerd
-import { Miniflare } from "miniflare"; import path from "node:path";
-const here = path.dirname(new URL(import.meta.url).pathname);
+import { Miniflare } from "miniflare"; import path from "node:path"; import { fileURLToPath } from "node:url";
+const here = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.join(here, "../../workers/translate-proxy/src");
 const ORIGIN = "https://www.arabic-keyboard.live";
 let pass = 0, bad = [];
