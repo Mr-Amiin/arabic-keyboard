@@ -1,0 +1,158 @@
+diff --git a/assets/js/translation-config.js b/assets/js/translation-config.js
+index 2a4411a..0da7864 100644
+--- a/assets/js/translation-config.js
++++ b/assets/js/translation-config.js
+@@ -2,5 +2,5 @@
+    Leave empty until the Worker is deployed: the Translation page then shows a clear "not connected yet" message.
+    Example:  window.AK_TRANSLATE_API = "https://translate.arabic-keyboard.live";
+    This is a public URL, NOT a secret. There is no key anywhere: the Worker reaches Cloudflare Workers AI through its AI binding.
+-   NOTE: the service worker caches this file; bump CACHE_NAME in sw.js after changing it. */
++   NOTE: sw.js serves this file network-first, so a change here reaches returning visitors without bumping CACHE_NAME. */
+ window.AK_TRANSLATE_API = "";
+diff --git a/sw.js b/sw.js
+index f5cd1cd..20adc01 100644
+--- a/sw.js
++++ b/sw.js
+@@ -10,11 +10,7 @@
+    not throw away a visitor's 19 MB download. Bump VENDOR_CACHE only when
+    the files under /assets/vendor/ themselves change.
+ */
+-<<<<<<< HEAD
+-const CACHE_NAME = "arabic-keyboard-shell-v9";
+-=======
+-const CACHE_NAME = "arabic-keyboard-shell-v8";
+->>>>>>> fcd4ff21175f4509b3a22d7e8809811b73461a6d
++const CACHE_NAME = "arabic-keyboard-shell-v10";
+ const VENDOR_CACHE = "arabic-keyboard-vendor-v1";
+ const isVendor = (url) => new URL(url).pathname.startsWith("/assets/vendor/");
+ const CORE_ASSETS = [
+@@ -72,8 +68,26 @@ self.addEventListener("activate", (event) => {
+   self.clients.claim();
+ });
+ 
++// The translation proxy address lives in this one tiny file. Serve it network-first so changing it
++// takes effect immediately for returning visitors (no CACHE_NAME bump needed); fall back to the cache offline.
++const isLiveConfig = (url) => new URL(url).pathname === "/assets/js/translation-config.js";
++
+ self.addEventListener("fetch", (event) => {
+   if (event.request.method !== "GET") return;
++  if (isLiveConfig(event.request.url)) {
++    event.respondWith(
++      fetch(event.request)
++        .then((response) => {
++          if (response && response.status === 200 && response.type === "basic") {
++            const copy = response.clone();
++            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
++          }
++          return response;
++        })
++        .catch(() => caches.match(event.request).then((cached) => cached || Response.error()))
++    );
++    return;
++  }
+   event.respondWith(
+     caches.match(event.request).then((cached) => {
+       if (cached) return cached;
+diff --git a/tests/translation/live-translation.mjs b/tests/translation/live-translation.mjs
+index 7bf19b1..561ddbb 100644
+--- a/tests/translation/live-translation.mjs
++++ b/tests/translation/live-translation.mjs
+@@ -72,7 +72,7 @@ try {
+   let r = await tr("السلام عليكم، كيف حالك؟", "ar", "en"); show("ar→en", r);
+   ok("2. Arabic → English is a REAL translation (Latin script, differs from input, several words)", real(r, "en", "السلام عليكم، كيف حالك؟") && words(out(r)).length >= 3, JSON.stringify(r.body));
+   warn("2b. English output mentions peace/hello/how/you", /peace|hello|how|you|greet/i.test(out(r)));
+-  if (!(r.status === 200) && r.body && /unsupported_language/.test(JSON.stringify(r.body))) console.log("\n     HINT: the model rejected the language CODES. Cloudflare's docs describe codes ('en') but show names ('english') in an example.\n     Open workers/translate-proxy/src/core.js, function translateChunk, and try passing the lowercase English NAME instead of the code, then redeploy.\n");
++  if (!(r.status === 200) && r.body && /unsupported_language/.test(JSON.stringify(r.body))) console.log("\n     HINT: the model rejected the language CODES. Cloudflare's docs describe codes ('en') but show names ('english') in an example.\n     In workers/translate-proxy/wrangler.toml under [vars] add  LANG_FORMAT = \"name\"  (the Worker then sends names such as 'english'), run `npx wrangler deploy` again, and rerun this test.\n");
+   const enOut = out(r);
+ 
+   r = await tr("Good morning, how are you today?", "en", "ar"); show("en→ar", r);
+diff --git a/tests/translation/worker.test.mjs b/tests/translation/worker.test.mjs
+index 4c576e9..2bdf623 100644
+--- a/tests/translation/worker.test.mjs
++++ b/tests/translation/worker.test.mjs
+@@ -60,6 +60,18 @@ test("translate: every advertised language works as source and target (codes pas
+   for (const code of LANGUAGE_CODES) { if (code === "en") continue; calls.length = 0; const r = await tr({ text: "Hello", from: "EN", to: code.toUpperCase() }); assert.equal(r.res.status, 200, code); assert.deepEqual(calls[0].input, { text: "Hello", source_lang: "en", target_lang: code }); }
+   for (const code of ["ar", "so", "sw", "ur"]) { calls.length = 0; assert.equal((await tr({ text: "x", from: code, to: "en" })).res.status, 200); assert.equal(calls[0].input.source_lang, code); }
+ });
++test("LANG_FORMAT: default sends codes; LANG_FORMAT=name sends the lowercase English names; both still return the model's text", async () => {
++  let r = await tr({ text: "Hi", from: "ar", to: "en" });
++  assert.deepEqual(calls[0].input, { text: "Hi", source_lang: "ar", target_lang: "en" }); assert.equal(r.res.status, 200);
++  calls.length = 0;
++  r = await tr({ text: "Hi", from: "ar", to: "en" }, null, mkEnv({ LANG_FORMAT: "name" }));
++  assert.deepEqual(calls[0].input, { text: "Hi", source_lang: "arabic", target_lang: "english" }); assert.equal(r.res.status, 200);
++  assert.equal(r.body.from, "ar"); assert.equal(r.body.to, "en");                  // the API contract with the page stays codes
++  calls.length = 0; await tr({ text: "Hi", from: "so", to: "fy" }, null, mkEnv({ LANG_FORMAT: "name" }));
++  assert.deepEqual(calls[0].input, { text: "Hi", source_lang: "somali", target_lang: "western frisian" });
++  calls.length = 0; await tr({ text: "Hi", from: "ar", to: "en" }, null, mkEnv({ LANG_FORMAT: "bogus" }));   // anything else = codes
++  assert.equal(calls[0].input.source_lang, "ar");
++});
+ test("translate: there is no auto-detect (the model cannot detect): 'from' is required", async () => {
+   assert.equal((await tr({ text: "x", from: "auto", to: "en" })).body.error.code, "bad_request");
+   assert.equal((await tr({ text: "x", to: "en" })).body.error.code, "bad_request"); assert.equal(calls.length, 0);
+diff --git a/workers/translate-proxy/README.md b/workers/translate-proxy/README.md
+index 17b4217..e10d42c 100644
+--- a/workers/translate-proxy/README.md
++++ b/workers/translate-proxy/README.md
+@@ -85,9 +85,8 @@ Also try `/languages?ui=en` (a list of 100 languages).
+ 1. Open `assets/js/translation-config.js` and put your address between the quotes:
+    `window.AK_TRANSLATE_API = "https://ak-translate-proxy.myname.workers.dev";`
+    (It is a public address, not a secret.)
+-2. Open `sw.js`, find the line `const CACHE_NAME = "arabic-keyboard-shell-v8";` and **increase the number by one** (`v8` -> `v9`).
+-   (The site caches its files for offline use. Without this, returning visitors keep the old settings.)
+-3. Publish the website as you normally do (commit and push).
++2. Publish the website as you normally do (commit and push). No other file needs changing: `sw.js` serves
++   `translation-config.js` network-first, so returning visitors pick up the new address immediately.
+ 
+ ### 8. Prove it really translates (recommended before announcing)
+ From the project folder (needs Node 18+):
+@@ -124,9 +123,9 @@ Add `PROBE=all` to test **all 100 languages** (takes 10+ minutes because of the
+ 
+ | Problem | What to do |
+ |---|---|
+-| The page says *"The translation service hasn't been connected to this site yet"* | `translation-config.js` is still empty, or you forgot to bump `CACHE_NAME` in `sw.js` (step 7). |
++| The page says *"The translation service hasn't been connected to this site yet"* | `translation-config.js` is still empty, or the change has not been pushed / published yet (step 7). |
+ | The page says *"Couldn't load the language list"* | The Worker address is wrong, the Worker isn't deployed, or `ALLOWED_ORIGINS` doesn't exactly match the site's address (browsers hide the details; check the browser's Network tab for a 403 / CORS message). |
+-| Live test: Arabic/English fail with `unsupported_language` | Cloudflare's docs describe language **codes** (`en`) but show names (`english`) in an example. In `src/core.js`, function `translateChunk`, try passing the lowercase English **name** (use the `LANGUAGE_NAMES` table in the same file) instead of the code, redeploy, rerun the test. |
++| Live test: Arabic/English fail with `unsupported_language` | Cloudflare's docs describe language **codes** (`en`) but show names (`english`) in an example. In `wrangler.toml` under `[vars]` add `LANG_FORMAT = "name"` (the Worker then sends `english`, `arabic`, ...), run `npx wrangler deploy`, and rerun the live test. No code edit is needed. |
+ | *"The free daily translation quota is used up"* | You have used the free 10,000 Neurons today. It renews at 00:00 UTC. Nothing is charged. |
+ | *"The translation model is busy"* (error 3040) | Temporary. Try again in a few seconds. |
+ | `npx wrangler deploy` complains about `ratelimits` | Update Wrangler (`npx wrangler@latest deploy`). If it still fails, delete the two `[[ratelimits]]` blocks and add a rate-limiting rule in the Cloudflare dashboard (Security -> WAF -> Rate limiting rules) for `/translate`. |
+diff --git a/workers/translate-proxy/src/core.js b/workers/translate-proxy/src/core.js
+index 12eea00..3f42a19 100644
+--- a/workers/translate-proxy/src/core.js
++++ b/workers/translate-proxy/src/core.js
+@@ -23,6 +23,7 @@
+      ALLOWED_ORIGINS        comma-separated origins (default: the two production origins)
+      ALLOW_LOCALHOST        "true" only for local development
+      DISABLED_LANGUAGES     comma-separated codes to hide (e.g. if the live test shows one does not work)
++     LANG_FORMAT            "code" (default) or "name": what is sent to the model as source_lang/target_lang
+      RATE_LIMITER_IP / RATE_LIMITER_GLOBAL   rate-limit bindings (per IP, and per Cloudflare location)
+ 
+    PRIVACY: request bodies are never logged or stored by this Worker.
+@@ -160,9 +161,13 @@ function withTimeout(p, ms) {
+   let t; const timeout = new Promise((_, rej) => { t = setTimeout(() => rej(new AiFailure("timeout", 504)), ms); });
+   return Promise.race([p, timeout]).finally(() => clearTimeout(t));
+ }
++// Cloudflare's schema documents language CODES ("en") but its own code sample passes lowercase NAMES ("english").
++// Default = codes. If the live test (tests/translation/live-translation.mjs) shows the model rejects codes, set
++// LANG_FORMAT = "name" in wrangler.toml and redeploy: no code change needed.
++function modelLang(env, code) { return String(env.LANG_FORMAT) === "name" ? LANGUAGE_NAMES[code].toLowerCase() : code; }
+ async function translateChunk(env, chunk, from, to) {
+   let out;
+-  try { out = await withTimeout(env.AI.run(MODEL, { text: chunk, source_lang: from, target_lang: to }), Number(env.CALL_TIMEOUT_MS) || CALL_TIMEOUT_MS); }   // CALL_TIMEOUT_MS env: tests only
++  try { out = await withTimeout(env.AI.run(MODEL, { text: chunk, source_lang: modelLang(env, from), target_lang: modelLang(env, to) }), Number(env.CALL_TIMEOUT_MS) || CALL_TIMEOUT_MS); }   // CALL_TIMEOUT_MS env: tests only
+   catch (e) { throw classify(e); }
+   const text = out && typeof out.translated_text === "string" ? out.translated_text : null;
+   if (text === null || !text.trim()) throw new AiFailure("bad_response", 502);
+diff --git a/workers/translate-proxy/wrangler.toml b/workers/translate-proxy/wrangler.toml
+index b9152ae..26e6af8 100644
+--- a/workers/translate-proxy/wrangler.toml
++++ b/workers/translate-proxy/wrangler.toml
+@@ -13,6 +13,7 @@ binding = "AI"
+ ALLOWED_ORIGINS = "https://www.arabic-keyboard.live,https://arabic-keyboard.live"
+ # ALLOW_LOCALHOST = "true"          # local development only; remove for production
+ # DISABLED_LANGUAGES = ""           # e.g. "ns,ff" to hide languages the live test showed do not work
++# LANG_FORMAT = "name"              # ONLY if the live test shows the model rejects language codes ("en"): send names ("english") instead
+ 
+ # Rate limiting (public site). period must be 10 or 60 seconds. Counters are per Cloudflare location and best-effort.
+ [[ratelimits]]

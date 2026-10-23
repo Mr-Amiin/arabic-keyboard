@@ -10,11 +10,7 @@
    not throw away a visitor's 19 MB download. Bump VENDOR_CACHE only when
    the files under /assets/vendor/ themselves change.
 */
-<<<<<<< HEAD
-const CACHE_NAME = "arabic-keyboard-shell-v9";
-=======
-const CACHE_NAME = "arabic-keyboard-shell-v8";
->>>>>>> fcd4ff21175f4509b3a22d7e8809811b73461a6d
+const CACHE_NAME = "arabic-keyboard-shell-v10";
 const VENDOR_CACHE = "arabic-keyboard-vendor-v1";
 const isVendor = (url) => new URL(url).pathname.startsWith("/assets/vendor/");
 const CORE_ASSETS = [
@@ -72,8 +68,26 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+// The translation proxy address lives in this one tiny file. Serve it network-first so changing it
+// takes effect immediately for returning visitors (no CACHE_NAME bump needed); fall back to the cache offline.
+const isLiveConfig = (url) => new URL(url).pathname === "/assets/js/translation-config.js";
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  if (isLiveConfig(event.request.url)) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200 && response.type === "basic") {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request).then((cached) => cached || Response.error()))
+    );
+    return;
+  }
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
