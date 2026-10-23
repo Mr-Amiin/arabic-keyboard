@@ -25,6 +25,7 @@ NAV_TOOLS = [
     ("/arabic-keyboard/", "لوحة المفاتيح العربية"),
     ("/transliteration/", "التحويل الصوتي"),
     ("/tashkeel/", "التشكيل"),
+    ("/translation/", "الترجمة"),
     ("/editor/", "المحرر"),
     ("/typing-test/", "اختبار الطباعة"),
 ]
@@ -93,6 +94,9 @@ def header_html(current_path, depth):
         {link("/tashkeel/", "التشكيل")}
       </div>
       <div class="nav-item">
+        {link("/translation/", "الترجمة")}
+      </div>
+      <div class="nav-item">
         <a href="{r}calligraphy-editor/">محرر الخط العربي</a>
       </div>
       <div class="nav-item">
@@ -120,6 +124,7 @@ def header_html(current_path, depth):
     <div class="close-x"><button class="icon-btn" id="mobileNavClose" aria-label="إغلاق القائمة">✕</button></div>
     {link("/", "الرئيسية")}
     {link("/tashkeel/", "التشكيل")}
+    {link("/translation/", "الترجمة")}
     {link("/calligraphy-editor/", "محرر الخط العربي")}
     <div class="grp-label lang-en">Tools</div>
     {"".join(f'<a href="{r}{p.strip("/")}/">{l}</a>' for p, l in NAV_TOOLS)}

@@ -15,7 +15,7 @@ const srv = http.createServer((q, r) => {
 const results = []; const bad = [];
 const ck = (n, ok, d = "") => { results.push(ok); if (!ok) bad.push(n); console.log((ok ? "PASS " : "FAIL ") + n + (!ok && d ? "  — " + d : "")); };
 const browser = await puppeteer.launch({ args: [...chromium.args.filter(a => !/single-process|no-zygote/.test(a)), "--no-sandbox", "--lang=en-US"], executablePath: await chromium.executablePath(), headless: "shell" });
-const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/editor/", "/typing-test/", "/arabic-typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
+const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
 
 async function fresh(w = 1280, h = 900) {            // brand-new visitor: empty storage
   const ctx = await browser.createBrowserContext();
@@ -145,7 +145,7 @@ for (const [name, u, w, h] of [["home-en-desktop", "/arabic-keyboard/", 1280, 11
 }
 
 /* 8b — header never wraps / overflows at in-between desktop widths, either language */
-for (const w of [880, 920, 1024]) for (const l of ["ar", "en"]) {
+for (const w of [861, 880, 920, 1024]) for (const l of ["ar", "en"]) {
   pg = await fresh(w, 800); await go(pg, "/tashkeel/?lang=" + l); await pg.waitForFunction(x => document.documentElement.lang === x && !document.documentElement.classList.contains("i18n-pending"), {}, l);
   const hd = await pg.evaluate(() => { const h = document.querySelector("header.site"), r = h.getBoundingClientRect(); const nav = document.querySelector("nav.primary").getBoundingClientRect(), act = document.querySelector(".head-actions").getBoundingClientRect(); return { h: Math.round(r.height), ov: document.documentElement.scrollWidth - innerWidth, clash: nav.right > act.left + 1 && nav.left < act.right - 1 && Math.abs(nav.top - act.top) < 30 }; });
   ck(`8b. header at ${w}px (${l}): single row, no overflow, nav not overlapping actions`, hd.h <= 80 && hd.ov <= 1 && !hd.clash, JSON.stringify(hd));

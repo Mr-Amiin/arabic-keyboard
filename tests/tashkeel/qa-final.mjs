@@ -221,18 +221,18 @@ const oldKeys = await pg.evaluate(async () => (await caches.keys()).join());
 ck("3a. (setup) old deployment installed its service worker (shell-v5) and has NO language switcher", !oldHas.sw && /shell-v5/.test(oldKeys) && (await pg.$$(".lang-switch")).length === 0, oldKeys);
 curRoot = NEW;                                                         // "deploy" the new version
 await go(pg, "/"); const firstAfter = await pg.evaluate(() => document.querySelectorAll(".lang-switch").length);
-await pg.waitForFunction(async () => { const k = await caches.keys(); return k.some(x => /shell-v6$/.test(x)) && !k.some(x => /shell-v5$/.test(x)); }, { timeout: 25000 });
-info(`first navigation right after deploy showed ${firstAfter ? "the NEW" : "the OLD (cached)"} page; SW then updated to shell-v6 and deleted v5`);
+await pg.waitForFunction(async () => { const k = await caches.keys(); return k.some(x => /shell-v8$/.test(x)) && !k.some(x => /shell-v5$/.test(x)); }, { timeout: 25000 });
+info(`first navigation right after deploy showed ${firstAfter ? "the NEW" : "the OLD (cached)"} page; SW then updated to shell-v8 and deleted v5`);
 await go(pg, "/"); const r1 = await pg.evaluate(() => ({ sw: document.querySelectorAll(".lang-switch").length, tash: document.querySelectorAll('nav.primary > .nav-item > a[href$="tashkeel/"]').length, script: !!document.querySelector('script[src="./assets/js/i18n.js"]') }));
 ck("3b. returning visitor: after the SW update, the next load of / (precached) has the new script, switcher and Tashkeel link", r1.sw >= 2 && r1.tash === 1 && r1.script, JSON.stringify(r1));
 await go(pg, "/faq/"); const r2a = await pg.evaluate(() => document.querySelectorAll(".lang-switch").length);
 info(`/faq/ (NOT precached) seconds after deploy, HTTP cache still fresh (max-age=600): ${r2a ? "already new" : "still the old copy (pre-existing 10-minute hosting cache TTL, not a service-worker issue)"}`);
 cc = "no-cache"; { const cdp = await pg.createCDPSession(); await cdp.send("Network.clearBrowserCache"); }   // = the 10-minute HTTP-cache TTL has expired
-await pg.evaluate(async () => { for (const k of await caches.keys()) if (/shell-v6$/.test(k)) await (await caches.open(k)).delete("/faq/"); });
+await pg.evaluate(async () => { for (const k of await caches.keys()) if (/shell-v8$/.test(k)) await (await caches.open(k)).delete("/faq/"); });
 await go(pg, "/faq/"); const r2 = await pg.evaluate(() => ({ sw: document.querySelectorAll(".lang-switch").length, script: !!document.querySelector('script[src="../assets/js/i18n.js"]') }));
 ck("3b2. non-precached page (/faq/) picks up the new script + switcher once its HTTP-cache TTL has expired (shell-v5 copy is gone)", r2.sw >= 2 && r2.script, JSON.stringify(r2));
-const swState = await pg.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); const c = await caches.open((await caches.keys()).find(k => /shell-v6$/.test(k))); return { ctl: !!navigator.serviceWorker.controller, i18n: !!(await c.match("/assets/js/i18n.js")), keys: (await caches.keys()).join() }; });
-ck("3c. new service worker controls the page and i18n.js is precached in shell-v6", swState.ctl && swState.i18n, JSON.stringify(swState));
+const swState = await pg.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); const c = await caches.open((await caches.keys()).find(k => /shell-v8$/.test(k))); return { ctl: !!navigator.serviceWorker.controller, i18n: !!(await c.match("/assets/js/i18n.js")), keys: (await caches.keys()).join() }; });
+ck("3c. new service worker controls the page and i18n.js is precached in shell-v8", swState.ctl && swState.i18n, JSON.stringify(swState));
 await pick(pg, "en");                                                   // English once online → dictionary cached
 await sleep(800);
 await pg.setOfflineMode(true); await go(pg, "/faq/"); await ready(pg, "en").catch(() => { }); const off = await st(pg);
@@ -240,7 +240,7 @@ ck("3d. offline: a visitor who used English once still gets the English page (di
 await pg.setOfflineMode(false); await pg.ctx.close();
 
 /* 3e script paths on nested routes + no 4xx anywhere, both languages */
-const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/editor/", "/typing-test/", "/arabic-typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/", "/calligraphy-editor/"];
+const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/", "/calligraphy-editor/"];
 pg = await fresh(); const badAll = [], tagBad = [];
 for (const l of ["ar", "en"]) for (const u of PAGES) {
   pg.bad.length = 0; await go(pg, u + "?lang=" + l); await ready(pg, l); await sleep(150);
@@ -263,12 +263,13 @@ for (const [w, h] of [[1280, 900], [390, 800]]) {
       const topTash = q('nav.primary > .nav-item > a[href$="tashkeel/"]'), dropTash = q('nav.primary .dropdown a[href$="tashkeel/"]'), mobTash = q('#mobileNav .mobile-panel > a[href$="tashkeel/"]');
       const sw = q(".lang-switch"), hdrSw = q("header.site .head-actions .lang-switch"), mobSw = q("#mobileNav .lang-switch");
       const hdr = document.querySelector("header.site").getBoundingClientRect();
-      return { topTash: topTash.length, dropTash: dropTash.length, mobTash: mobTash.length, sw: sw.length, hdrSw: hdrSw.length, mobSw: mobSw.length,
+      const topTr = q('nav.primary > .nav-item > a[href$="translation/"]'), dropTr = q('nav.primary .dropdown a[href$="translation/"]'), mobTr = q('#mobileNav .mobile-panel a[href$="translation/"]'), trCur = q('a[aria-current="page"][href$="translation/"]');
+      return { topTr: topTr.length, dropTr: dropTr.length, mobTr: mobTr.length, trCur: trCur.length, topTash: topTash.length, dropTash: dropTash.length, mobTash: mobTash.length, sw: sw.length, hdrSw: hdrSw.length, mobSw: mobSw.length,
         deskVisible: w > 860 ? vis(topTash[0]) && vis(hdrSw[0]) : null, mobHidden: w <= 860 ? !vis(hdrSw[0]) && getComputedStyle(document.querySelector("nav.primary")).display === "none" : null,
         cur: q('[aria-current="page"][href$="tashkeel/"]').length, scrollX: document.documentElement.scrollWidth - innerWidth, hdrH: Math.round(hdr.height) };
     }, w);
-    const isTk = u === "/tashkeel/";
-    const ok = r.topTash === 1 && r.dropTash === 1 && r.mobTash === 2 && r.sw === 2 && r.hdrSw === 1 && r.mobSw === 1 && (w > 860 ? r.deskVisible : r.mobHidden) && (isTk ? r.cur >= 2 : r.cur === 0) && r.scrollX <= 1 && r.hdrH <= 80;
+    const isTk = u === "/tashkeel/", isTr = u === "/translation/";
+    const ok = r.topTash === 1 && r.dropTash === 1 && r.mobTash === 2 && r.sw === 2 && r.hdrSw === 1 && r.mobSw === 1 && (w > 860 ? r.deskVisible : r.mobHidden) && (isTk ? r.cur >= 2 : r.cur === 0) && r.topTr === 1 && r.dropTr === 1 && r.mobTr === 2 && (isTr ? r.trCur >= 2 : r.trCur === 0) && r.scrollX <= 1 && r.hdrH <= 80;
     if (!ok) probs.push(`${w}px ${l} ${u} ${JSON.stringify(r)}`);
     if (w <= 860 && (u === "/" || isTk)) {                                  // mobile menu: open, Tashkeel link works, switcher inside works
       await pg.click("#menuToggle"); await pg.waitForSelector("#mobileNav.open");
@@ -279,7 +280,7 @@ for (const [w, h] of [[1280, 900], [390, 800]]) {
   }
   await pg.ctx.close();
 }
-ck("3f. every page × desktop/mobile × ar/en: exactly one top-level Tashkeel link + one in the Tools dropdown + two in the mobile menu (top-level + Tools group), one header + one menu switcher, correct visibility, active state only on /tashkeel/, no overflow", probs.length === 0, probs.slice(0, 4).join(" ;; "));
+ck("3f. every page × desktop/mobile × ar/en: exactly one top-level Tashkeel AND Translation link, each also in the Tools dropdown and twice in the mobile menu (top-level + Tools group), one header + one menu switcher, correct visibility, active state only on /tashkeel/, no overflow", probs.length === 0, probs.slice(0, 4).join(" ;; "));
 
 /* 3g mobile click-through: Tashkeel link inside the menu, both languages */
 for (const l of ["ar", "en"]) {

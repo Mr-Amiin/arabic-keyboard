@@ -1,0 +1,6 @@
+{
+  "name": "ak-translate-proxy",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Worker: translation proxy for arabic-keyboard.live (Workers AI, @cf/meta/m2m100-1.2b). See README.md."
+}

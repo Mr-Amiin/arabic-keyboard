@@ -1,0 +1,5 @@
+# secrets and tooling output: never commit
+workers/translate-proxy/.dev.vars
+.dev.vars
+.wrangler/
+node_modules/
