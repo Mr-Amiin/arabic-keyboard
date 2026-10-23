@@ -1,6 +1,6 @@
 {
-  "name": "لوحة عربي — أدوات الكتابة العربية",
-  "short_name": "لوحة عربي",
+  "name": "كيبورد عربي — أدوات الكتابة العربية",
+  "short_name": "كيبورد عربي",
   "description": "اكتب بالعربية أونلاين: لوحة مفاتيح افتراضية، تحويل صوتي، تشكيل، محرر، واختبار طباعة.",
   "start_url": "/",
   "scope": "/",
@@ -13,6 +13,7 @@
   "icons": [
     { "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
     { "src": "/assets/icons/icon-source.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]
 }

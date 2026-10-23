@@ -1,0 +1,8 @@
+{
+  "name": "ak-translation-tests",
+  "private": true,
+  "type": "module",
+  "description": "Optional runtime test: runs the Worker inside Cloudflare's real workerd runtime (Miniflare). Run: npm install && npm run workerd",
+  "scripts": { "workerd": "node workerd-runtime.mjs", "unit": "node --test worker.test.mjs" },
+  "devDependencies": { "miniflare": "^4.0.0" }
+}

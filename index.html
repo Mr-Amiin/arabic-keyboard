@@ -13,6 +13,9 @@
 <meta name="theme-color" content="#1F6F53">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="./favicon.ico" sizes="48x48">
+<link rel="icon" href="./assets/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" sizes="180x180">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -29,14 +32,17 @@
 <a href="#main" class="skip-link lang-en">تخطَّ إلى المحتوى</a>
 <header class="site">
   <div class="wrap nav-row">
-    <a href="./" class="brand"><span class="mark">ع</span>لوحة عربي</a>
+    <a href="./" class="brand"><img class="logo logo-light" src="./assets/brand/arabic-keyboard-logo.svg" alt="كيبورد عربي" width="99" height="44"><img class="logo logo-dark" src="./assets/brand/arabic-keyboard-logo-dark.svg" alt="كيبورد عربي" width="99" height="44"></a>
     <nav class="primary" aria-label="التنقل الرئيسي">
       <div class="nav-item">
         <button type="button" aria-haspopup="true">الأدوات <span aria-hidden="true">▾</span></button>
-        <div class="dropdown"><a href="./arabic-keyboard/">لوحة المفاتيح العربية</a><a href="./transliteration/">التحويل الصوتي</a><a href="./tashkeel/">التشكيل</a><a href="./editor/">المحرر</a><a href="./typing-test/">اختبار الطباعة</a></div>
+        <div class="dropdown"><a href="./arabic-keyboard/">لوحة المفاتيح العربية</a><a href="./transliteration/">التحويل الصوتي</a><a href="./tashkeel/">التشكيل</a><a href="./translation/">الترجمة</a><a href="./editor/">المحرر</a><a href="./typing-test/">اختبار الطباعة</a></div>
       </div>
       <div class="nav-item">
         <a href="./tashkeel/">التشكيل</a>
+      </div>
+      <div class="nav-item">
+        <a href="./translation/">الترجمة</a>
       </div>
       <div class="nav-item">
         <a href="./calligraphy-editor/">محرر الخط العربي</a>
@@ -63,9 +69,10 @@
     <div class="close-x"><button class="icon-btn" id="mobileNavClose" aria-label="إغلاق القائمة">✕</button></div>
     <a href="./" aria-current="page">الرئيسية</a>
     <a href="./tashkeel/">التشكيل</a>
+    <a href="./translation/">الترجمة</a>
     <a href="./calligraphy-editor/">محرر الخط العربي</a>
     <div class="grp-label lang-en">Tools</div>
-    <a href="./arabic-keyboard/">لوحة المفاتيح العربية</a><a href="./transliteration/">التحويل الصوتي</a><a href="./tashkeel/">التشكيل</a><a href="./editor/">المحرر</a><a href="./typing-test/">اختبار الطباعة</a>
+    <a href="./arabic-keyboard/">لوحة المفاتيح العربية</a><a href="./transliteration/">التحويل الصوتي</a><a href="./tashkeel/">التشكيل</a><a href="./translation/">الترجمة</a><a href="./editor/">المحرر</a><a href="./typing-test/">اختبار الطباعة</a>
     <div class="grp-label lang-en">Learn</div>
     <a href="./arabic-alphabet/">الأبجدية العربية</a><a href="./learn-arabic/">تعلّم العربية</a>
     <div class="grp-label lang-en">Resources</div>
@@ -189,10 +196,10 @@
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a href="./" class="brand" style="margin-bottom:10px;"><span class="mark">ع</span>لوحة عربي</a>
+        <a href="./" class="brand" style="margin-bottom:10px;"><img class="logo logo-light" src="./assets/brand/arabic-keyboard-logo.svg" alt="كيبورد عربي" width="99" height="44"><img class="logo logo-dark" src="./assets/brand/arabic-keyboard-logo-dark.svg" alt="كيبورد عربي" width="99" height="44"></a>
         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
       </div>
-      <div><h4 class="lang-en">Tools</h4><ul><li><a href="./arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="./transliteration/">التحويل الصوتي</a></li><li><a href="./tashkeel/">التشكيل</a></li><li><a href="./editor/">المحرر</a></li><li><a href="./typing-test/">اختبار الطباعة</a></li><li><a href="./tools/">كل الأدوات</a></li></ul></div>
+      <div><h4 class="lang-en">Tools</h4><ul><li><a href="./arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="./transliteration/">التحويل الصوتي</a></li><li><a href="./tashkeel/">التشكيل</a></li><li><a href="./translation/">الترجمة</a></li><li><a href="./editor/">المحرر</a></li><li><a href="./typing-test/">اختبار الطباعة</a></li><li><a href="./tools/">كل الأدوات</a></li></ul></div>
       <div><h4 class="lang-en">Learn</h4><ul><li><a href="./arabic-alphabet/">الأبجدية العربية</a></li><li><a href="./learn-arabic/">تعلّم العربية</a></li><li><a href="./arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
       <div><h4 class="lang-en">Resources</h4><ul><li><a href="./faq/">الأسئلة الشائعة</a></li><li><a href="./about/">من نحن</a></li><li><a href="./contact/">تواصل معنا</a></li></ul></div>
       <div><h4 class="lang-en">Company</h4><ul><li><a href="./privacy/">الخصوصية</a></li><li><a href="./terms/">الشروط</a></li></ul></div>

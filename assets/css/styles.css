@@ -87,10 +87,19 @@ header.site{
 }
 .nav-row{ display:flex; align-items:center; justify-content:space-between; height:68px; gap:16px; }
 .brand{ display:flex; align-items:center; gap:10px; font-family:var(--font-ar-display); font-size:22px; font-weight:700; text-decoration:none; }
-.brand .mark{
-  width:34px; height:34px; border-radius:9px; background:linear-gradient(155deg, var(--emerald), var(--emerald-deep));
-  display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; flex:none;
+/* Logo image: two variants (light/dark), swapped by the theme. The <img> pair carries the
+   Arabic wordmark «كيبورد عربي» as outlined artwork, so the aspect ratio is fixed by `height`. */
+.brand .logo{ display:block; height:44px; width:auto; max-width:100%; flex:none; }
+.brand .logo-dark{ display:none; }
+html[data-theme="dark"] .brand .logo-light{ display:none; }
+html[data-theme="dark"] .brand .logo-dark{ display:block; }
+@media (prefers-color-scheme: dark){
+  html:not([data-theme]) .brand .logo-light{ display:none; }
+  html:not([data-theme]) .brand .logo-dark{ display:block; }
 }
+footer.site .brand .logo{ height:52px; }
+@media (max-width:480px){ .brand .logo{ height:38px; } }
+@media (max-width:360px){ .brand .logo{ height:32px; } }
 nav.primary{ display:flex; align-items:center; gap:2px; }
 .nav-item{ position:relative; }
 nav.primary > .nav-item > a, nav.primary > .nav-item > button{
@@ -642,3 +651,38 @@ html[lang="en"] body{ font-family:var(--font-ui), var(--arabic-font), sans-serif
 html[lang="en"] h1, html[lang="en"] h2, html[lang="en"] h3, html[lang="en"] .brand{ font-family:var(--font-ui), var(--arabic-font), sans-serif; letter-spacing:-.01em; }
 html[lang="en"] .lang-opt[lang="ar"]{ font-family:var(--font-ar-body); }
 .kb-row, .alpha-grid{ direction:rtl; }
+
+/* Narrow desktops (861-1040px): with the Translation link and the language switcher the header needs a little less padding to stay on one row. */
+@media (min-width:861px) and (max-width:1040px){
+  .nav-row{ gap:8px; }
+  nav.primary{ gap:0; }
+  nav.primary > .nav-item > a, nav.primary > .nav-item > button{ padding-inline:9px; font-size:14px; }
+  .head-actions{ gap:6px; }
+  .brand{ font-size:20px; }
+}
+
+/* ===== Translation tool (/translation/) — scoped to .tr-* ===== */
+.tr-langs{ display:flex; align-items:flex-end; gap:12px; margin-bottom:18px; }
+.tr-field{ flex:1 1 0; min-width:0; }
+.tr-select{ width:100%; min-height:46px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--surface); color:var(--ink); font-family:var(--font-ui), var(--arabic-font), sans-serif; font-size:15px; }
+.tr-select:focus-visible{ outline:2px solid var(--emerald); outline-offset:2px; }
+.tr-select:disabled{ opacity:.6; cursor:not-allowed; }
+.tk-actions .tb-btn.tr-swap, .tr-swap{ flex:0 0 auto; width:46px; height:46px; min-height:46px; padding:0; justify-content:center; font-size:20px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--ink); cursor:pointer; }
+.tr-swap:hover:not(:disabled){ border-color:var(--emerald); color:var(--emerald); }
+.tr-swap:disabled{ opacity:.55; cursor:not-allowed; }
+.tr-in[dir="rtl"]{ font-family:var(--arabic-font); font-size:22px; line-height:2.1; }
+.tr-in[dir="ltr"], .tr-in[dir="auto"]{ font-family:var(--font-ui), var(--arabic-font), sans-serif; font-size:17px; line-height:1.9; }
+.tr-in{ min-height:170px; }
+.tr-help{ font-size:13px; color:var(--ink-soft); margin:8px 0 0; line-height:1.7; }
+.tr-out[dir="rtl"]{ font-family:var(--arabic-font); font-size:23px; line-height:2.3; }
+.tr-out[dir="ltr"]{ font-family:var(--font-ui), var(--arabic-font), sans-serif; font-size:18px; line-height:1.9; }
+.tr-status{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.tr-status[hidden]{ display:none; }
+.tr-undo{ min-height:34px; padding:4px 14px; border:1px solid var(--border); background:var(--surface); color:var(--ink); cursor:pointer; }
+.tb-btn.is-loading::after{ content:""; width:14px; height:14px; margin-inline-start:8px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; display:inline-block; animation:tr-spin .8s linear infinite; }
+@keyframes tr-spin{ to{ transform:rotate(360deg); } }
+@media (prefers-reduced-motion:reduce){ .tb-btn.is-loading::after{ animation:none; border-top-color:currentColor; } }
+@media (max-width:560px){
+  .tr-langs{ flex-direction:column; align-items:stretch; gap:6px; }
+  .tr-swap{ align-self:center; transform:rotate(90deg); }
+}

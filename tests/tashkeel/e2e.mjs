@@ -281,10 +281,10 @@ try {
 
   overrides["/sw.js"] = SW_NEXT;                                           // "deploy" a new shell version
   await page.evaluate(async () => { await (await navigator.serviceWorker.getRegistration()).update(); });
-  await waitForCache(page, /shell-v7$/);
-  await page.waitForFunction(async () => !(await caches.keys()).some((k) => /shell-v6$/.test(k)), { timeout: 15000 });   // new worker finished activating
+  await waitForCache(page, /shell-v9$/);
+  await page.waitForFunction(async () => !(await caches.keys()).some((k) => /shell-v8$/.test(k)), { timeout: 15000 });   // new worker finished activating
   let rep = await cacheReport(page);
-  check("13c. next deploy (shell bumped): the 19 MB model + runtime survive in the vendor cache; old shell cache removed", modelsIn(rep).join() === "arabic-keyboard-vendor-v1" && !Object.keys(rep).some((k) => /shell-v6$/.test(k)), JSON.stringify(rep));
+  check("13c. next deploy (shell bumped): the 19 MB model + runtime survive in the vendor cache; old shell cache removed", modelsIn(rep).join() === "arabic-keyboard-vendor-v1" && !Object.keys(rep).some((k) => /shell-v8$/.test(k)), JSON.stringify(rep));
   await page.setOfflineMode(true); await page.reload({ waitUntil: "domcontentloaded" });
   h0 = hits.length;
   o = await run(page, "العلم نور والجهل ظلمة");

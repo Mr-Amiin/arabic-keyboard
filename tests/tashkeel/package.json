@@ -8,7 +8,8 @@
     "e2e": "node e2e.mjs",
     "i18n": "node i18n.mjs",
     "qa": "node qa-final.mjs",
-    "keyboard": "node keyboard-visible.mjs"
+    "keyboard": "node keyboard-visible.mjs",
+    "translation": "node translation-ui.mjs"
   },
   "devDependencies": {
     "@sparticuz/chromium": "^138.0.2",

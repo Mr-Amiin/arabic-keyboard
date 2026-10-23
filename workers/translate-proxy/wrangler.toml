@@ -1,0 +1,30 @@
+# Cloudflare Worker: translation proxy for arabic-keyboard.live (Workers AI, model @cf/meta/m2m100-1.2b).
+# Deploy:   cd workers/translate-proxy && npx wrangler deploy
+# There is NO secret to configure: Workers AI is reached through the `AI` binding below.
+name = "ak-translate-proxy"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# Workers AI binding -> available in the code as env.AI  (env.AI.run("@cf/meta/m2m100-1.2b", {...}))
+[ai]
+binding = "AI"
+
+[vars]
+ALLOWED_ORIGINS = "https://www.arabic-keyboard.live,https://arabic-keyboard.live"
+# ALLOW_LOCALHOST = "true"          # local development only; remove for production
+# DISABLED_LANGUAGES = ""           # e.g. "ns,ff" to hide languages the live test showed do not work
+
+# Rate limiting (public site). period must be 10 or 60 seconds. Counters are per Cloudflare location and best-effort.
+[[ratelimits]]
+name = "RATE_LIMITER_IP"            # per visitor IP
+namespace_id = "1001"
+  [ratelimits.simple]
+  limit = 10
+  period = 60
+
+[[ratelimits]]
+name = "RATE_LIMITER_GLOBAL"        # all visitors, per Cloudflare location: protects the daily free allocation
+namespace_id = "1002"
+  [ratelimits.simple]
+  limit = 120
+  period = 60
