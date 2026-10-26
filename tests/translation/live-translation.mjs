@@ -53,6 +53,21 @@ async function tr(text, from, to, raw = false) {
   }
   return { status: 429, body: { ok: false, error: { code: "rate_limited" } }, headers: new Headers() };
 }
+// Validation checks (section 11) must be judged on the Worker's VALIDATION answer. The rate limiter runs before validation (by design,
+// see README), so right after the translation calls above a 429 only means "not evaluated yet". Wait it out and ask again; the
+// expected status/code is never relaxed, and a request that is still 429 after ~2 minutes is reported as a failure with its body.
+async function trValidation(text, from, to) {
+  let r;
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    r = await tr(text, from, to, true);
+    if (r.status !== 429) return r;
+    const w = (Number(r.headers.get("retry-after")) || 30) + 1;
+    console.log(`     (rate limiter answered before validation could run: waiting ${w}s, attempt ${attempt}/4)`); await sleep(w * 1000);
+  }
+  return r;
+}
+const why = r => JSON.stringify({ status: r.status, body: r.body });   // shown on every failed validation check
+const errIs = (r, status, code) => r.status === status && !!(r.body && r.body.error && r.body.error.code === code);
 const out = r => (r.body && r.body.ok ? r.body.translation : "");
 const show = (label, r) => console.log(`     ${label}: ${r.body && r.body.ok ? JSON.stringify(r.body.translation) : JSON.stringify(r.body)}`);
 const real = (r, to, input) => r.status === 200 && r.body.ok && out(r).trim().length > 0 && out(r) !== input && (SCRIPT[to] ? SCRIPT[to].test(out(r)) : (LATIN.test(out(r)) && !AR.test(out(r))));
@@ -111,11 +126,11 @@ try {
   if (list.length) { const rev = []; for (const c of ["fr", "es", "tr", "ur"].filter(c => list.includes(c))) { const x = await tr("Bonjour, comment allez-vous ?", c === "fr" ? "fr" : "en", "ar"); rev.push(c); if (c === "fr") ok("10. French → Arabic is a REAL translation (Arabic script)", real(x, "ar", "Bonjour, comment allez-vous ?"), JSON.stringify(x.body)); break; } }
 
   /* ---- validation / protection (cheap: rejected before the model is called) ---- */
-  r = await tr("   ", "ar", "en", true); ok("11a. empty text -> 400 empty", r.status === 400 && r.body.error.code === "empty");
-  r = await tr("ع".repeat(5001), "ar", "en", true); ok("11b. over 5,000 characters -> 413 too_long", r.status === 413 && r.body.error.code === "too_long");
-  r = await tr("نص", "ar", "xx", true); ok("11c. unsupported language -> 400 unsupported_language", r.status === 400 && r.body.error.code === "unsupported_language");
-  r = await tr("نص", "ar", "ar", true); ok("11d. same language -> 400 same_language", r.status === 400 && r.body.error.code === "same_language");
-  r = await tr("نص", "auto", "en", true); ok("11e. no auto-detect: from='auto' -> 400 bad_request (the model cannot detect languages)", r.status === 400 && r.body.error.code === "bad_request");
+  r = await trValidation("   ", "ar", "en"); ok("11a. empty text -> 400 empty", errIs(r, 400, "empty"), why(r));
+  r = await trValidation("ع".repeat(5001), "ar", "en"); ok("11b. over 5,000 characters -> 413 too_long", errIs(r, 413, "too_long"), why(r));
+  r = await trValidation("نص", "ar", "xx"); ok("11c. unsupported language -> 400 unsupported_language", errIs(r, 400, "unsupported_language"), why(r));
+  r = await trValidation("نص", "ar", "ar"); ok("11d. same language -> 400 same_language", errIs(r, 400, "same_language"), why(r));
+  r = await trValidation("نص", "auto", "en"); ok("11e. no auto-detect: from='auto' -> 400 bad_request (the model cannot detect languages)", errIs(r, 400, "bad_request"), why(r));
   const evil = await fetch(API + "/translate", { method: "POST", headers: { "content-type": "application/json", origin: "https://evil.example" }, body: JSON.stringify({ text: "x", from: "en", to: "ar" }) });
   ok("11f. a foreign Origin is refused (403) and gets no CORS header", evil.status === 403 && evil.headers.get("access-control-allow-origin") === null);
   const pre = await fetch(API + "/translate", { method: "OPTIONS", headers: { origin: ORIGIN, "access-control-request-method": "POST", "access-control-request-headers": "content-type" } });

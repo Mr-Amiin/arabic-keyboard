@@ -94,6 +94,37 @@ test("validation: unsupported / malformed codes and same language never reach th
   assert.equal(calls.length, 0);
 });
 
+test("validation contract: exact status + code + body shape for empty, unsupported, same-language and from=auto; the model is NEVER called", async () => {
+  const cases = [
+    ["empty text",                { text: "",     from: "ar",   to: "en" }, 400, "empty"],
+    ["whitespace-only text",      { text: "   ", from: "ar",   to: "en" }, 400, "empty"],
+    ["unsupported target code",   { text: "نص",   from: "ar",   to: "xx" }, 400, "unsupported_language"],
+    ["unsupported source code",   { text: "نص",   from: "xx",   to: "en" }, 400, "unsupported_language"],
+    ["identical languages",       { text: "نص",   from: "ar",   to: "ar" }, 400, "same_language"],
+    ["identical, different case", { text: "نص",   from: "AR",   to: "ar" }, 400, "same_language"],
+    ["from = auto",               { text: "نص",   from: "auto", to: "en" }, 400, "bad_request"],
+    ["from missing",              { text: "نص",                 to: "en" }, 400, "bad_request"],
+  ];
+  for (const [name, payload, status, code] of cases) {
+    const r = await tr(payload);
+    assert.equal(r.res.status, status, name); assert.equal(r.body.ok, false, name); assert.equal(r.body.error.code, code, name);
+    assert.equal(typeof r.body.error.message, "string", name); assert.ok(r.body.error.message.length > 0, name);
+    assert.equal(r.res.headers.get("access-control-allow-origin"), ORIGIN, name + ": the page can read the error");
+  }
+  assert.equal(calls.length, 0, "no invalid request may reach Workers AI");
+});
+test("rate limiter runs BEFORE validation (by design): a spent per-IP window answers 429 even for an invalid request, and the model is still never called", async () => {
+  // A counting limiter shaped like the production binding: 10 requests per window per key.
+  const counts = new Map(); const limiter = { limit: async ({ key }) => { const n = (counts.get(key) || 0) + 1; counts.set(key, n); return { success: n <= 10 }; } };
+  const env = mkEnv({ RATE_LIMITER_IP: limiter }); const h = { headers: { "cf-connecting-ip": "203.0.113.50" } };
+  for (let i = 0; i < 10; i++) assert.equal((await tr({ text: "   ", from: "ar", to: "en" }, h, env)).res.status, 400, "request " + (i + 1) + " is still validated");
+  for (const payload of [{ text: "   ", from: "ar", to: "en" }, { text: "x", from: "ar", to: "xx" }, { text: "x", from: "ar", to: "ar" }, { text: "x", from: "auto", to: "en" }]) {
+    const r = await tr(payload, h, env);
+    assert.equal(r.res.status, 429); assert.equal(r.body.error.code, "rate_limited"); assert.equal(r.res.headers.get("retry-after"), "30");
+  }
+  assert.equal((await tr({ text: "   ", from: "ar", to: "en" }, { headers: { "cf-connecting-ip": "198.51.100.9" } }, env)).res.status, 400, "another visitor is unaffected");
+  assert.equal(calls.length, 0, "neither validation errors nor rate-limited requests reach Workers AI");
+});
 test("chunking: long multi-paragraph text is split into sentence-sized model calls (<= CHUNK_CHARS) and re-assembled EXACTLY", async () => {
   aiImpl = echo;
   const para = n => Array.from({ length: n }, (_, i) => `هذه هي الجملة رقم ${i + 1} في الفقرة، وهي جملة طويلة نسبيًا لاختبار التقسيم.`).join(" ");

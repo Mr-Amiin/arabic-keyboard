@@ -31,6 +31,9 @@ Checked on Cloudflare's Workers AI pricing page (last updated 20 Oct 2026). **Re
 * How the limits are enforced in this project: a visitor can make **10 translations per minute** (per IP), and each Cloudflare location
   accepts at most **120 per minute** overall. These counters are per location and best-effort (Cloudflare's own description), so they slow
   abuse down but are not an exact global cap. The hard stop is always the free daily allocation.
+  The limiter runs **before** the input checks, so a request that is rejected as invalid (empty text, unknown language, ...) still counts
+  toward the visitor's 10 per minute. Invalid requests never reach the model, so they cost no allocation. When a window is used up, even
+  an invalid request is answered `429 rate_limited` (with `retry-after`) instead of `400`. The live test waits that out before judging.
 
 ---
 
