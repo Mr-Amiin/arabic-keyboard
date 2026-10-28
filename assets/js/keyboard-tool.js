@@ -129,7 +129,9 @@ window.ArabicKeyboardTool = (function () {
        hard-coded for sample text. */
     const TASHKEEL_RE = /[\u064B-\u0652\u0670]/g; // fatha/tanween/damma/tanween/kasra/tanween/sukun/shadda + dagger alif
     let highlightEl = null;
-    if (editor.tagName === "TEXTAREA" && editor.parentElement) {
+    // opts.highlight === false: pages that embed the keyboard around their own
+    // textarea (e.g. /tashkeel/) keep that textarea's normal look and skip the overlay.
+    if (opts.highlight !== false && editor.tagName === "TEXTAREA" && editor.parentElement) {
       const host = editor.parentElement;
       highlightEl = document.createElement("div");
       highlightEl.className = "editor editor-highlight notranslate";
@@ -229,12 +231,89 @@ window.ArabicKeyboardTool = (function () {
     bind(opts.fontMinusId || "btnFontMinus", () => { fontSize = Math.max(14, fontSize - 2); editor.style.fontSize = fontSize + "px"; syncHighlightBox(); });
     bind(opts.fontPlusId || "btnFontPlus", () => { fontSize = Math.min(40, fontSize + 2); editor.style.fontSize = fontSize + "px"; syncHighlightBox(); });
 
+    /* After the virtual keyboard changes the text, tell the page. By default the
+       tool just refreshes its own counters + undo stack. With opts.emitInput the
+       tool fires a real "input" event instead (this tool's own input listener then
+       does the same refresh once), so a host page's existing input handlers —
+       e.g. the Tashkeel character counter — see on-screen typing exactly like
+       physical typing. */
+    function commitEdit() {
+      if (opts.emitInput) editor.dispatchEvent(new Event("input", { bubbles: true }));
+      else { updateMeta(); pushUndo(); }
+    }
+
+    /* Run an edit and leave the PAGE exactly where the visitor had it. Besides focus(), browsers also
+       queue a "reveal the new selection" scroll of the whole page when the editor's own scroll has to
+       change (long text); preventScroll does not cover that. Flush layout so any such scroll has been
+       applied, then put the page back. Synchronous and tiny: it cannot fight a user's own scrolling. */
+    function keepPageScroll(edit) {
+      const x = window.scrollX, y = window.scrollY;
+      edit();
+      void editor.offsetHeight;
+      if (window.scrollX !== x || window.scrollY !== y) window.scrollTo({ left: x, top: y, behavior: "instant" });
+    }
+
+    /* Keep the caret/selection live in the editor WITHOUT scrolling the page to it.
+       A plain focus() scrolls the editor into view, so with the editor above the keyboard
+       on a short or phone screen every key tap would yank the page back up and move the
+       keys from under the finger. */
+    function focusEditor() { editor.focus({ preventScroll: true }); revealCaret(); }
+
+    /* preventScroll also skips the browser's own "scroll the textarea to its caret", so in a long
+       text the new character would be typed out of sight. Do that part ourselves: scroll only the
+       textarea (never the page) just enough to show the caret line. Measured on an off-screen
+       mirror with the same font, width, padding and direction so wrapping and RTL match. */
+    function revealCaret() {
+      try {
+        if (editor.scrollHeight <= editor.clientHeight) return;
+        const cs = getComputedStyle(editor), m = document.createElement("div"), mark = document.createElement("span");
+        ["fontFamily", "fontSize", "fontWeight", "fontStyle", "fontFeatureSettings", "letterSpacing", "wordSpacing", "lineHeight",
+          "textIndent", "textTransform", "tabSize", "direction", "wordBreak", "paddingTop", "paddingRight", "paddingBottom", "paddingLeft"
+        ].forEach((k) => { m.style[k] = cs[k]; });
+        Object.assign(m.style, { position: "absolute", visibility: "hidden", left: "-9999px", top: "0", boxSizing: "border-box",
+          width: editor.clientWidth + "px", whiteSpace: "pre-wrap", overflowWrap: "break-word" });
+        m.textContent = editor.value.slice(0, editor.selectionEnd);
+        mark.textContent = "\u200b";
+        m.appendChild(mark);
+        document.body.appendChild(m);
+        const top = mark.offsetTop, lh = parseFloat(cs.lineHeight) || mark.offsetHeight || 24;
+        m.remove();
+        const bottom = top + lh + (parseFloat(cs.paddingBottom) || 0);
+        if (top - (parseFloat(cs.paddingTop) || 0) < editor.scrollTop) editor.scrollTop = Math.max(0, top - (parseFloat(cs.paddingTop) || 0));
+        else if (bottom > editor.scrollTop + editor.clientHeight) editor.scrollTop = bottom - editor.clientHeight;
+      } catch (e) { /* purely cosmetic: never let it break typing */ }
+    }
+
+    /* Insert at the caret, or replace the selected text, as a native field does. */
     function insertAtCursor(str) {
-      const pos = editor.selectionStart ?? editor.value.length;
-      editor.value = editor.value.slice(0, pos) + str + editor.value.slice(pos);
-      editor.selectionStart = editor.selectionEnd = pos + str.length;
-      editor.focus();
-      updateMeta(); pushUndo();
+      keepPageScroll(() => {
+        const start = editor.selectionStart ?? editor.value.length;
+        const end = editor.selectionEnd ?? start;
+        editor.value = editor.value.slice(0, start) + str + editor.value.slice(end);
+        editor.selectionStart = editor.selectionEnd = start + str.length;
+        focusEditor();
+        commitEdit();
+      });
+    }
+
+    /* Backspace: delete the selection if there is one, otherwise the character
+       before the caret (never half of a surrogate pair, e.g. an emoji). */
+    function backspace() {
+      keepPageScroll(() => {
+        const v = editor.value;
+        const start = editor.selectionStart ?? v.length;
+        const end = editor.selectionEnd ?? start;
+        let from = start;
+        if (end === start) {
+          if (start === 0) { focusEditor(); return; }
+          from = start - 1;
+          if (from > 0 && /[\uDC00-\uDFFF]/.test(v[from]) && /[\uD800-\uDBFF]/.test(v[from - 1])) from--;
+        }
+        editor.value = v.slice(0, from) + v.slice(end);
+        editor.selectionStart = editor.selectionEnd = from;
+        focusEditor();
+        commitEdit();
+      });
     }
 
     /* mode switch */
@@ -362,11 +441,7 @@ window.ArabicKeyboardTool = (function () {
       backBtn.className = "key wide notranslate"; backBtn.type = "button"; backBtn.textContent = "⌫ حذف";
       backBtn.setAttribute("aria-label", "حذف الحرف الأخير");
       backBtn.setAttribute("translate", "no");
-      backBtn.addEventListener("click", () => {
-        const pos = editor.selectionStart ?? editor.value.length;
-        if (pos > 0) { editor.value = editor.value.slice(0, pos - 1) + editor.value.slice(pos); editor.selectionStart = editor.selectionEnd = pos - 1; updateMeta(); pushUndo(); }
-        editor.focus();
-      });
+      backBtn.addEventListener("click", backspace);
       const enterBtn = document.createElement("button");
       enterBtn.className = "key wide notranslate"; enterBtn.type = "button"; enterBtn.textContent = "↵ سطر جديد";
       enterBtn.setAttribute("aria-label", "سطر جديد");

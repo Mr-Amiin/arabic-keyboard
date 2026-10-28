@@ -4,12 +4,13 @@
   "type": "module",
   "description": "Automated tests for the /tashkeel/ tool. Not deployed logic; run locally: npm install && npm test",
   "scripts": {
-    "test": "node --test unit.test.mjs model.test.mjs ui.test.mjs",
+    "test": "node --test unit.test.mjs model.test.mjs ui.test.mjs keyboard-toggle.test.mjs",
     "e2e": "node e2e.mjs",
     "i18n": "node i18n.mjs",
     "qa": "node qa-final.mjs",
     "keyboard": "node keyboard-visible.mjs",
-    "translation": "node translation-ui.mjs"
+    "translation": "node translation-ui.mjs",
+    "toggle": "node keyboard-toggle.mjs"
   },
   "devDependencies": {
     "@sparticuz/chromium": "^138.0.2",

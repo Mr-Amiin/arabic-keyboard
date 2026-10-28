@@ -239,6 +239,8 @@ try {
   await ctx.close();
 
   /* ---- 13: Ichkil fixes in a real browser ---- */
+  const SHELL_NOW = Number(/shell-v(\d+)/.exec(fs.readFileSync(path.join(ROOT, "sw.js"), "utf8"))[1]);   // the shell version actually shipped in sw.js
+  const SHELL_RE = (n) => new RegExp("shell-v" + n + "$");
   const SW_NEXT = "/tmp/e2e-sw-next.js";                 // the production sw.js with a bumped shell version = "next deploy"
   fs.writeFileSync(SW_NEXT, fs.readFileSync(path.join(ROOT, "sw.js"), "utf8").replace(/shell-v(\d+)/, (m, n) => "shell-v" + (Number(n) + 1)));
   const SW_V4 = path.join(ROOT, "tests/tashkeel/fixtures/sw-v4-original.js");   // the previously deployed worker, verbatim
@@ -281,10 +283,10 @@ try {
 
   overrides["/sw.js"] = SW_NEXT;                                           // "deploy" a new shell version
   await page.evaluate(async () => { await (await navigator.serviceWorker.getRegistration()).update(); });
-  await waitForCache(page, /shell-v9$/);
-  await page.waitForFunction(async () => !(await caches.keys()).some((k) => /shell-v8$/.test(k)), { timeout: 15000 });   // new worker finished activating
+  await waitForCache(page, SHELL_RE(SHELL_NOW + 1));
+  await page.waitForFunction(async (src) => !(await caches.keys()).some((k) => new RegExp(src).test(k)), { timeout: 15000 }, SHELL_RE(SHELL_NOW).source);   // new worker finished activating
   let rep = await cacheReport(page);
-  check("13c. next deploy (shell bumped): the 19 MB model + runtime survive in the vendor cache; old shell cache removed", modelsIn(rep).join() === "arabic-keyboard-vendor-v1" && !Object.keys(rep).some((k) => /shell-v8$/.test(k)), JSON.stringify(rep));
+  check("13c. next deploy (shell bumped): the 19 MB model + runtime survive in the vendor cache; old shell cache removed", modelsIn(rep).join() === "arabic-keyboard-vendor-v1" && !Object.keys(rep).some((k) => SHELL_RE(SHELL_NOW).test(k)), JSON.stringify(rep));
   await page.setOfflineMode(true); await page.reload({ waitUntil: "domcontentloaded" });
   h0 = hits.length;
   o = await run(page, "العلم نور والجهل ظلمة");

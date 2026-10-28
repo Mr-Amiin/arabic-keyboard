@@ -626,6 +626,19 @@ html[data-theme="dark"] .tk-out.has-result{ color:var(--emerald); }
 }
 .tk-app [hidden]{ display:none !important; }
 
+/* On-screen keyboard on /tashkeel/: ON/OFF switch above the shared keyboard (.kb-panel / .key styles are reused as-is). */
+.tk-kb-toggle{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; }
+.tk-kb-label{ font-size:13px; font-weight:600; }
+.tk-switch{ display:inline-flex; align-items:center; gap:10px; min-height:44px; padding:4px 8px; background:none; border:0; border-radius:var(--radius-sm); color:var(--ink); font-family:var(--font-ui); font-size:13px; font-weight:700; cursor:pointer; }
+.tk-switch:focus-visible{ outline:2px solid var(--emerald); outline-offset:2px; }
+.tk-switch-track{ position:relative; flex:none; width:44px; height:24px; border-radius:999px; background:var(--border); transition:background .15s ease; }
+.tk-switch-knob{ position:absolute; top:3px; inset-inline-start:3px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.35); transition:inset-inline-start .15s ease; }
+.tk-switch[aria-checked="true"] .tk-switch-track{ background:var(--emerald); }
+.tk-switch[aria-checked="true"] .tk-switch-knob{ inset-inline-start:23px; }
+.tk-switch-state{ min-width:3.4em; text-align:start; }
+.tk-kb{ margin-top:8px; border:1px solid var(--border); border-radius:var(--radius-md); max-height:none; overflow:visible; }
+@media (prefers-reduced-motion:reduce){ .tk-switch-track, .tk-switch-knob{ transition:none; } }
+
 /* ---------------- LANGUAGE SWITCHER (العربية | English) ---------------- */
 .lang-switch{ display:inline-flex; align-items:stretch; border:1px solid var(--border); border-radius:10px; background:var(--surface); overflow:hidden; flex:0 0 auto; }
 .lang-opt{

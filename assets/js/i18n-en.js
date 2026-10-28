@@ -229,6 +229,8 @@
  "تقدّم المعالجة": "Processing progress",
  "إعادة المحاولة": "Try again",
  "الناتج": "Result",
+ "تشغيل": "ON",
+ "إيقاف": "OFF",
  "نسخ النص المشكول": "Copy diacritized text",
  "تحتاج هذه الأداة إلى تفعيل JavaScript.": "This tool requires JavaScript to be enabled.",
  "التشكيل آلي وقد يخطئ، خصوصًا في حركة آخر الكلمة (الإعراب) وفي الأسماء النادرة والشعر. الحروف التي شكّلتَها بنفسك تبقى كما كتبتها. راجع النصوص المهمة (القرآن الكريم، الوثائق الرسمية، المواد التعليمية) بشريًا.": "Diacritization is automatic and can be wrong, especially for the final vowel of a word (i'rab) and for rare names and poetry. Letters you diacritized yourself stay exactly as you wrote them. Have important texts (the Qur'an, official documents, teaching materials) reviewed by a person.",

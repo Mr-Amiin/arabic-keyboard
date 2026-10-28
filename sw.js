@@ -10,7 +10,7 @@
    not throw away a visitor's 19 MB download. Bump VENDOR_CACHE only when
    the files under /assets/vendor/ themselves change.
 */
-const CACHE_NAME = "arabic-keyboard-shell-v10";
+const CACHE_NAME = "arabic-keyboard-shell-v11";
 const VENDOR_CACHE = "arabic-keyboard-vendor-v1";
 const isVendor = (url) => new URL(url).pathname.startsWith("/assets/vendor/");
 const CORE_ASSETS = [

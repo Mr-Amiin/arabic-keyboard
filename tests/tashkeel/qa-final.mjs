@@ -1,13 +1,17 @@
 // Final release QA: English localization + Tashkeel integration, in a REAL browser (headless Chromium).
 // Real Tashkeel runs use the shipped model (no mocks). Failure injection only aborts/delays network requests.
-// Run:  cd tests/tashkeel && npm install && node qa-final.mjs   (needs git; unpacks HEAD for the SW-upgrade test)
+// Run:  cd tests/tashkeel && npm install && node qa-final.mjs   (needs git history; unpacks OLD_REF for the SW-upgrade test)
 import http from "node:http"; import fs from "node:fs"; import path from "node:path"; import { execSync } from "node:child_process";
 import chromium from "@sparticuz/chromium"; import puppeteer from "puppeteer-core";
 
 const NEW = path.resolve(new URL("../..", import.meta.url).pathname);
 const OLD = "/tmp/qa-old-site";
+// The "previously deployed" site for the service-worker upgrade test (section 3). Pinned to the last commit BEFORE the i18n release
+// (cache shell-v5, no language switcher) so the test's premise stays true as HEAD moves on; the NEW side is always this working tree.
+const OLD_REF = "10d2864";
+const NEW_SHELL = /shell-v(\d+)/.exec(fs.readFileSync(path.join(NEW, "sw.js"), "utf8"))[1];   // shell cache version actually shipped in sw.js
 fs.rmSync(OLD, { recursive: true, force: true }); fs.mkdirSync(OLD, { recursive: true });
-execSync(`git -C ${NEW} archive HEAD | tar -x -C ${OLD}`);          // the previously deployed version (HEAD)
+execSync(`git -C ${NEW} archive ${OLD_REF} | tar -x -C ${OLD}`);   // the previously deployed version (see OLD_REF)
 let curRoot = NEW, cc = "max-age=600";   // cc: Cache-Control sent by the test server (GitHub Pages sends max-age=600)
 const PORT = 8141, O = `http://localhost:${PORT}`;
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".wasm": "application/wasm", ".woff2": "font/woff2", ".onnx": "application/octet-stream" };
@@ -221,18 +225,18 @@ const oldKeys = await pg.evaluate(async () => (await caches.keys()).join());
 ck("3a. (setup) old deployment installed its service worker (shell-v5) and has NO language switcher", !oldHas.sw && /shell-v5/.test(oldKeys) && (await pg.$$(".lang-switch")).length === 0, oldKeys);
 curRoot = NEW;                                                         // "deploy" the new version
 await go(pg, "/"); const firstAfter = await pg.evaluate(() => document.querySelectorAll(".lang-switch").length);
-await pg.waitForFunction(async () => { const k = await caches.keys(); return k.some(x => /shell-v8$/.test(x)) && !k.some(x => /shell-v5$/.test(x)); }, { timeout: 25000 });
-info(`first navigation right after deploy showed ${firstAfter ? "the NEW" : "the OLD (cached)"} page; SW then updated to shell-v8 and deleted v5`);
+await pg.waitForFunction(async (nv) => { const k = await caches.keys(); return k.some(x => new RegExp("shell-v" + nv + "$").test(x)) && !k.some(x => /shell-v5$/.test(x)); }, { timeout: 25000 }, NEW_SHELL);
+info(`first navigation right after deploy showed ${firstAfter ? "the NEW" : "the OLD (cached)"} page; SW then updated to shell-v${NEW_SHELL} and deleted v5`);
 await go(pg, "/"); const r1 = await pg.evaluate(() => ({ sw: document.querySelectorAll(".lang-switch").length, tash: document.querySelectorAll('nav.primary > .nav-item > a[href$="tashkeel/"]').length, script: !!document.querySelector('script[src="./assets/js/i18n.js"]') }));
 ck("3b. returning visitor: after the SW update, the next load of / (precached) has the new script, switcher and Tashkeel link", r1.sw >= 2 && r1.tash === 1 && r1.script, JSON.stringify(r1));
 await go(pg, "/faq/"); const r2a = await pg.evaluate(() => document.querySelectorAll(".lang-switch").length);
 info(`/faq/ (NOT precached) seconds after deploy, HTTP cache still fresh (max-age=600): ${r2a ? "already new" : "still the old copy (pre-existing 10-minute hosting cache TTL, not a service-worker issue)"}`);
 cc = "no-cache"; { const cdp = await pg.createCDPSession(); await cdp.send("Network.clearBrowserCache"); }   // = the 10-minute HTTP-cache TTL has expired
-await pg.evaluate(async () => { for (const k of await caches.keys()) if (/shell-v8$/.test(k)) await (await caches.open(k)).delete("/faq/"); });
+await pg.evaluate(async (nv) => { for (const k of await caches.keys()) if (new RegExp("shell-v" + nv + "$").test(k)) await (await caches.open(k)).delete("/faq/"); }, NEW_SHELL);
 await go(pg, "/faq/"); const r2 = await pg.evaluate(() => ({ sw: document.querySelectorAll(".lang-switch").length, script: !!document.querySelector('script[src="../assets/js/i18n.js"]') }));
 ck("3b2. non-precached page (/faq/) picks up the new script + switcher once its HTTP-cache TTL has expired (shell-v5 copy is gone)", r2.sw >= 2 && r2.script, JSON.stringify(r2));
-const swState = await pg.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); const c = await caches.open((await caches.keys()).find(k => /shell-v8$/.test(k))); return { ctl: !!navigator.serviceWorker.controller, i18n: !!(await c.match("/assets/js/i18n.js")), keys: (await caches.keys()).join() }; });
-ck("3c. new service worker controls the page and i18n.js is precached in shell-v8", swState.ctl && swState.i18n, JSON.stringify(swState));
+const swState = await pg.evaluate(async (nv) => { const r = await navigator.serviceWorker.getRegistration(); const c = await caches.open((await caches.keys()).find(k => new RegExp("shell-v" + nv + "$").test(k))); return { ctl: !!navigator.serviceWorker.controller, i18n: !!(await c.match("/assets/js/i18n.js")), keys: (await caches.keys()).join() }; }, NEW_SHELL);
+ck(`3c. new service worker controls the page and i18n.js is precached in shell-v${NEW_SHELL}`, swState.ctl && swState.i18n, JSON.stringify(swState));
 await pick(pg, "en");                                                   // English once online → dictionary cached
 await sleep(800);
 await pg.setOfflineMode(true); await go(pg, "/faq/"); await ready(pg, "en").catch(() => { }); const off = await st(pg);

@@ -104,6 +104,16 @@
   <label for="tashkeelIn" class="tk-label">النص بدون تشكيل</label>
   <textarea class="demo-in editor tk-in" id="tashkeelIn" dir="rtl" lang="ar" spellcheck="false" autocomplete="off" placeholder="اكتب أو الصق نصًا عربيًا بدون تشكيل…"></textarea>
   <div class="editor-meta"><span id="tashkeelCounts">٠ حرف · ٠ كلمة</span></div>
+  <div class="tk-kb-toggle" id="tashkeelKbRow">
+    <span class="tk-kb-label" id="tashkeelKbLabel">لوحة المفاتيح العربية</span>
+    <button type="button" class="tk-switch" id="tashkeelKbSwitch" role="switch" aria-checked="true" aria-labelledby="tashkeelKbLabel" aria-controls="tashkeelKbPanel">
+      <span class="tk-switch-track" aria-hidden="true"><span class="tk-switch-knob"></span></span>
+      <span class="tk-switch-state" id="tashkeelKbState">تشغيل</span>
+    </button>
+  </div>
+  <div class="kb-panel tk-kb notranslate" id="tashkeelKbPanel" translate="no">
+    <div id="virtualKeyboard" class="notranslate" translate="no"></div>
+  </div>
   <div class="tk-actions">
     <button class="tb-btn primary" id="tashkeelRun" type="button">تشكيل النص ✨</button>
     <button class="tb-btn" id="tashkeelExample" type="button">مثال</button>
@@ -197,6 +207,7 @@
 <script src="../assets/js/app.js" defer></script>
   <script src="../assets/js/tashkeel-engine.js" defer></script>
   <script src="../assets/js/tashkeel-tool.js" defer></script>
+  <script src="../assets/js/keyboard-tool.js" defer></script>
   <script src="../assets/js/tashkeel-init.js" defer></script>
 </body>
 </html>
