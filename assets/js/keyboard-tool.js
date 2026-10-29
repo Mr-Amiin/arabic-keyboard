@@ -109,6 +109,8 @@ window.ArabicKeyboardTool = (function () {
     const dirIndicator = document.getElementById(opts.dirIndicatorId || "dirIndicator");
 
     let undoStack = [""], redoStack = [], suppressPush = false, translitOn = false, fontSize = 24;
+    // A single-line <input> (e.g. the /typing-test/ field) cannot hold line breaks: browsers strip them from its value.
+    const singleLine = editor.tagName === "INPUT";
 
     /* ---------------------------------------------------------------
        Tashkeel highlight overlay
@@ -286,6 +288,10 @@ window.ArabicKeyboardTool = (function () {
 
     /* Insert at the caret, or replace the selected text, as a native field does. */
     function insertAtCursor(str) {
+      // Never edit a field the page has disabled / made read-only (e.g. a finished typing test), exactly like physical typing.
+      if (editor.disabled || editor.readOnly) return;
+      if (singleLine) str = str.replace(/[\r\n]+/g, "");
+      if (!str) return;
       keepPageScroll(() => {
         const start = editor.selectionStart ?? editor.value.length;
         const end = editor.selectionEnd ?? start;
@@ -299,6 +305,7 @@ window.ArabicKeyboardTool = (function () {
     /* Backspace: delete the selection if there is one, otherwise the character
        before the caret (never half of a surrogate pair, e.g. an emoji). */
     function backspace() {
+      if (editor.disabled || editor.readOnly) return;
       keepPageScroll(() => {
         const v = editor.value;
         const start = editor.selectionStart ?? v.length;
@@ -447,7 +454,8 @@ window.ArabicKeyboardTool = (function () {
       enterBtn.setAttribute("aria-label", "سطر جديد");
       enterBtn.setAttribute("translate", "no");
       enterBtn.addEventListener("click", () => insertAtCursor("\n"));
-      lastRow.appendChild(enterBtn); lastRow.appendChild(spaceBtn); lastRow.appendChild(backBtn);
+      if (!singleLine) lastRow.appendChild(enterBtn);   // a single-line field has no line breaks: no "new line" key
+      lastRow.appendChild(spaceBtn); lastRow.appendChild(backBtn);
     }
 
     return { editor, insertAtCursor, transliterate };

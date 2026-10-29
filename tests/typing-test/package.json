@@ -1,0 +1,15 @@
+{
+  "name": "typing-test-keyboard-tests",
+  "private": true,
+  "type": "module",
+  "description": "Automated tests for the on-screen Arabic keyboard on /typing-test/. Run locally: npm install && npm test (jsdom) / npm run browser (real Chromium; Linux bundled build, or set CHROME_PATH)",
+  "scripts": {
+    "test": "node --test keyboard.test.mjs",
+    "browser": "node keyboard-browser.mjs"
+  },
+  "devDependencies": {
+    "@sparticuz/chromium": "^138.0.2",
+    "jsdom": "^26.1.0",
+    "puppeteer-core": "^24.43.1"
+  }
+}

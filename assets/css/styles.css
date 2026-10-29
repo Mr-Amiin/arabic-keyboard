@@ -626,7 +626,7 @@ html[data-theme="dark"] .tk-out.has-result{ color:var(--emerald); }
 }
 .tk-app [hidden]{ display:none !important; }
 
-/* On-screen keyboard on /tashkeel/: ON/OFF switch above the shared keyboard (.kb-panel / .key styles are reused as-is). */
+/* On-screen keyboard on /tashkeel/ and /typing-test/ (the latter has no switch; .tt-kb shares .tk-kb's panel box). On /tashkeel/: ON/OFF switch above the shared keyboard (.kb-panel / .key styles are reused as-is). */
 .tk-kb-toggle{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; }
 .tk-kb-label{ font-size:13px; font-weight:600; }
 .tk-switch{ display:inline-flex; align-items:center; gap:10px; min-height:44px; padding:4px 8px; background:none; border:0; border-radius:var(--radius-sm); color:var(--ink); font-family:var(--font-ui); font-size:13px; font-weight:700; cursor:pointer; }
@@ -636,7 +636,9 @@ html[data-theme="dark"] .tk-out.has-result{ color:var(--emerald); }
 .tk-switch[aria-checked="true"] .tk-switch-track{ background:var(--emerald); }
 .tk-switch[aria-checked="true"] .tk-switch-knob{ inset-inline-start:23px; }
 .tk-switch-state{ min-width:3.4em; text-align:start; }
-.tk-kb{ margin-top:8px; border:1px solid var(--border); border-radius:var(--radius-md); max-height:none; overflow:visible; }
+.tk-kb, .tt-kb{ margin-top:8px; border:1px solid var(--border); border-radius:var(--radius-md); max-height:none; overflow:visible; }
+/* /typing-test/ only: the test field is a single line; the generic mobile .editor height (180px, made for textareas) would push the keys below the fold. */
+.tt-input{ height:auto; }
 @media (prefers-reduced-motion:reduce){ .tk-switch-track, .tk-switch-knob{ transition:none; } }
 
 /* ---------------- LANGUAGE SWITCHER (العربية | English) ---------------- */

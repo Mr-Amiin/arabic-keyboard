@@ -113,7 +113,10 @@
   <div class="stat"><div class="num" id="statTime">30</div><div class="lbl">Seconds</div></div>
 </div>
 <div data-i18n-skip class="prompt-text" id="promptText" dir="rtl"></div>
-<input type="text" id="typing-input" class="editor" style="min-height:auto; padding:14px 16px; font-size:20px;" dir="rtl" placeholder="ابدأ الكتابة هنا لتشغيل المؤقت…" autocomplete="off">
+<input type="text" id="typing-input" class="editor tt-input" style="min-height:auto; padding:14px 16px; font-size:20px;" dir="rtl" placeholder="ابدأ الكتابة هنا لتشغيل المؤقت…" autocomplete="off">
+<div class="kb-panel tt-kb notranslate" id="typingKbPanel" translate="no" role="group" aria-label="لوحة المفاتيح العربية">
+  <div id="virtualKeyboard" class="notranslate" translate="no"></div>
+</div>
 <div style="text-align:center; margin-top:14px;">
   <button class="tb-btn primary" id="restartTest">إعادة الاختبار ↻</button>
 </div>
@@ -160,6 +163,7 @@
 <div class="toast" id="toast" role="status"></div>
 <script src="../assets/js/app.js" defer></script>
   <script src="../assets/js/typing-test.js" defer></script>
+  <script src="../assets/js/keyboard-tool.js" defer></script>
   <script src="../assets/js/typing-test-init.js" defer></script>
 </body>
 </html>
