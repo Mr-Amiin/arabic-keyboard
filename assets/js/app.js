@@ -1,19 +1,29 @@
 /* ============================================================
    لوحة عربي — Global shared behavior (every route loads this)
    Theme toggle, mobile nav, toast, FAQ accordion.
-   Note: theme intentionally kept in-memory (defaults to system
-   preference) rather than using localStorage/cookies, so it is
-   safe to preview inside sandboxed artifact viewers. If you self
-   host this site, add a localStorage-backed persistence layer
-   here — it's the one line intentionally left out.
+   Theme: the visitor's explicit choice is saved in localStorage
+   ("ak-theme": "light" | "dark") so it survives navigation, refresh
+   and direct loads. With nothing saved the system preference is used.
+   assets/js/theme-init.js applies the saved value before first paint
+   (keep the key name in sync); this file owns the toggle + saving.
    ============================================================ */
 (function () {
   "use strict";
 
   /* ---------- THEME ---------- */
+  const THEME_KEY = "ak-theme";
   const root = document.documentElement;
   const themeBtn = document.getElementById("themeToggle");
-  let theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  function savedTheme() {
+    try {
+      const v = window.localStorage.getItem(THEME_KEY);
+      return v === "dark" || v === "light" ? v : null;
+    } catch (e) { return null; }
+  }
+  function systemTheme() {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  let theme = savedTheme() || systemTheme();
   function applyTheme() {
     root.setAttribute("data-theme", theme);
     if (themeBtn) {
@@ -26,8 +36,16 @@
     themeBtn.addEventListener("click", () => {
       theme = theme === "dark" ? "light" : "dark";
       applyTheme();
+      try { window.localStorage.setItem(THEME_KEY, theme); } catch (e) { /* storage blocked: applies to this page only */ }
     });
   }
+  // Keep other open tabs, and pages restored from the back/forward cache, in step with the saved choice.
+  function syncTheme() {
+    const next = savedTheme() || systemTheme();
+    if (next !== theme) { theme = next; applyTheme(); }
+  }
+  window.addEventListener("storage", (e) => { if (e.key === THEME_KEY || e.key === null) syncTheme(); });
+  window.addEventListener("pageshow", (e) => { if (e.persisted) syncTheme(); });
 
   /* ---------- MOBILE NAV ---------- */
   const menuToggle = document.getElementById("menuToggle");

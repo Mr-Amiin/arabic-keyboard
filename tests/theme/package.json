@@ -1,0 +1,14 @@
+{
+  "name": "ak-theme-tests",
+  "private": true,
+  "type": "module",
+  "description": "Real-browser regression test for dark/light theme persistence across pages. Run: npm install && npm test  (needs Chrome/Chromium on Windows/macOS: set CHROME_PATH if it is not auto-detected; SITE_ROOT=/path/to/other/checkout to test another tree)",
+  "scripts": {
+    "test": "node theme-persistence.mjs",
+    "test:unit": "node --test launch-browser.test.mjs"
+  },
+  "devDependencies": {
+    "@sparticuz/chromium": "^138.0.2",
+    "puppeteer-core": "^24.43.1"
+  }
+}
