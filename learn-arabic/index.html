@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تعلّم العربية — دروس ومسار منظّم للمبتدئين</title>
-<meta name="description" content="مسار تعلّم منظّم للغة العربية يشمل الأبجدية والحركات والتحويل الصوتي ولوحة المفاتيح واختبار الطباعة — بطاقات مرتبطة بأدوات حقيقية.">
+<title>تعلّم العربية — Learn Arabic: Alphabet Course, Harakat &amp; Reading Practice</title>
+<meta name="description" content="Free interactive Arabic course for beginners: all 28 letters with forms and examples, harakat, pronunciation guidance, quizzes, typing practice and saved progress.">
 <link rel="canonical" href="https://www.arabic-keyboard.live/learn-arabic/">
-<meta property="og:title" content="تعلّم العربية — دروس ومسار منظّم للمبتدئين">
-<meta property="og:description" content="مسار تعلّم منظّم للغة العربية يشمل الأبجدية والحركات والتحويل الصوتي ولوحة المفاتيح واختبار الطباعة — بطاقات مرتبطة بأدوات حقيقية.">
+<meta property="og:title" content="تعلّم العربية — Learn Arabic: Alphabet Course, Harakat &amp; Reading Practice">
+<meta property="og:description" content="Free interactive Arabic course for beginners: all 28 letters with forms and examples, harakat, pronunciation guidance, quizzes, typing practice and saved progress.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.arabic-keyboard.live/learn-arabic/">
 <meta name="theme-color" content="#1F6F53">
@@ -20,6 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/styles.css">
+<link rel="stylesheet" href="../assets/css/learn.css">
 
 
 <meta name="google-adsense-account" content="ca-pub-2057098005458261">
@@ -97,25 +98,40 @@
 <section class="hero compact">
   <span class="eyebrow lang-en">Start here</span>
   <h1>تعلّم العربية</h1>
-  <p class="lead">نقطة انطلاق منظّمة لتعلّم أساسيات الكتابة العربية، من الحروف إلى الطباعة السريعة.</p>
+  <p class="lead lang-en" lang="en" dir="ltr" data-i18n-skip>An interactive beginner course in Modern Standard Arabic: learn all 28 letters, how they connect, the short-vowel marks, and practice reading and typing. Free, no account, and your progress stays on your device.</p>
 </section>
 
-<section class="section" style="padding-top:8px;">
-  <div class="grid-cards">
-    <a href="../arabic-alphabet/" class="card"><div class="ic">📖</div><h3>الأبجدية العربية</h3><p>الحروف الـ٢٨ وأشكالها المتصلة ونطقها.</p></a><a href="../tashkeel/" class="card"><div class="ic">✨</div><h3>الحركات والتشكيل</h3><p>الفتحة والضمة والكسرة والسكون والشدة والتنوين.</p></a><a href="../transliteration/" class="card"><div class="ic">🔤</div><h3>التحويل الصوتي</h3><p>كيف تُكتب العربية بأحرف لاتينية (Arabizi).</p></a><a href="../arabic-keyboard/" class="card"><div class="ic">⌨️</div><h3>لوحة المفاتيح العربية</h3><p>تعلّم تخطيط لوحة المفاتيح العربية القياسية.</p></a><a href="../arabic-typing-test/" class="card"><div class="ic">🏁</div><h3>التدرّب على الطباعة</h3><p>درّب سرعتك ودقتك في الكتابة بالعربية.</p></a><a href="../editor/" class="card"><div class="ic">📝</div><h3>الكتابة المتصلة</h3><p>تدرّب على كتابة فقرات وجمل متصلة في محرر مخصّص.</p></a>
-  </div>
-</section>
+<div class="lx lx-main" lang="en" dir="ltr" data-i18n-skip>
+  <noscript><p class="lx-note">The interactive lessons need JavaScript. Visit the <a href="../arabic-alphabet/">Arabic alphabet reference</a> for a static letter chart.</p></noscript>
+  <div id="learnApp" aria-live="off" data-keyboard-src="../assets/js/keyboard-tool.js"><p class="lx-small">Loading the course…</p></div>
 
-<article class="content-block wrap-narrow" style="padding:0 20px;">
-  <h2>مسار مقترح للمبتدئين</h2>
-  <ul>
-    <li data-i18n-html="learn.step1">ابدأ بصفحة <strong>الأبجدية العربية</strong> لتتعرف على شكل كل حرف ونطقه.</li>
-    <li data-i18n-html="learn.step2">انتقل إلى <strong>الحركات والتشكيل</strong> لفهم كيفية ضبط نطق الكلمات.</li>
-    <li data-i18n-html="learn.step3">جرّب <strong>لوحة المفاتيح العربية</strong> لتعتاد كتابة الحروف بنفسك.</li>
-    <li data-i18n-html="learn.step4">استخدم <strong>التحويل الصوتي</strong> إن كنت معتادًا على الكتابة اللاتينية.</li>
-    <li data-i18n-html="learn.step5">اختبر تقدّمك عبر <strong>اختبار الطباعة العربي</strong>.</li>
-  </ul>
-</article>
+  <section id="lxTypePanel" class="lx-typepanel" aria-label="Typing practice" hidden>
+    <div id="lxTPrompt" class="lx-tprompt"></div>
+    <label class="lx-label" for="lxEditor">Your answer</label>
+    <div class="editor-area lx-editor-area"><textarea id="lxEditor" class="editor" dir="rtl" lang="ar" rows="2" maxlength="200" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="lxTPrompt"></textarea></div>
+    <div class="lx-actions"><button type="button" class="lx-btn" id="lxTCheck" data-action="typecheck">Check</button><span id="lxTNext"></span><button type="button" class="lx-btn lx-btn-alt" id="lxKbToggle" aria-expanded="true" aria-controls="lxKbWrap">Hide Arabic keyboard</button></div>
+    <div id="lxTFb" class="lx-fb" role="status" aria-live="polite"></div>
+    <p class="lx-small"><span id="lxKbStatus" role="status"></span> <button type="button" class="lx-link lx-link-quiet" id="lxKbRetry" hidden>Try loading the keyboard again</button></p>
+    <span id="lxKbAnnounce" class="lx-sr" role="status" aria-live="polite" aria-atomic="true"></span>
+  </section>
+</div>
+
+<!-- The on-screen keyboard lives OUTSIDE the data-i18n-skip course container on purpose: the site translator then localises its control labels
+     (Space / Delete / New line / Fatha...) exactly like the standalone keyboard page. DOM order is unchanged: answer box, controls, keys, then the page text. -->
+<div class="lx lx-kbhost" lang="en" dir="ltr">
+  <div id="lxKbWrap" class="kb-panel notranslate" translate="no" hidden><div id="lxKb" class="notranslate" translate="no"></div></div>
+</div>
+
+<div class="lx lx-after" lang="en" dir="ltr" data-i18n-skip>
+
+  <section class="lx-intro" style="margin-top:44px" aria-labelledby="lxWhat">
+    <h2 id="lxWhat">What you will learn</h2>
+    <p>The course follows a clear beginner path: <strong>1.</strong> the 28 letters, their names, sounds and shapes; <strong>2.</strong> harakat (fatha, kasra, damma, sukun, shadda, tanween); <strong>3.</strong> practice quizzes; <strong>4.</strong> reading and typing from single letters up to short sentences. Each letter lesson ends with a short check, and a lesson is marked complete only when you pass it.</p>
+    <h2 id="lxConnect">How Arabic letters connect</h2>
+    <p>Arabic is written right to left, and most letters join to the next one, changing shape by position: alone, at the beginning, in the middle, or at the end of a connected group. Six letters never join to the letter <em>after</em> them: <span class="lx-ar" lang="ar" dir="rtl" style="white-space:nowrap">ا د ذ ر ز و</span>. After one of these the next letter starts a fresh shape, which is why words such as <span class="lx-ar" lang="ar" dir="rtl">دار</span> (daar, “house”) look broken into pieces.</p>
+    <p class="lx-small">Audio uses your device’s text-to-speech voice where available. It approximates pronunciation but is not a native recording, and transliteration is only a rough guide. Examples are Modern Standard Arabic; dialects pronounce some letters differently.</p>
+  </section>
+</div>
 
   </div>
 </main>
@@ -142,5 +158,11 @@
 <div class="toast" id="toast" role="status"></div>
 <script src="../assets/js/app.js" defer></script>
   
+<script src="../assets/js/learn/data.js" defer></script>
+<script src="../assets/js/learn/engine.js" defer></script>
+<script src="../assets/js/learn/progress.js" defer></script>
+<script src="../assets/js/learn/audio.js" defer></script>
+<script src="../assets/js/learn/typing-dock.js" defer></script>
+<script src="../assets/js/learn/app.js" defer></script>
 </body>
 </html>

@@ -10,7 +10,7 @@
    not throw away a visitor's 19 MB download. Bump VENDOR_CACHE only when
    the files under /assets/vendor/ themselves change.
 */
-const CACHE_NAME = "arabic-keyboard-shell-v15";
+const CACHE_NAME = "arabic-keyboard-shell-v16";
 const VENDOR_CACHE = "arabic-keyboard-vendor-v1";
 const isVendor = (url) => new URL(url).pathname.startsWith("/assets/vendor/");
 const CORE_ASSETS = [
@@ -21,8 +21,10 @@ const CORE_ASSETS = [
   "/translation/",
   "/editor/",
   "/typing-test/",
+  "/learn-arabic/",
   "/manifest.json",
   "/assets/css/styles.css",
+  "/assets/css/learn.css",
   "/assets/js/app.js",
   "/assets/js/theme-init.js",
   "/assets/js/i18n.js",
@@ -33,6 +35,12 @@ const CORE_ASSETS = [
   "/assets/js/translation-config.js",
   "/assets/js/translation-tool.js",
   "/assets/js/alphabet.js",
+  "/assets/js/learn/data.js",
+  "/assets/js/learn/engine.js",
+  "/assets/js/learn/progress.js",
+  "/assets/js/learn/audio.js",
+  "/assets/js/learn/typing-dock.js",
+  "/assets/js/learn/app.js",
   "/assets/icons/icon-192.png",
   "/assets/icons/icon-512.png",
   "/assets/icons/apple-touch-icon.png",
@@ -100,10 +108,17 @@ self.addEventListener("fetch", (event) => {
           }
           return response;
         })
-        .catch(() => {
+        .catch(async () => {
           // Offline fallback only for page navigations. Other requests (the Tashkeel
           // model / WASM runtime) must fail honestly instead of receiving the home page.
-          if (event.request.mode === "navigate") return caches.match("/");
+          if (event.request.mode === "navigate") {
+            // The exact URL (including its query string) was never cached. Pages are static HTML and the only query
+            // parameter the site reads is ?lang=, which is read client-side from location.search, so serve the SAME page
+            // from the cache ignoring the query; only if that also misses fall back to the home page, as before.
+            // ignoreSearch is deliberately limited to this offline navigation fallback: online requests, exact cached
+            // variants and every non-navigation request keep exact-URL behaviour.
+            return (await caches.match(event.request, { ignoreSearch: true })) || caches.match("/");
+          }
           return Response.error();
         });
     })

@@ -1,0 +1,17 @@
+{
+  "name": "learn-arabic-tests",
+  "private": true,
+  "type": "module",
+  "description": "Tests for the Learn Arabic course: unit tests (node --test) and headless-browser suites (puppeteer-core + @sparticuz/chromium; run `npm install` first).",
+  "scripts": {
+    "test": "node --test learn.test.mjs dst.test.mjs phase2a.test.mjs",
+    "browser": "node browser/phase1.browser.mjs",
+    "keyboard": "node browser/keyboard.browser.mjs",
+    "sw": "node browser/sw.browser.mjs",
+    "all": "npm test && npm run browser && npm run keyboard && npm run sw"
+  },
+  "devDependencies": {
+    "@sparticuz/chromium": "^138.0.2",
+    "puppeteer-core": "^24.43.1"
+  }
+}
