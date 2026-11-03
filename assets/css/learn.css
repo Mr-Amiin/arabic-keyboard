@@ -81,3 +81,16 @@
 .lx-link-quiet{ color:var(--emerald); }
 .lx-tprompt{ scroll-margin-top:84px; }
 .lx-tprompt p{ margin:6px 0; }
+/* V1: audio controls, vocabulary, patterns, review */
+.lx-speech{ display:flex; align-items:center; flex-wrap:wrap; gap:8px 12px; margin:0 0 14px; padding:8px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--surface); font-size:.88rem; }
+.lx-speech-label{ font-weight:700; } .lx-speech-status{ color:var(--ink-soft); flex:1 1 220px; } .lx-speech-status.is-error{ color:var(--danger); font-weight:600; }
+.lx-q-en{ font-size:clamp(1.6rem,6vw,2.4rem); font-weight:700; line-height:1.4; }
+.lx-dialect{ margin-top:18px; } .lx-blank-word{ width:2.2em; }
+.lx-ex-ar{ unicode-bidi:isolate; }
+/* Dark mode: white text on the dark-mode --emerald (#3FA57F) is only 3:1; filled buttons use the site's own --emerald-deep there (>= 4.5:1). */
+:root[data-theme="dark"] .lx-btn:not(.lx-btn-alt){ background:var(--emerald-deep); border-color:var(--emerald-deep); }
+:root[data-theme="dark"] .lx-btn:not(.lx-btn-alt):hover{ background:#256B50; border-color:var(--emerald); }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .lx-btn:not(.lx-btn-alt){ background:var(--emerald-deep); border-color:var(--emerald-deep); }
+  :root:not([data-theme="light"]) .lx-btn:not(.lx-btn-alt):hover{ background:#256B50; border-color:var(--emerald); }
+}

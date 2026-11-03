@@ -17,8 +17,8 @@ const CORE = coreOf(sw);
 const onDisk = u => fs.existsSync(path.join(REPO, u === "/" ? "index.html" : u.endsWith("/") ? u.slice(1) + "index.html" : u.slice(1)));
 
 /* ---------- service worker ---------- */
-test("sw.js: new cache version v12 (stale v11/v10 Learn assets cannot be served)", () => {
-  assert.equal(sw.match(/const CACHE_NAME = "([^"]+)"/)[1], "arabic-keyboard-shell-v12");
+test("sw.js: new cache version v16 (stale v11/v10 Learn assets cannot be served)", () => {
+  assert.equal(sw.match(/const CACHE_NAME = "([^"]+)"/)[1], "arabic-keyboard-shell-v16");
   assert.equal(sw.match(/const VENDOR_CACHE = "([^"]+)"/)[1], "arabic-keyboard-vendor-v1", "vendor cache name must not change (19 MB model)");
 });
 test("sw.js: every precache path exists on disk (one bad path makes cache.addAll fail silently for ALL assets)", () => {
@@ -26,7 +26,7 @@ test("sw.js: every precache path exists on disk (one bad path makes cache.addAll
   for (const u of CORE) assert.ok(onDisk(u), "missing file for " + u);
 });
 test("sw.js: Learn page, CSS and every Learn script are precached", () => {
-  for (const u of ["/learn-arabic/", "/assets/css/learn.css", ...["data", "engine", "progress", "audio", "typing-dock", "app"].map(n => `/assets/js/learn/${n}.js`), "/assets/js/keyboard-tool.js"]) assert.ok(CORE.includes(u), u);
+  for (const u of ["/learn-arabic/", "/assets/css/learn.css", ...["data", "vocab-data", "srs", "engine", "review", "progress", "audio", "typing-dock", "app"].map(n => `/assets/js/learn/${n}.js`), "/assets/js/keyboard-tool.js"]) assert.ok(CORE.includes(u), u);
 });
 test("sw.js: every local script/stylesheet the Learn page references is precached (nothing needed offline is left out)", () => {
   const refs = [...html.matchAll(/(?:src|href)="(\.\.\/assets\/[^"]+)"/g)].map(m => m[1].replace("..", ""));
@@ -56,7 +56,7 @@ test("Learn page: keyboard-tool.js is NOT a static script tag (it must be lazy-l
 });
 test("Learn page: scripts load in dependency order, with typing-dock before app", () => {
   const order = [...html.matchAll(/<script src="\.\.\/assets\/js\/learn\/(\w[\w-]*)\.js"/g)].map(m => m[1]);
-  assert.deepEqual(order, ["data", "engine", "progress", "audio", "typing-dock", "app"]);
+  assert.deepEqual(order, ["data", "vocab-data", "srs", "engine", "review", "progress", "audio", "typing-dock", "app"]);
 });
 test("Learn page: dock markup is complete, hidden by default, persistent (outside #learnApp), with an accessible toggle", () => {
   for (const id of ["lxTypePanel", "lxTPrompt", "lxEditor", "lxKbToggle", "lxKbWrap", "lxKb", "lxKbStatus", "lxKbRetry", "lxKbAnnounce", "lxTCheck", "lxTNext", "lxTFb"]) assert.ok(new RegExp(`id="${id}"`).test(html), id);

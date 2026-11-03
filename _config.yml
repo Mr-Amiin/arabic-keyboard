@@ -1,0 +1,16 @@
+# Jekyll configuration for GitHub Pages (branch deployment of the repository root).
+#
+# The Arabic-course teacher-review package (docs/arabic-course-review: review sheet, CSV, reviewer guide and its generator) is a
+# maintenance artifact. It must NOT be published as a student-facing page or a public download.
+#
+# IMPORTANT: setting `exclude` REPLACES Jekyll's built-in default exclusions, so those defaults are listed again below to keep this
+# change from publishing anything that was previously withheld. Nothing else about the site is affected by this file.
+exclude:
+  - docs/arabic-course-review
+  - node_modules
+  - Gemfile
+  - Gemfile.lock
+  - vendor/bundle
+  - vendor/cache
+  - vendor/gems
+  - vendor/ruby

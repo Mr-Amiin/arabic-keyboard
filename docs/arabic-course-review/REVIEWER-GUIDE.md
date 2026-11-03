@@ -6,7 +6,7 @@ The Learn Arabic course (alphabet, harakat, reading practice) was written and te
 ## Files
 | File | Purpose |
 |---|---|
-| `review-items.csv` | One row per reviewable item (459 rows). Open in Excel/Sheets (UTF-8 with BOM, so Arabic displays correctly). **Fill in the last three columns.** |
+| `review-items.csv` | One row per reviewable item (544 rows). Open in Excel/Sheets (UTF-8 with BOM, so Arabic displays correctly). **Fill in the last three columns.** |
 | `review-sheet.md` | The same items grouped by lesson, easier to read straight through. |
 | `build-review-package.mjs` | Regenerates both files from the course source, so every value traces to a source location (the `source` column). |
 
@@ -17,14 +17,19 @@ The Learn Arabic course (alphabet, harakat, reading practice) was written and te
 - letter-shapes: 28 items
 - look-alike group: 9 items
 - missing-letter exercise: 56 items
-- page-template: 12 items
-- page-text: 6 items
+- page-template: 20 items
+- page-text: 9 items
 - pronunciation: 28 items
 - quick-check: 139 items
 - reading-item: 27 items
 - reading-stage: 6 items
+- sentence-example: 12 items
+- sentence-pattern: 4 items
+- vocabulary: 51 items
+- vocabulary-dialect: 3 items
+- vocabulary-topic: 4 items
 
-77 items are marked **high** priority. This is a rule-based suggestion (emphatic/pharyngeal/uvular letters, claims about dialects, hamza, dagger alif, ta marbuta, non-joining letters, factual statements about the writing system). It is not a judgement that other items are safe, so please review all of them.
+147 items are marked **high** priority. This is a rule-based suggestion (emphatic/pharyngeal/uvular letters, claims about dialects, hamza, dagger alif, ta marbuta, non-joining letters, factual statements about the writing system). It is not a judgement that other items are safe, so please review all of them.
 
 ## How to review
 1. Work lesson by lesson. For each row, read the **arabic_as_implemented**, **plain_spelling**, **transliteration** and **english_text** columns and check them against your own knowledge and a reference you trust.
@@ -44,17 +49,20 @@ The Learn Arabic course (alphabet, harakat, reading practice) was written and te
 - **page-text / page-template:** statements the page makes to every learner about joining rules, audio and dialects.
 
 ## Special cases that need extra care
-- **dagger-alif**: 1 items (listed at the end of `review-sheet.md`)
-- **hamza**: 12 items (listed at the end of `review-sheet.md`)
-- **lam-alif-ligature**: 3 items (listed at the end of `review-sheet.md`)
+- **contains-arabic-example**: 3 items (listed at the end of `review-sheet.md`)
+- **dagger-alif**: 9 items (listed at the end of `review-sheet.md`)
+- **dialect**: 3 items (listed at the end of `review-sheet.md`)
+- **hamza**: 35 items (listed at the end of `review-sheet.md`)
+- **hamzat-wasl**: 4 items (listed at the end of `review-sheet.md`)
+- **lam-alif-ligature**: 9 items (listed at the end of `review-sheet.md`)
 - **makes-a-dialect-claim**: 4 items (listed at the end of `review-sheet.md`)
 - **non-joining-letter**: 20 items (listed at the end of `review-sheet.md`)
-- **non-joining-letter-inside-word**: 71 items (listed at the end of `review-sheet.md`)
-- **shadda**: 8 items (listed at the end of `review-sheet.md`)
-- **sukun**: 36 items (listed at the end of `review-sheet.md`)
-- **ta-marbuta**: 15 items (listed at the end of `review-sheet.md`)
-- **tanween**: 7 items (listed at the end of `review-sheet.md`)
-- **uses-character-outside-the-28-letter-table**: 26 items (listed at the end of `review-sheet.md`)
+- **non-joining-letter-inside-word**: 128 items (listed at the end of `review-sheet.md`)
+- **shadda**: 25 items (listed at the end of `review-sheet.md`)
+- **sukun**: 77 items (listed at the end of `review-sheet.md`)
+- **ta-marbuta**: 34 items (listed at the end of `review-sheet.md`)
+- **tanween**: 23 items (listed at the end of `review-sheet.md`)
+- **uses-character-outside-the-28-letter-table**: 64 items (listed at the end of `review-sheet.md`)
 
 ## What the automated checks do and do not cover
 The column `automated_checks_STRUCTURE_ONLY` records what software verified. It never means a row is approved. In particular, software has **not** checked: pronunciation, naturalness of usage, correctness of English meanings, correctness of vowel marks beyond consistency with the plain spelling, or dialect statements.

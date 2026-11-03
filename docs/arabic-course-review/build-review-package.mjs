@@ -14,6 +14,8 @@ const REPO = path.resolve(HERE, "../..");
 const require = createRequire(import.meta.url);
 const D = require(path.join(REPO, "assets/js/learn/data.js"));
 const E = require(path.join(REPO, "assets/js/learn/engine.js"));
+const V = require(path.join(REPO, "assets/js/learn/vocab-data.js"));
+const RV = require(path.join(REPO, "assets/js/learn/review.js"));
 const read = f => fs.readFileSync(path.join(REPO, f), "utf8");
 
 export const COLUMNS = ["item_id", "lesson_no", "lesson_title", "category", "field", "arabic_as_implemented", "plain_spelling", "transliteration",
@@ -26,12 +28,12 @@ const hasArabic = s => /[\u0600-\u06FF]/.test(s);
 const pad = n => String(n).padStart(2, "0");
 const strip = s => E.normalizeAr(s);
 const FLAGS = [
-  ["hamza", /[أإآؤئء]/], ["dagger-alif", /\u0670/], ["ta-marbuta", /ة/], ["shadda", /\u0651/], ["tanween", /[\u064B-\u064D]/],
+  ["hamza", /[أإآؤئء]/], ["hamzat-wasl", /(^|\s)\u0627\u0650/], ["dagger-alif", /\u0670/], ["ta-marbuta", /ة/], ["shadda", /\u0651/], ["tanween", /[\u064B-\u064D]/],
   ["sukun", /\u0652/], ["alif-maqsura", /ى/]
 ];
 const NONJOIN = new Set(D.NON_CONNECTING);
 // Only features that need specialist judgement raise priority; sukun / ordinary non-joining letters are routine.
-const HIGH_FLAGS = ["hamza", "dagger-alif", "ta-marbuta", "alif-maqsura", "tanween", "shadda", "lam-alif-ligature"];
+const HIGH_FLAGS = ["hamza", "hamzat-wasl", "dagger-alif", "ta-marbuta", "alif-maqsura", "tanween", "shadda", "lam-alif-ligature"];
 const highOf = sp => String(sp || "").split("; ").filter(f => HIGH_FLAGS.includes(f)).join("; ");
 const flagsFor = (...texts) => {
   const t = texts.join(" "); const f = FLAGS.filter(([, re]) => re.test(t)).map(([n]) => n);
@@ -153,6 +155,33 @@ D.READING_STAGES.forEach((s, si) => {
     english_text: `Prompt: ${q.prompt}  Correct: ${q.answer}.  Options (order random): ${q.options.map(o => o.value).sort().join(" / ")}.  Explanation shown: ${q.explanation}`, automated_checks_STRUCTURE_ONLY: "correct option present; 4 distinct options", source: "assets/js/learn/engine.js → readingChoice()" }));
 });
 
+/* ---------- vocabulary (V1) ---------- */
+V.TOPICS.forEach((t, ti) => {
+  add({ item_id: `V-TOPIC-${t.id.toUpperCase()}`, lesson_no: `V${ti + 1}`, lesson_title: `Vocabulary: ${t.title}`, category: "vocabulary-topic", field: "topic description and grammar note shown to learners", english_text: `${t.blurb} ${t.note}`,
+    special_flags: /[\u0600-\u06FF]/.test(t.note) ? "contains-arabic-example" : "", automated_checks_STRUCTURE_ONLY: "text present", source: `assets/js/learn/vocab-data.js → TOPICS[${ti}]`, suggested_priority: "high", priority_reason: "states grammar facts (agreement, gender, counting forms)" });
+  V.ITEMS.filter(i => i.topic === t.id).forEach(it => {
+    const sp = flagsFor(it.ar), specific = (RV.spellingVariants(it, E.mulberry32(1), 3) || []).join("  ");
+    add({ item_id: `V-${it.id.toUpperCase()}`, lesson_no: `V${ti + 1}`, lesson_title: `Vocabulary: ${t.title}`, category: "vocabulary", field: `${it.kind} (register: ${it.reg === "msa" ? "Modern Standard Arabic" : it.reg})`,
+      arabic_as_implemented: it.ar + (it.punct || ""), plain_spelling: it.plain, transliteration: it.translit, english_text: it.en,
+      context_notes: [it.note, it.kind === "word" ? `Spelling exercise shows the plain spelling plus 3 machine-made misspellings, for example: ${specific}. Confirm none of these is an accepted spelling of the word.` : "Phrase: not used in the spelling exercise.", it.punct ? `The punctuation mark ${it.punct} is displayed after the phrase and is not part of the typed answer.` : ""].filter(Boolean).join(" "),
+      special_flags: sp, automated_checks_STRUCTURE_ONLY: `plain = vowelled after stripping marks: ${strip(it.ar) === strip(it.plain)}; ${nfcOk(it.ar)}; register recorded: ${it.reg}`, source: `assets/js/learn/vocab-data.js → ITEMS (${it.id})`,
+      suggested_priority: highOf(sp) ? "high" : "standard", priority_reason: highOf(sp) ? "contains " + highOf(sp) : "" });
+  });
+});
+V.DIALECT.forEach(d => add({ item_id: `V-${d.id.toUpperCase()}`, lesson_no: "V4", lesson_title: "Vocabulary: Greetings and everyday expressions", category: "vocabulary-dialect", field: `DIALECT item (${d.region}); shown for recognition only, never quizzed`,
+  arabic_as_implemented: d.ar + d.punct, plain_spelling: d.plain, transliteration: d.translit, english_text: d.en, context_notes: `Classified as ${d.reg}, region: ${d.region}. Confirm the spelling, vowelling, region label and transliteration; dialect spelling has no single standard.`,
+  special_flags: flagsFor(d.ar) + (flagsFor(d.ar) ? "; " : "") + "dialect", automated_checks_STRUCTURE_ONLY: `${nfcOk(d.ar)}; excluded from every exercise and review: true`, source: "assets/js/learn/vocab-data.js → DIALECT", suggested_priority: "high", priority_reason: "dialect classification and spelling" }));
+
+/* ---------- sentence patterns (V1) ---------- */
+V.PATTERNS.forEach((pt, pi) => {
+  add({ item_id: `PAT-${pt.id.toUpperCase()}`, lesson_no: `S${pi + 1}`, lesson_title: `Sentence pattern: ${pt.template}`, category: "sentence-pattern", field: "pattern title and explanation shown to learners", arabic_as_implemented: pt.title.match(/[\u0600-\u06FF][^“”:]*/g) ? pt.title.match(/[\u0600-\u06FF][^“”:]*/g).join("  |  ") : "", english_text: `${pt.title}. ${pt.explain}`,
+    special_flags: flagsFor(pt.explain), automated_checks_STRUCTURE_ONLY: "text present", source: `assets/js/learn/vocab-data.js → PATTERNS (${pt.id})`, suggested_priority: "high", priority_reason: "grammar explanation (gender agreement, endings, definiteness)" });
+  pt.examples.forEach(e => { const sp = flagsFor(e.ar);
+    add({ item_id: `PAT-${e.id.slice(4).toUpperCase()}`, lesson_no: `S${pi + 1}`, lesson_title: `Sentence pattern: ${pt.template}`, category: "sentence-example", field: "example sentence (fill-in-the-blank and typing exercises)", arabic_as_implemented: e.ar + (e.punct || ""), plain_spelling: e.plain, transliteration: e.translit, english_text: e.en,
+      context_notes: `Fill-in exercise: the blank is the word ${e.slot}; options = that word + these distractors: ${e.pool.join("  ")}. Confirm the correct word is right AND that every distractor is wrong for this sentence (gender, meaning, definiteness).`,
+      special_flags: sp, automated_checks_STRUCTURE_ONLY: `plain = vowelled after stripping marks: ${strip(e.ar) === strip(e.plain)}; blank word occurs in the sentence: ${e.ar.split(" ").includes(e.slot)}; ${nfcOk(e.ar)}`, source: `assets/js/learn/vocab-data.js → PATTERNS (${e.id})`, suggested_priority: "high", priority_reason: "grammar: case endings and agreement" }); });
+});
+
 /* ---------- page text and templates that carry teaching claims ---------- */
 const html = read("learn-arabic/index.html"), app = read("assets/js/learn/app.js");
 const text = h => h.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
@@ -181,7 +210,15 @@ const UI_SENTENCES = [
   ["X-UI-STAGE-CHOICE", "stage card text for the harakat-reading stage", "items: read each mark and choose its sound.", "", "standard"],
   ["X-UI-STAGE-EXACT", "stage card text for the vowelled-words stage", "items to type with harakat (letters and marks must match).", "", "standard"],
   ["X-UI-STAGE-LETTERS", "stage card text for letters-only typing stages", "items to read and type (harakat optional).", "", "standard"],
-  ["X-UI-PASS-RULE", "rule shown before every quick check", "Get at least 2 right to complete this lesson.", "pedagogical rule: 2 of 3 correct completes a lesson", "high"]
+  ["X-UI-PASS-RULE", "rule shown before every quick check", "Get at least 2 right to complete this lesson.", "pedagogical rule: 2 of 3 correct completes a lesson", "high"],
+  ["X-UI-VOCAB-INTRO", "introduction on the Vocabulary page", "All vocabulary is Modern Standard Arabic unless a card says otherwise.", "register claim", "high"],
+  ["X-UI-VOCAB-ROUND", "text above the vocabulary practice buttons", "Each round has 10 questions. Your answers schedule each word for review.", "", "standard"],
+  ["X-UI-DIALECT", "heading text of the regional-variants box on the Greetings page", "“How are you?” sounds different across the Arab world.", "dialect statement", "high"],
+  ["X-UI-DIALECT-NOTE", "sentence in the regional-variants box", "These are shown so you can recognise them; they are not quizzed.", "", "standard"],
+  ["X-UI-RECALL", "instruction for vocabulary/sentence recall questions", "Type this in Arabic. The check compares letters only, so harakat are optional.", "defines what counts as correct", "high"],
+  ["X-UI-PATTERN-PRACTICE", "text above the pattern practice button", "Complete each sentence, then type each one from its English meaning. Your answers schedule these sentences for review.", "", "standard"],
+  ["X-UI-REVIEW-RULE", "explanation on the Daily review page", "A correct answer moves an item to a longer interval; a miss brings it back tomorrow.", "scheduling rule shown to learners", "standard"],
+  ["X-UI-REVIEW-LADDER", "explanation on the Daily review page", "The questions get harder as you learn an item.", "", "standard"]
 ];
 UI_SENTENCES.forEach(([id, field, sentence, why, prio]) => {
   if (!app.includes(sentence)) throw new Error(`UI sentence for ${id} not found in app.js: the app wording changed; update UI_SENTENCES in build-review-package.mjs`);

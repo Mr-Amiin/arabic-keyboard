@@ -4,11 +4,12 @@
   "type": "module",
   "description": "Tests for the Learn Arabic course: unit tests (node --test) and headless-browser suites (puppeteer-core + @sparticuz/chromium; run `npm install` first).",
   "scripts": {
-    "test": "node --test learn.test.mjs dst.test.mjs phase2a.test.mjs",
-    "browser": "node browser/phase1.browser.mjs",
+    "test": "node --test learn.test.mjs dst.test.mjs phase2a.test.mjs v1.test.mjs srs-dst.test.mjs",
+    "browser": "node browser/phase1.browser.mjs && node browser/audit.browser.mjs",
     "keyboard": "node browser/keyboard.browser.mjs",
     "sw": "node browser/sw.browser.mjs",
-    "all": "npm test && npm run browser && npm run keyboard && npm run sw"
+    "all": "npm test && npm run browser && npm run keyboard && npm run sw && npm run v1",
+    "v1": "node browser/v1.browser.mjs && node browser/audio.browser.mjs && node browser/v1-layout.browser.mjs"
   },
   "devDependencies": {
     "@sparticuz/chromium": "^138.0.2",

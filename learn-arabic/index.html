@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تعلّم العربية — Learn Arabic: Alphabet Course, Harakat &amp; Reading Practice</title>
-<meta name="description" content="Free interactive Arabic course for beginners: all 28 letters with forms and examples, harakat, pronunciation guidance, quizzes, typing practice and saved progress.">
+<title>تعلّم العربية — Learn Arabic: Alphabet, Vocabulary, Harakat &amp; Daily Review</title>
+<meta name="description" content="Free interactive Arabic course for beginners: all 28 letters, harakat, vocabulary (numbers, colours, family, greetings), sentence patterns, a spaced-repetition daily review, typing practice and saved progress.">
 <link rel="canonical" href="https://www.arabic-keyboard.live/learn-arabic/">
-<meta property="og:title" content="تعلّم العربية — Learn Arabic: Alphabet Course, Harakat &amp; Reading Practice">
-<meta property="og:description" content="Free interactive Arabic course for beginners: all 28 letters with forms and examples, harakat, pronunciation guidance, quizzes, typing practice and saved progress.">
+<meta property="og:title" content="تعلّم العربية — Learn Arabic: Alphabet, Vocabulary, Harakat &amp; Daily Review">
+<meta property="og:description" content="Free interactive Arabic course for beginners: all 28 letters, harakat, vocabulary (numbers, colours, family, greetings), sentence patterns, a spaced-repetition daily review, typing practice and saved progress.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.arabic-keyboard.live/learn-arabic/">
 <meta name="theme-color" content="#1F6F53">
@@ -98,11 +98,13 @@
 <section class="hero compact">
   <span class="eyebrow lang-en">Start here</span>
   <h1>تعلّم العربية</h1>
-  <p class="lead lang-en" lang="en" dir="ltr" data-i18n-skip>An interactive beginner course in Modern Standard Arabic: learn all 28 letters, how they connect, the short-vowel marks, and practice reading and typing. Free, no account, and your progress stays on your device.</p>
+  <p class="lead lang-en" lang="en" dir="ltr" data-i18n-skip>An interactive beginner course in Modern Standard Arabic: learn all 28 letters and how they connect, the short-vowel marks, vocabulary by topic and simple sentences, with a daily spaced-repetition review and typing practice. Free, no account, and your progress stays on your device.</p>
 </section>
 
 <div class="lx lx-main" lang="en" dir="ltr" data-i18n-skip>
   <noscript><p class="lx-note">The interactive lessons need JavaScript. Visit the <a href="../arabic-alphabet/">Arabic alphabet reference</a> for a static letter chart.</p></noscript>
+  <div id="lxSpeech" class="lx-speech" role="group" aria-label="Audio settings"><span class="lx-speech-label">Audio</span><button type="button" class="lx-hear" id="lxSpeedBtn" aria-pressed="false">Slow speech: off</button><span id="lxSpeechStatus" class="lx-speech-status"></span></div>
+  <div id="lxSpeechMsg" class="lx-sr" role="status" aria-live="polite"></div>
   <div id="learnApp" aria-live="off" data-keyboard-src="../assets/js/keyboard-tool.js"><p class="lx-small">Loading the course…</p></div>
 
   <section id="lxTypePanel" class="lx-typepanel" aria-label="Typing practice" hidden>
@@ -126,9 +128,12 @@
 
   <section class="lx-intro" style="margin-top:44px" aria-labelledby="lxWhat">
     <h2 id="lxWhat">What you will learn</h2>
-    <p>The course follows a clear beginner path: <strong>1.</strong> the 28 letters, their names, sounds and shapes; <strong>2.</strong> harakat (fatha, kasra, damma, sukun, shadda, tanween); <strong>3.</strong> practice quizzes; <strong>4.</strong> reading and typing from single letters up to short sentences. Each letter lesson ends with a short check, and a lesson is marked complete only when you pass it.</p>
+    <p>The course follows a clear beginner path: <strong>1.</strong> the 28 letters, their names, sounds and shapes; <strong>2.</strong> harakat (fatha, kasra, damma, sukun, shadda, tanween); <strong>3.</strong> vocabulary by topic: numbers, colours, family, and greetings and everyday expressions; <strong>4.</strong> sentence patterns such as “This is a …” and “Where is …?”; <strong>5.</strong> practice quizzes, reading and typing from single letters up to short sentences, using the on-screen Arabic keyboard. Each letter lesson ends with a short check, and a lesson is marked complete only when you pass it.</p>
     <h2 id="lxConnect">How Arabic letters connect</h2>
     <p>Arabic is written right to left, and most letters join to the next one, changing shape by position: alone, at the beginning, in the middle, or at the end of a connected group. Six letters never join to the letter <em>after</em> them: <span class="lx-ar" lang="ar" dir="rtl" style="white-space:nowrap">ا د ذ ر ز و</span>. After one of these the next letter starts a fresh shape, which is why words such as <span class="lx-ar" lang="ar" dir="rtl">دار</span> (daar, “house”) look broken into pieces.</p>
+    <h2 id="lxReview">Daily review</h2>
+    <p>Each time you answer a question about a letter, a word or a sentence, the course records the result for that item and schedules its next review. A correct answer moves the item to a longer interval; a miss brings it back tomorrow. Open the daily review to practise whatever is due. Your progress and review schedule are saved on your device only, with no account.</p>
+    <p class="lx-note" role="note"><strong>Beta.</strong> The Arabic content of this course has not yet been reviewed by a qualified Arabic teacher; a review is planned. If you spot a mistake, please tell us on the <a href="../contact/">contact page</a>.</p>
     <p class="lx-small">Audio uses your device’s text-to-speech voice where available. It approximates pronunciation but is not a native recording, and transliteration is only a rough guide. Examples are Modern Standard Arabic; dialects pronounce some letters differently.</p>
   </section>
 </div>
@@ -159,7 +164,10 @@
 <script src="../assets/js/app.js" defer></script>
   
 <script src="../assets/js/learn/data.js" defer></script>
+<script src="../assets/js/learn/vocab-data.js" defer></script>
+<script src="../assets/js/learn/srs.js" defer></script>
 <script src="../assets/js/learn/engine.js" defer></script>
+<script src="../assets/js/learn/review.js" defer></script>
 <script src="../assets/js/learn/progress.js" defer></script>
 <script src="../assets/js/learn/audio.js" defer></script>
 <script src="../assets/js/learn/typing-dock.js" defer></script>

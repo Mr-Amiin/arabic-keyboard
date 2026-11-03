@@ -298,7 +298,9 @@ test("16. other pages are unaffected: /arabic-typing-test/ has no keyboard; Tash
   ak.window.close();
 });
 
-test("17. service worker: shell cache bumped to v15 so returning visitors get the changed assets; the shared assets are precached", () => {
-  assert.match(swJs, /CACHE_NAME = "arabic-keyboard-shell-v15"/);
+test("17. service worker: shell cache bumped to v15 (or later) so returning visitors get the changed assets; the shared assets are precached", () => {
+  // Releases after v15 bump the version again (e.g. the Learn Arabic academy release); the requirement is "at least v15".
+  const v = Number((swJs.match(/CACHE_NAME = "arabic-keyboard-shell-v(\d+)"/) || [])[1]);
+  assert.ok(v >= 15, "cache version must be v15 or later, got v" + v);
   for (const a of ["/typing-test/", "/assets/css/styles.css", "/assets/js/keyboard-tool.js", "/assets/js/typing-test.js"]) assert.ok(swJs.includes(`"${a}"`), a);
 });
