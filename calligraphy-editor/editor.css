@@ -1,14 +1,21 @@
 /* ===========================================================
    Calligraphy Editor — application shell
    Phase 1: shell, canvas viewport, dock, zoom, contextual panel.
-   No webpage chrome. No scrolling. Full-viewport app surface.
+   The editor is a non-scrolling app surface (#app) that sits inside the
+   site page, between the shared site header and footer
+   (see "SITE INTEGRATION" at the end of this file).
    =========================================================== */
 
-:root{
+/* The editor's design tokens are scoped to #app, NOT :root. The shared site design system
+   (assets/css/styles.css) defines variables with the same names (--ink, --ink-soft, --danger,
+   --radius-md, --radius-lg) and a dark theme that redefines them; declared on :root these would
+   collide in both directions (the editor would go light-on-light in dark mode, and the site header
+   and footer would inherit the editor's colours). */
+#app{
   --bar-h: 52px;
   --dock-bg: rgba(30,31,34,0.92);
   --dock-bg-light: #ffffff;
-  --panel-border: rgba(0,0,0,0.08);
+  --panel-border: rgba(var(--shade-rgb),0.08);
   --ink: #1c1d20;
   --ink-soft: #6b6d76;
   --accent: #3b6ef6;
@@ -18,7 +25,79 @@
   --radius-lg: 16px;
   --radius-md: 10px;
   --shadow-panel: 0 6px 24px rgba(0,0,0,0.16), 0 1px 2px rgba(0,0,0,0.08);
+  /* Theme-aware aliases. Light values are exactly the literals the rules used before, so light mode is
+     unchanged; the dark values live in "DARK THEME" below. */
+  --ed-surface: #ffffff;           /* top bar, popovers */
+  --ed-surface-2: #ffffff;         /* chips, selects, active tab: raised controls on a panel */
+  --ed-sunken: #fafafa;            /* dashed drop areas */
+  --shade-rgb: 0,0,0;              /* hover / pressed / hairline overlays: black on light, white on dark */
+  --solid-bg: var(--ink);          /* primary solid buttons (Export, Project actions, ...) */
+  --on-solid: #ffffff;             /* text on them */
+  --ink-paper: #6b6d76;            /* UI painted over the (always white) artboard: hint, locked frame */
+  --danger-ink: #a8262a;           /* error text on the tinted error box */
 }
+
+
+/* ===================== DARK THEME =====================
+   Driven by the SITE's theme system, not a second one: assets/js/theme-init.js sets <html data-theme>
+   before first paint (saved "ak-theme", else the OS preference), and the navbar's #themeToggle in
+   assets/js/app.js flips and persists it. Nothing here stores or reads a preference.
+   Surfaces/borders reuse the site's own dark variables (--bg, --surface, --surface-2, --border), which
+   the editor does not shadow. --ink / --ink-soft / --danger ARE shadowed by the tokens above, so they
+   get the site's dark values as literals (assets/css/styles.css, html[data-theme="dark"]).
+   The artboard stays white on purpose: it is the user's paper (what gets drawn on and exported), not
+   chrome. Only the workspace around it and every panel/control switch. */
+html[data-theme="dark"] #app{
+  color-scheme: dark;                 /* native inputs, selects, scrollbars, colour pickers */
+  --canvas-bg: var(--bg);
+  --ink: #EAF0EA;                     /* = site dark --ink */
+  --ink-soft: #9FAFA6;                /* = site dark --ink-soft */
+  --danger: #F0686D;
+  --danger-ink: #FF9EA2;
+  --panel-border: var(--border);
+  --dock-bg-light: var(--surface);
+  --dock-bg: var(--surface-2);
+  --ed-surface: var(--surface);
+  --ed-surface-2: var(--surface-2);
+  --ed-sunken: var(--bg);
+  --shade-rgb: 255,255,255;
+  --accent: #3366EE;                  /* white text on it = 4.9:1 (the light #3b6ef6 is 4.4:1); still 3.4:1 on panels */
+  --solid-bg: var(--accent);          /* a near-white solid button would read as an unexpected white block */
+  --on-solid: #ffffff;
+  --shadow-panel: 0 6px 24px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.4);
+}
+/* On a dark workspace a dark panel needs a hairline to stay distinguishable (light mode relies on shadow). */
+html[data-theme="dark"] #app .floating-panel,
+html[data-theme="dark"] #app .ctx-popover{
+  box-shadow: var(--shadow-panel), 0 0 0 1px var(--border);
+}
+html[data-theme="dark"] #app #artboard{
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 20px 60px rgba(0,0,0,0.55);
+}
+html[data-theme="dark"] #app .toast{
+  background: var(--surface-2); color: var(--ink);
+  box-shadow: var(--shadow-panel), 0 0 0 1px var(--border);
+}
+/* Library/Tashkeel preview icons are drawn in the default ink (#161616) by presentation attributes, which is
+   invisible on a dark tile. CSS beats those attributes, so show them in the theme ink. This only restyles the
+   preview icons inside panels: drawing data (#scene) and the paper preview in the text panel are untouched. */
+html[data-theme="dark"] #app .floating-panel svg [fill="#161616"]{ fill: var(--ink); }
+html[data-theme="dark"] #app .floating-panel svg [stroke="#161616"]{ stroke: var(--ink); }
+/* Text fields (hex values, text box, project rename, ...) have no background of their own: light mode shows
+   the browser's white field. Give them an inset dark field instead of the browser's grey. */
+html[data-theme="dark"] #app :is(textarea, input:not([type="color"], [type="range"], [type="checkbox"], [type="radio"], [type="file"], [type="button"])){
+  background: var(--bg);
+  color: var(--ink);
+}
+/* the active tab must stand out from the inactive ones on the dark track */
+html[data-theme="dark"] #app .export-format-tab.active{ background: var(--border); box-shadow: none; }
+/* Solid blue buttons: the light theme fades the English half (.82) and the hover state (.88) with opacity,
+   which on blue drops white text under 4.5:1. Keep the text opaque and darken on hover instead. */
+html[data-theme="dark"] #app .text-btn .lang-secondary{ opacity: 1; }
+html[data-theme="dark"] #app .text-btn:not(.text-btn-ghost):hover{ opacity: 1; filter: brightness(.88); }
+/* light mode dims these labels to .65; on the dark surface that drops them under 4.5:1 */
+html[data-theme="dark"] #app .tashkeel-font-marks-layer .library-section-label{ opacity: .9; }
+html[data-theme="dark"] .boot-fatal-error-banner{ background: #0E1713; color: #EAF0EA; }
 
 *{ box-sizing: border-box; }
 
@@ -39,27 +118,24 @@ button:focus-visible, a:focus-visible{
   outline-offset: 2px;
 }
 
-html, body{
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;          /* no page scrolling — this is an app, not a webpage */
-  background: var(--canvas-bg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Tahoma, Arial, sans-serif;
-  color: var(--ink);
-  -webkit-user-select: none;
-  user-select: none;
-}
-
+/* html/body belong to the shared site stylesheet now (the page scrolls normally, the footer is below).
+   What used to be set on html/body is set on the editor's own surface instead, so everything inside
+   it inherits exactly what it inherited before.
+   Font stack: "Inter" was removed from the list. It only ever matched a locally installed copy; the
+   site now loads the Inter web font for its header/footer, which would otherwise start applying to
+   the editor UI on systems that have none of the preceding fonts (e.g. Android, Linux). */
 #app{
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 100%;              /* #editor-host fixes the height (SITE INTEGRATION) */
+  overflow: hidden;          /* the editor itself never scrolls — it is an app, not a webpage */
   display: flex;
   flex-direction: column;
+  background: var(--canvas-bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, Arial, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* ===================== TOP BAR ===================== */
@@ -70,7 +146,7 @@ html, body{
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
-  background: #ffffff;
+  background: var(--ed-surface);
   border-bottom: 1px solid var(--panel-border);
   z-index: 40;
 }
@@ -108,8 +184,11 @@ html, body{
    real mobile-viewport testing). Shrink and let this group scroll
    horizontally rather than wrap. */
 @media (max-width: 820px){
+  /* The 46vw cap that used to be here was narrower than Export + Project and scrolled Export out of view
+     inside this group on phones. The group now sizes to its content (never wider than the bar; overflow-x
+     below stays as a last-resort safety net) and the title absorbs the slack. */
   .bar-right{
-    max-width: 46vw;
+    flex: 0 1 auto;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -133,11 +212,12 @@ html, body{
     position: static;
     left: auto;
     transform: none;
-    flex: 1 1 auto;
+    flex: 1 1 0;             /* basis 0: the title only takes what the buttons leave free, and gives it up first */
     min-width: 0;
     max-width: none;
     justify-content: center;
   }
+  .bar-left{ flex: 0 0 auto; }
   /* The truncation itself has to live on the actual text element now --
      .bar-center is a flex container (inherited from .bar-group), and a
      flex container's own text-overflow doesn't clip its children the
@@ -148,6 +228,15 @@ html, body{
     white-space: nowrap;
     min-width: 0;
   }
+}
+
+/* Narrow phones (<= 400px): the bilingual Export/Project labels (Arabic primary + English secondary)
+   no longer fit next to Undo/Redo/menu; keep the Arabic primary text and tighten spacing so both buttons stay
+   fully on screen (measured down to 320px). Wider screens keep the full bilingual labels. */
+@media (max-width: 400px){
+  #top-bar{ padding: 0 6px; }
+  .bar-right .text-btn{ padding: 7px 8px; }
+  .bar-right .text-btn .lang-secondary{ display: none; }
 }
 
 .icon-btn{
@@ -171,8 +260,8 @@ html, body{
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.icon-btn:hover:not(:disabled){ background: rgba(0,0,0,0.06); }
-.icon-btn:active:not(:disabled){ background: rgba(0,0,0,0.1); }
+.icon-btn:hover:not(:disabled){ background: rgba(var(--shade-rgb),0.06); }
+.icon-btn:active:not(:disabled){ background: rgba(var(--shade-rgb),0.1); }
 .icon-btn:disabled{ opacity: .32; cursor: default; }
 .icon-btn.sm{ width: 30px; height: 30px; }
 .icon-btn.sm svg{ width: 16px; height: 16px; }
@@ -180,8 +269,8 @@ html, body{
 .text-btn{
   appearance: none;
   border: none;
-  background: var(--ink);
-  color: #fff;
+  background: var(--solid-bg);
+  color: var(--on-solid);
   font-size: 13px;
   font-weight: 600;
   padding: 8px 14px;
@@ -219,7 +308,7 @@ html, body{
   border: 1px solid var(--panel-border);
   font-weight: 500;
 }
-.text-btn-ghost:hover{ background: rgba(0,0,0,0.04); color: var(--ink); }
+.text-btn-ghost:hover{ background: rgba(var(--shade-rgb),0.04); color: var(--ink); }
 
 /* ===================== WORKSPACE / CANVAS ===================== */
 #workspace{
@@ -227,7 +316,7 @@ html, body{
   flex: 1 1 auto;
   overflow: hidden;
   background:
-    radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px) 0 0/22px 22px,
+    radial-gradient(rgba(var(--shade-rgb),0.06) 1px, transparent 1px) 0 0/22px 22px,
     var(--canvas-bg);
   cursor: default;
   touch-action: none; /* we drive pan/zoom/drag ourselves via pointer events */
@@ -288,7 +377,7 @@ html, body{
   justify-content: center;
   pointer-events: none;
   z-index: 5;
-  color: var(--ink-soft);
+  color: var(--ink-paper);
   font-size: 16px;
   opacity: .5;
   text-align: center;
@@ -350,7 +439,7 @@ html, body{
   padding: 6px 2px;
   border-radius: var(--radius-md);
 }
-.zoom-readout:hover{ background: rgba(0,0,0,0.06); color: var(--ink); }
+.zoom-readout:hover{ background: rgba(var(--shade-rgb),0.06); color: var(--ink); }
 
 /* tool dock: bottom-center, dark floating dock.
    On a narrow (mobile) viewport the full button row is wider than the
@@ -434,7 +523,7 @@ html, body{
   bottom: 84px;
   transform: translateX(-50%) translateY(6px);
   background: var(--ink);
-  color: #fff;
+  color: var(--on-solid);
   font-size: 12.5px;
   padding: 9px 16px;
   border-radius: 999px;
@@ -524,7 +613,7 @@ html, body{
   flex: 0 0 auto;
   appearance: none;
   border: 1px solid var(--panel-border);
-  background: #fff;
+  background: var(--ed-surface-2);
   color: var(--ink);
   font-size: 13px;
   padding: 7px 12px;
@@ -563,7 +652,7 @@ html, body{
   gap: 6px;
   appearance: none;
   border: 1px solid var(--panel-border);
-  background: #fff;
+  background: var(--ed-surface-2);
   color: var(--ink-soft);
   font-size: 11.5px;
   padding: 10px 6px;
@@ -604,7 +693,7 @@ html, body{
   gap: 6px;
   appearance: none;
   border: 1px solid var(--panel-border);
-  background: #fff;
+  background: var(--ed-surface-2);
   color: var(--ink-soft);
   font-size: 11.5px;
   padding: 10px 6px;
@@ -669,7 +758,7 @@ html, body{
 .tashkeel-variation-chip{
   appearance: none;
   border: 1px solid var(--panel-border);
-  background: #fff;
+  background: var(--ed-surface-2);
   color: var(--ink-soft);
   font-size: 11px;
   padding: 3px 10px;
@@ -677,7 +766,7 @@ html, body{
   cursor: pointer;
 }
 .tashkeel-variation-chip:hover{ border-color: var(--accent); }
-.tashkeel-variation-chip.active{ border-color: var(--accent); color: var(--ink); background: rgba(0,0,0,0.04); font-weight: 600; }
+.tashkeel-variation-chip.active{ border-color: var(--accent); color: var(--ink); background: rgba(var(--shade-rgb),0.04); font-weight: 600; }
 .tashkeel-style-section .library-section-label{ display: block; text-align: center; font-size: 11px; margin: 10px 0 8px; }
 .tashkeel-style-grid{
   grid-template-columns: repeat(6, 1fr);
@@ -721,16 +810,16 @@ html, body{
   padding: 8px 6px;
   margin: 0;
   border: none;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(var(--shade-rgb),0.06);
   background: transparent;
   cursor: pointer;
   border-radius: 0;
 }
 .tashkeel-calligraphic-grid .tashkeel-calligraphic-chip:nth-child(odd){
-  border-left: 1px solid rgba(0,0,0,0.06);
+  border-left: 1px solid rgba(var(--shade-rgb),0.06);
 }
-.tashkeel-calligraphic-chip:hover:not(.unavailable){ background: rgba(0,0,0,0.03); }
-.tashkeel-calligraphic-chip:active:not(.unavailable){ background: rgba(0,0,0,0.06); }
+.tashkeel-calligraphic-chip:hover:not(.unavailable){ background: rgba(var(--shade-rgb),0.03); }
+.tashkeel-calligraphic-chip:active:not(.unavailable){ background: rgba(var(--shade-rgb),0.06); }
 .tashkeel-calligraphic-chip svg{ width: 46px; height: 46px; }
 /* Phase 17: an unavailable slot is a normal, focusable <button> (see
    tashkeel-panel.js -- deliberately not `disabled`, so a keyboard/
@@ -802,7 +891,7 @@ html, body{
 .trace-image-import-btn{
   appearance: none;
   border: 1px dashed var(--panel-border);
-  background: #fafafa;
+  background: var(--ed-sunken);
   color: var(--ink-soft);
   font-size: 13px;
   padding: 14px;
@@ -839,7 +928,7 @@ html, body{
   cursor: pointer;
   border-radius: var(--radius-md);
 }
-.menu-bar-section-header:hover, .menu-bar-section-header.active{ background: rgba(0,0,0,0.05); }
+.menu-bar-section-header:hover, .menu-bar-section-header.active{ background: rgba(var(--shade-rgb),0.05); }
 .menu-bar-section-list{ display: flex; flex-direction: column; padding: 2px 0 6px 10px; }
 .menu-bar-section-list[hidden]{ display: none; }
 .menu-bar-row{
@@ -853,7 +942,7 @@ html, body{
   cursor: pointer;
   border-radius: calc(var(--radius-md) - 2px);
 }
-.menu-bar-row:hover:not(:disabled){ background: rgba(0,0,0,0.05); color: var(--ink); }
+.menu-bar-row:hover:not(:disabled){ background: rgba(var(--shade-rgb),0.05); color: var(--ink); }
 .menu-bar-row:disabled{ opacity: .4; cursor: not-allowed; }
 .menu-bar-section-list hr{ border: none; border-top: 1px solid var(--panel-border); margin: 4px 4px; }
 /* Help > Keyboard Shortcuts: a plain, non-interactive read-out, never
@@ -872,7 +961,7 @@ html, body{
   display: flex;
   flex-direction: column;
   width: min(90vw, 340px);
-  max-height: calc(100vh - var(--bar-h) - 32px);
+  max-height: calc(var(--app-h) - var(--bar-h) - 32px);
   padding: 14px 16px 16px;
   overflow-y: auto;
 }
@@ -916,7 +1005,7 @@ html, body{
   border: 1px solid transparent;
   border-radius: var(--radius-md);
 }
-.project-list-row:hover{ background: rgba(0,0,0,0.03); }
+.project-list-row:hover{ background: rgba(var(--shade-rgb),0.03); }
 .project-list-row.active{ border-color: var(--accent); }
 .project-list-open{
   flex: 1 1 auto;
@@ -942,7 +1031,7 @@ html, body{
 }
 .project-list-time{ font-size: 11px; color: var(--ink-soft); flex: 0 0 auto; }
 .project-list-delete{ flex: 0 0 auto; align-self: center; color: var(--ink-soft); }
-.project-list-delete:hover{ color: #e5484d; }
+.project-list-delete:hover{ color: var(--danger); }
 
 .project-panel-confirm{
   width: min(90vw, 340px);
@@ -964,7 +1053,7 @@ html, body{
   display: flex;
   flex-direction: column;
   width: min(90vw, 340px);
-  max-height: calc(100vh - var(--bar-h) - 32px);
+  max-height: calc(var(--app-h) - var(--bar-h) - 32px);
   padding: 14px 16px 16px;
   overflow-y: auto;
 }
@@ -974,7 +1063,7 @@ html, body{
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  background: rgba(0,0,0,0.04);
+  background: rgba(var(--shade-rgb),0.04);
   border-radius: var(--radius-md);
   padding: 3px;
   margin-bottom: 4px;
@@ -993,7 +1082,7 @@ html, body{
   white-space: nowrap;
 }
 .export-format-tab:hover{ color: var(--ink); }
-.export-format-tab.active{ background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+.export-format-tab.active{ background: var(--ed-surface-2); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
 .export-format-tab:focus-visible{ outline: 2px solid var(--accent); outline-offset: 1px; }
 
 .export-section[hidden]{ display: none; }
@@ -1035,7 +1124,7 @@ html, body{
   border-radius: var(--radius-md);
   background: rgba(229,72,77,0.1);
   border: 1px solid rgba(229,72,77,0.3);
-  color: #a8262a;
+  color: var(--danger-ink);
   font-size: 12.5px;
   direction: rtl;
   text-align: right;
@@ -1060,7 +1149,7 @@ html, body{
   transform-origin: center center;
   pointer-events: none;
 }
-.selection-frame.locked{ outline-color: var(--ink-soft); outline-style: dashed; }
+.selection-frame.locked{ outline-color: var(--ink-paper); outline-style: dashed; }
 .selection-frame-group{
   outline-style: dashed;
   background: rgba(59,110,246,0.04);
@@ -1206,7 +1295,7 @@ html, body{
   transform: translateX(-50%);
   display: flex;
   gap: 2px;
-  background: #fff;
+  background: var(--ed-surface);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-panel);
   padding: 5px;
@@ -1223,7 +1312,7 @@ html, body{
   color: var(--ink);
 }
 .ctx-popover button svg{ width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; }
-.ctx-popover button:hover{ background: rgba(0,0,0,0.06); }
+.ctx-popover button:hover{ background: rgba(var(--shade-rgb),0.06); }
 
 .icon-btn.active{ background: var(--accent); color: #fff; }
 
@@ -1284,14 +1373,14 @@ html, body{
   border-radius: 6px;
   padding: 5px 6px;
   font-size: 11.5px;
-  background: #fff;
+  background: var(--ed-surface-2);
   color: var(--ink);
 }
 .inspector-editpath-btn{
   flex: 1;
   appearance: none;
   border: 1px solid var(--panel-border);
-  background: #fff;
+  background: var(--ed-surface-2);
   color: var(--ink);
   font-size: 12.5px;
   font-weight: 600;
@@ -1345,12 +1434,30 @@ html, body{
 }
 .scene-object-hidden{ display: none; }
 
-/* ===================== LANGUAGE SWITCHER (العربية | English) ===================== */
-.lang-switch{ display: inline-flex; align-items: stretch; border: 1px solid var(--panel-border); border-radius: 8px; overflow: hidden; flex: 0 0 auto; margin-right: 4px; background: #fff; }
-.lang-opt{ appearance: none; border: 0; background: transparent; color: var(--ink-soft); cursor: pointer; font: inherit; font-size: 12px; font-weight: 600; line-height: 1; padding: 0 9px; height: 30px; }
-.lang-opt + .lang-opt{ border-left: 1px solid var(--panel-border); }
-.lang-opt:hover{ background: rgba(0,0,0,0.04); color: var(--ink); }
-.lang-opt[aria-pressed="true"]{ background: var(--accent); color: #fff; }
-.lang-opt:focus-visible{ outline: 2px solid var(--accent); outline-offset: -2px; }
+/* ===================== LANGUAGE =====================
+   The editor has no language switcher of its own. The site header (desktop) / mobile menu hosts the single
+   control (assets/js/i18n.js), and it retranslates the editor in place. */
 /* English mode: the bilingual "عربي • English" labels show English only. */
 html[lang="en"] .lang-secondary{ display: none; }
+
+/* ===========================================================
+   SITE INTEGRATION — the editor inside the shared site page
+   The page is: sticky site header (shared styles.css) → #editor-host → site footer.
+   =========================================================== */
+:root{
+  --site-header-h: 69px;     /* header.site: .nav-row 68px + 1px border (assets/css/styles.css) */
+  --site-gap: 40px;          /* = footer.site margin-top: a strip of page below the editor, so there is
+                                always page (not canvas) under a finger/cursor to scroll down to the footer */
+  --app-h: calc(100vh - var(--site-header-h) - var(--site-gap));
+}
+@supports (height: 100dvh){
+  :root{ --app-h: calc(100dvh - var(--site-header-h) - var(--site-gap)); }
+}
+#editor-host{
+  position: relative;
+  height: var(--app-h);      /* replaces the old 100vh: every "viewport height" the editor used means this */
+}
+.visually-hidden{
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}

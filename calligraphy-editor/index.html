@@ -14,10 +14,17 @@
 <link rel="icon" href="../favicon.ico" sizes="48x48">
 <link rel="icon" href="../assets/icons/favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png" sizes="180x180">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<!-- Shared site design system (navbar/footer). Loaded BEFORE editor.css so the editor's own rules win any tie;
+     editor.css scopes its variables and generic rules to #app so the two never collide. -->
+<link rel="stylesheet" href="../assets/css/styles.css">
 <link rel="stylesheet" href="./editor.css">
 <meta name="google-adsense-account" content="ca-pub-2057098005458261">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
      crossorigin="anonymous"></script>
+<script src="../assets/js/theme-init.js"></script>
 <script src="../assets/js/i18n.js"></script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S07J4DS20K"></script>
@@ -30,10 +37,70 @@
 </script>
 </head>
 <body>
+
+<a href="#workspace" class="skip-link lang-en">تخطَّ إلى المحتوى</a>
+<header class="site">
+  <div class="wrap nav-row">
+    <a href="../" class="brand"><img class="logo logo-light" src="../assets/brand/arabic-keyboard-logo.svg" alt="كيبورد عربي" width="99" height="44"><img class="logo logo-dark" src="../assets/brand/arabic-keyboard-logo-dark.svg" alt="كيبورد عربي" width="99" height="44"></a>
+    <nav class="primary" aria-label="التنقل الرئيسي">
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">الأدوات <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../translation/">الترجمة</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a></div>
+      </div>
+      <div class="nav-item">
+        <a href="../tashkeel/">التشكيل</a>
+      </div>
+      <div class="nav-item">
+        <a href="../translation/">الترجمة</a>
+      </div>
+      <div class="nav-item">
+        <a href="../calligraphy-editor/" aria-current="page">محرر الخط العربي</a>
+      </div>
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">تعلّم <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a></div>
+      </div>
+      <div class="nav-item">
+        <button type="button" aria-haspopup="true">موارد <span aria-hidden="true">▾</span></button>
+        <div class="dropdown"><a href="../faq/">الأسئلة الشائعة</a><a href="../about/">من نحن</a><a href="../contact/">تواصل معنا</a></div>
+      </div>
+    </nav>
+    <div class="head-actions">
+      
+      <button class="icon-btn" id="themeToggle" aria-label="تبديل الوضع الداكن" title="الوضع الداكن">🌙</button>
+      <button class="icon-btn hamburger" id="menuToggle" aria-label="فتح القائمة">☰</button>
+    </div>
+  </div>
+</header>
+
+<div id="mobileNav" aria-hidden="true">
+  <div class="mobile-panel">
+    <div class="close-x"><button class="icon-btn" id="mobileNavClose" aria-label="إغلاق القائمة">✕</button></div>
+    <a href="../">الرئيسية</a>
+    <a href="../tashkeel/">التشكيل</a>
+    <a href="../translation/">الترجمة</a>
+    <a href="../calligraphy-editor/" aria-current="page">محرر الخط العربي</a>
+    <div class="grp-label lang-en">Tools</div>
+    <a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../translation/">الترجمة</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a>
+    <div class="grp-label lang-en">Learn</div>
+    <a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a>
+    <div class="grp-label lang-en">Resources</div>
+    <a href="../faq/">الأسئلة الشائعة</a><a href="../about/">من نحن</a><a href="../contact/">تواصل معنا</a>
+  </div>
+</div>
+
+
+<!-- Page-level heading for SEO/accessibility (the editor UI itself has no headings). Visually hidden; the
+     wording is the page's existing title. #editor-host sizes the editor to the space between the site header
+     and footer (see "SITE INTEGRATION" at the end of editor.css). -->
+<div id="editor-host">
+<h1 class="visually-hidden">محرر الخط العربي</h1>
 <div id="app" dir="ltr">
 
   <!-- ===== TOP BAR ===== -->
-  <header id="top-bar">
+  <!-- A plain group, not <header>: a <header> outside sectioning content is a second "banner" landmark, and the
+       site header above is the page's one banner. -->
+  <div id="top-bar" role="group" aria-label="Editor toolbar">
     <div class="bar-group bar-left">
       <button class="icon-btn" id="btn-menu" title="Menu (Edit, Transform, Arrange, View, Insert)" aria-haspopup="true" aria-expanded="false" data-action="menu">
         <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
@@ -55,7 +122,7 @@
       <button class="text-btn" id="btn-export" data-action="export">تصدير <span class="lang-secondary">• Export</span> ▾</button>
       <button class="text-btn" id="btn-project" data-action="project">المشروع <span class="lang-secondary">• Project</span></button>
     </div>
-  </header>
+  </div><!-- /#top-bar -->
 
   <!-- ===== MAIN WORKSPACE ===== -->
   <main id="workspace" class="tool-select">
@@ -296,6 +363,28 @@
   <!-- toast -->
   <div id="toast" class="toast" hidden></div>
 </div>
+</div><!-- /#editor-host -->
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="../" class="brand" style="margin-bottom:10px;"><img class="logo logo-light" src="../assets/brand/arabic-keyboard-logo.svg" alt="كيبورد عربي" width="99" height="44"><img class="logo logo-dark" src="../assets/brand/arabic-keyboard-logo-dark.svg" alt="كيبورد عربي" width="99" height="44"></a>
+        <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+      </div>
+      <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+      <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+      <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 لوحة عربي</span>
+      <span>صُنع بعناية للكتابة العربية</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../assets/js/app.js" defer></script>
 
 <!--
   The real, audited font/family/variation registry

@@ -138,6 +138,7 @@
  "محرر الخط العربي — Arabic Calligraphy Editor": "Arabic Calligraphy Editor",
  "محرر خط عربي أونلاين: اكتب نصك واختر من خطوط عربية متعددة، وأضف التشكيل والزخارف، ثم صدّر التصميم بصيغة PNG أو SVG أو PDF.": "An online Arabic calligraphy editor: type your text, choose from many Arabic fonts, add diacritics and ornaments, then export your design as PNG, SVG or PDF.",
  "تكوين بدون عنوان": "Untitled composition",
+ "تكوين بدون عنوان *": "Untitled composition *",   // same title with the editor's unsaved-changes marker (ui.js)
  "تصدير": "Export",
  "المشروع": "Project",
  "أضف نصًا أو اختر أداة للبدء": "Add text or choose a tool to start",

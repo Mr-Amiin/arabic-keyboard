@@ -1,4 +1,4 @@
-// Service-worker suite: the REAL worker (v16) in headless Chromium, served from the repo root.
+// Service-worker suite: the REAL worker (v17) in headless Chromium, served from the repo root.
 import fs from "node:fs";
 import path from "node:path";
 import { harness, sleep, txt, REPO } from "./lib.mjs";
@@ -7,7 +7,7 @@ const H = await harness("service-worker"); const { base, ok } = H;
 const src = fs.readFileSync(path.join(REPO, "sw.js"), "utf8");
 const CACHE = src.match(/CACHE_NAME = "([^"]+)"/)[1], VENDOR = src.match(/VENDOR_CACHE = "([^"]+)"/)[1];
 const CORE = eval(src.match(/const CORE_ASSETS = (\[[\s\S]*?\]);/)[1]);
-ok(CACHE === "arabic-keyboard-shell-v16", "sw.js CACHE_NAME is v16 (above the live v15) (" + CACHE + ")");
+ok(CACHE === "arabic-keyboard-shell-v17", "sw.js CACHE_NAME is v17 (above the live v16) (" + CACHE + ")");
 const p = await H.page({ sw: true }); let N = 0;
 const U = h => `${base}/learn-arabic/?n=${++N}${h || ""}`;
 const settle = async () => { await p.evaluate(() => navigator.serviceWorker.ready); await sleep(2500); };
@@ -28,16 +28,16 @@ ok(["/learn-arabic/", "/assets/css/learn.css", "/assets/js/learn/typing-dock.js"
 ok(ks.every(k => k === CACHE || k === VENDOR), "no unexpected caches after a fresh install");
 /* 2. activation removes obsolete caches, keeps the vendor cache, and old Learn assets cannot linger */
 await p.evaluate(async v => {
-  for (const name of ["arabic-keyboard-shell-v10", "arabic-keyboard-shell-v11", "arabic-keyboard-shell-v15"]) { const c = await caches.open(name); await c.put("/assets/js/learn/app.js", new Response("window.__STALE_" + name.slice(-3) + "=1")); await c.put("/old-only.txt", new Response("x")); }
+  for (const name of ["arabic-keyboard-shell-v10", "arabic-keyboard-shell-v11", "arabic-keyboard-shell-v16"]) { const c = await caches.open(name); await c.put("/assets/js/learn/app.js", new Response("window.__STALE_" + name.slice(-3) + "=1")); await c.put("/old-only.txt", new Response("x")); }
   const vc = await caches.open(v); await vc.put("/assets/vendor/keepme.bin", new Response("vendor"));
   for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
 }, VENDOR);
 await p.goto(U(), { waitUntil: "domcontentloaded" }); await p.waitForSelector(".lx-grid"); await settle();
 ks = await keys();
-ok(!ks.includes("arabic-keyboard-shell-v10") && !ks.includes("arabic-keyboard-shell-v11") && !ks.includes("arabic-keyboard-shell-v15") && ks.includes(CACHE), "activation deleted the obsolete v10, v11 and the currently-live v15 caches (now: " + JSON.stringify(ks) + ")");
+ok(!ks.includes("arabic-keyboard-shell-v10") && !ks.includes("arabic-keyboard-shell-v11") && !ks.includes("arabic-keyboard-shell-v16") && ks.includes(CACHE), "activation deleted the obsolete v10, v11 and the currently-live v16 caches (now: " + JSON.stringify(ks) + ")");
 ok(ks.includes(VENDOR) && await p.evaluate(async v => !!(await (await caches.open(v)).match("/assets/vendor/keepme.bin")), VENDOR), "the separate vendor cache (19 MB Tashkeel model) was preserved");
 await p.goto(U(), { waitUntil: "domcontentloaded" }); await p.waitForSelector(".lx-grid");
-ok(await p.evaluate(() => !("__STALE_v10" in window) && !("__STALE_v11" in window) && !("__STALE_v15" in window) && typeof LearnTypingDock === "object" && typeof LearnEngine.gradeTyped === "function"), "page runs the new Learn code, not stale cached v10/v11/v15 files");
+ok(await p.evaluate(() => !("__STALE_v10" in window) && !("__STALE_v11" in window) && !("__STALE_v16" in window) && typeof LearnTypingDock === "object" && typeof LearnEngine.gradeTyped === "function"), "page runs the new Learn code, not stale cached v10/v11/v16 files");
 /* 3. dashboard + keyboard under the worker */
 await p.goto(U(), { waitUntil: "domcontentloaded" }); await p.waitForSelector(".lx-grid");
 ok((await p.$$(".lx-tile")).length === 28 && (await p.evaluate(() => !!navigator.serviceWorker.controller)), "dashboard renders (28 tiles) while controlled by the worker");

@@ -17,8 +17,8 @@ const CORE = coreOf(sw);
 const onDisk = u => fs.existsSync(path.join(REPO, u === "/" ? "index.html" : u.endsWith("/") ? u.slice(1) + "index.html" : u.slice(1)));
 
 /* ---------- service worker ---------- */
-test("sw.js: new cache version v16 (stale v11/v10 Learn assets cannot be served)", () => {
-  assert.equal(sw.match(/const CACHE_NAME = "([^"]+)"/)[1], "arabic-keyboard-shell-v16");
+test("sw.js: new cache version v17 (stale v16/v11/v10 assets cannot be served)", () => {
+  assert.equal(sw.match(/const CACHE_NAME = "([^"]+)"/)[1], "arabic-keyboard-shell-v17");
   assert.equal(sw.match(/const VENDOR_CACHE = "([^"]+)"/)[1], "arabic-keyboard-vendor-v1", "vendor cache name must not change (19 MB model)");
 });
 test("sw.js: every precache path exists on disk (one bad path makes cache.addAll fail silently for ALL assets)", () => {
