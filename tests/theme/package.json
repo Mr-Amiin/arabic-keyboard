@@ -6,6 +6,7 @@
   "scripts": {
     "test": "node theme-persistence.mjs",
     "test:editor": "node calligraphy-editor-theme.mjs",
+    "test:navbar": "node navbar-responsive.mjs",
     "test:unit": "node --test launch-browser.test.mjs"
   },
   "devDependencies": {
