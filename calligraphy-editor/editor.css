@@ -113,7 +113,9 @@ html[data-theme="dark"] .boot-fatal-error-banner{ background: #0E1713; color: #E
    inputs that customize it (.text-panel-input, .project-rename-input)
    already have their own deliberate :focus treatment below -- so this
    rule intentionally leaves inputs alone rather than fighting them. */
-button:focus-visible, a:focus-visible{
+/* Scoped with :where(#app) (no added specificity): --accent only exists inside #app, so unscoped this declaration was invalid
+   for the site header/drawer/footer and removed their focus ring (the site's own `:focus-visible` gold ring) on this page. */
+:where(#app) button:focus-visible, :where(#app) a:focus-visible{
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -239,7 +241,10 @@ button:focus-visible, a:focus-visible{
   .bar-right .text-btn .lang-secondary{ display: none; }
 }
 
-.icon-btn{
+/* SCOPED to the editor via :where(#app) (zero added specificity, so the cascade inside the editor is unchanged).
+   The site header's #themeToggle, #menuToggle (.hamburger) and #mobileNavClose are also .icon-btn; an unscoped rule here
+   overrode the site's `.hamburger{display:none}` and restyled them (hamburger visible on desktop, 34px/borderless). */
+:where(#app) .icon-btn{
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -252,7 +257,7 @@ button:focus-visible, a:focus-visible{
   color: var(--ink);
   transition: background .12s ease, opacity .12s ease;
 }
-.icon-btn svg{
+:where(#app) .icon-btn svg{
   width: 18px; height: 18px;
   fill: none;
   stroke: currentColor;
@@ -260,11 +265,11 @@ button:focus-visible, a:focus-visible{
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.icon-btn:hover:not(:disabled){ background: rgba(var(--shade-rgb),0.06); }
-.icon-btn:active:not(:disabled){ background: rgba(var(--shade-rgb),0.1); }
-.icon-btn:disabled{ opacity: .32; cursor: default; }
-.icon-btn.sm{ width: 30px; height: 30px; }
-.icon-btn.sm svg{ width: 16px; height: 16px; }
+:where(#app) .icon-btn:hover:not(:disabled){ background: rgba(var(--shade-rgb),0.06); }
+:where(#app) .icon-btn:active:not(:disabled){ background: rgba(var(--shade-rgb),0.1); }
+:where(#app) .icon-btn:disabled{ opacity: .32; cursor: default; }
+:where(#app) .icon-btn.sm{ width: 30px; height: 30px; }
+:where(#app) .icon-btn.sm svg{ width: 16px; height: 16px; }
 
 .text-btn{
   appearance: none;
@@ -1314,7 +1319,7 @@ button:focus-visible, a:focus-visible{
 .ctx-popover button svg{ width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; }
 .ctx-popover button:hover{ background: rgba(var(--shade-rgb),0.06); }
 
-.icon-btn.active{ background: var(--accent); color: #fff; }
+:where(#app) .icon-btn.active{ background: var(--accent); color: #fff; }
 
 /* ===================== FLOATING INSPECTOR (Phase 3) ===================== */
 .panel-inspector{
