@@ -16,6 +16,8 @@ const D = require(path.join(REPO, "assets/js/learn/data.js"));
 const E = require(path.join(REPO, "assets/js/learn/engine.js"));
 const V = require(path.join(REPO, "assets/js/learn/vocab-data.js"));
 const RV = require(path.join(REPO, "assets/js/learn/review.js"));
+const CV = require(path.join(REPO, "assets/js/learn/conversations.js"));
+const RD = require(path.join(REPO, "assets/js/learn/reading.js"));
 const read = f => fs.readFileSync(path.join(REPO, f), "utf8");
 
 export const COLUMNS = ["item_id", "lesson_no", "lesson_title", "category", "field", "arabic_as_implemented", "plain_spelling", "transliteration",
@@ -182,6 +184,59 @@ V.PATTERNS.forEach((pt, pi) => {
       special_flags: sp, automated_checks_STRUCTURE_ONLY: `plain = vowelled after stripping marks: ${strip(e.ar) === strip(e.plain)}; blank word occurs in the sentence: ${e.ar.split(" ").includes(e.slot)}; ${nfcOk(e.ar)}`, source: `assets/js/learn/vocab-data.js → PATTERNS (${e.id})`, suggested_priority: "high", priority_reason: "grammar: case endings and agreement" }); });
 });
 
+/* ---------- regional variants (Phase 3): shown to learners for recognition only, never quizzed or scheduled ---------- */
+V.VARIANTS.forEach(d => {
+  const ti = V.TOPICS.findIndex(t => t.id === d.topic), rel = V.ITEMS.find(i => i.id === d.related), sp = flagsFor(d.ar);
+  add({ item_id: `V-${d.id.toUpperCase()}`, lesson_no: `V${ti + 1}`, lesson_title: `Vocabulary: ${V.TOPICS[ti].title}`, category: "vocabulary-variant", field: `regional item (${d.region}); shown for recognition only, never quizzed or scheduled`,
+    arabic_as_implemented: d.ar, plain_spelling: d.plain, transliteration: d.translit, english_text: d.en,
+    context_notes: `Classified as ${d.reg === "dialect" ? "spoken dialect" : "standard Arabic whose usage is regional"}; region: ${d.region}. Related Modern Standard Arabic item: ${rel ? rel.ar + " (" + rel.en + ", " + rel.id + ")" : d.related}. ${d.note}`.trim(),
+    special_flags: (sp ? sp + "; " : "") + (d.reg === "dialect" ? "dialect" : "regional-usage"), automated_checks_STRUCTURE_ONLY: `${nfcOk(d.ar)}; related MSA item exists: ${!!rel}; excluded from every exercise and review: ${!RV.BY_ID[d.id]}`,
+    source: "assets/js/learn/vocab-packs.js → VARIANTS", suggested_priority: "high", priority_reason: "dialect / regional classification and spelling" });
+});
+
+/* ---------- conversation units (Phase 3): dialogue text, translations, key vocabulary, sentence items, comprehension questions, pronunciation guidance ---------- */
+const safe = v => (/^[=+\-@\t\r]/.test(String(v)) ? `(${v})` : String(v));   // keep any cell from being read as a spreadsheet formula
+const answerOf = q => q.options[q.answer];
+CV.UNITS.forEach((u, ci) => {
+  const no = "C" + (ci + 1), title = `Conversation ${ci + 1}: ${u.title}`, base = { lesson_no: no, lesson_title: title }, src = x => `assets/js/learn/conversations.js → UNITS[${ci}]${x}`;
+  add({ ...base, item_id: `${no}-INTRO`, category: "conversation-unit", field: "unit title, scenario, speakers and register statement shown to learners", english_text: `${u.title}. ${u.scenario} Speakers: ${Object.entries(u.speakers).map(([k, v]) => `${k} = ${v}`).join("; ")}.`,
+    context_notes: `Register statement shown: ${u.registerNote} Unit id: ${u.id}.`, automated_checks_STRUCTURE_ONLY: `register recorded: ${u.register}; ${u.lines.length} lines`, source: src(""), suggested_priority: "high", priority_reason: "register claim (Modern Standard Arabic) and the translation of the scenario" });
+  u.lines.forEach(l => { const sp = flagsFor(l.ar);
+    add({ ...base, item_id: `${no}-L${l.n}`, category: "dialogue-line", field: `dialogue line ${l.n} (speaker ${l.speaker}: ${u.speakers[l.speaker]})`, arabic_as_implemented: l.ar, plain_spelling: l.plain, transliteration: l.translit, english_text: l.en,
+      context_notes: `Spoken by device text-to-speech (audio key ${l.audioKey}); no recording exists. Confirm vowelling, case endings, naturalness, gender agreement with the speaker, and the translation.`, special_flags: sp,
+      automated_checks_STRUCTURE_ONLY: `plain = vowelled after stripping marks: ${strip(l.ar) === strip(l.plain)}; ${nfcOk(l.ar)}`, source: src(`.lines[${l.n - 1}]`), suggested_priority: "high", priority_reason: "full sentence with case endings and verb forms" }); });
+  add({ ...base, item_id: `${no}-VOCAB`, category: "conversation-vocabulary", field: "key vocabulary list (each word is a scheduled vocabulary item reviewed under its own V- row)", arabic_as_implemented: u.vocab.map(id => RV.BY_ID[id].ar).join("  |  "),
+    english_text: u.vocab.map(id => `${id}: ${RV.BY_ID[id].en}`).join("; "), automated_checks_STRUCTURE_ONLY: `every id exists in the vocabulary data: ${u.vocab.every(id => !!RV.BY_ID[id])}`, source: src(".vocab") });
+  u.sentenceIds.forEach(sid => { const e = RV.BY_ID[sid], sp = flagsFor(e.ar);
+    add({ ...base, item_id: sid.toUpperCase(), category: "sentence-example", field: "sentence-completion item from this dialogue (fill-in-the-blank and typing exercises; scheduled for review)", arabic_as_implemented: e.ar + (e.punct || ""), plain_spelling: e.plain, transliteration: e.translit, english_text: e.en,
+      context_notes: `Fill-in exercise: the blank is the word ${e.slot}; options = that word + these distractors: ${e.pool.join("  ")}. Confirm the correct word is right AND that every distractor is wrong for this sentence (gender, meaning, case ending).`,
+      special_flags: sp, automated_checks_STRUCTURE_ONLY: `plain = vowelled after stripping marks: ${strip(e.ar) === strip(e.plain)}; blank word occurs in the sentence: ${e.ar.split(" ").includes(e.slot)}; ${nfcOk(e.ar)}`, source: `assets/js/learn/conversations.js → SENTENCE_ITEMS (${sid})`, suggested_priority: "high", priority_reason: "distractors must all be wrong" }); });
+  u.questions.forEach((q, qi) => add({ ...base, item_id: `${no}-Q${qi + 1}`, category: "comprehension-question", field: "dialogue comprehension question", arabic_as_implemented: q.arabicOptions ? q.options.join("  ") : "",
+    english_text: `Question: ${q.prompt}  Options: ${q.options.map((o, oi) => (oi === q.answer ? "[CORRECT] " : "") + o).join(" / ")}.  Explanation shown: ${q.explanation}`, context_notes: "Option order is shuffled each time the question is shown; grading uses the option, not its position. Confirm the keyed answer is correct and no other option is also acceptable.",
+    special_flags: flagsFor(q.options.join(" "), q.explanation), automated_checks_STRUCTURE_ONLY: `keyed index ${q.answer} is within ${q.options.length} distinct options: ${q.answer >= 0 && q.answer < q.options.length && new Set(q.options).size === q.options.length}`, source: src(`.questions[${qi}]`) }));
+  u.speak.forEach((t, ti) => { const l = u.lines[t.line - 1];
+    add({ ...base, item_id: `${no}-SP${ti + 1}`, category: "pronunciation", field: `speaking-practice pronunciation guidance for dialogue line ${t.line}`, arabic_as_implemented: l.ar, plain_spelling: l.plain, transliteration: l.translit, english_text: t.tip,
+      context_notes: "Teacher: is this English-speaker approximation accurate, safe for beginners, and correct for Modern Standard Arabic? The learner self-checks; the course cannot hear them.", special_flags: flagsFor(l.ar), automated_checks_STRUCTURE_ONLY: `refers to an existing line: ${!!l}`, source: src(`.speak[${ti}]`), suggested_priority: "high", priority_reason: "pronunciation guidance" }); });
+  u.dialect.forEach((d, di) => add({ ...base, item_id: `${no}-D${di + 1}`, category: "dialect-note", field: `spoken variant shown for recognition only (${d.region}); never quizzed`, arabic_as_implemented: d.ar, plain_spelling: strip(d.ar), transliteration: d.translit, english_text: d.en,
+    context_notes: `Region label: ${d.region}. ${d.note} Confirm the form, spelling, region label and transliteration; dialect spelling has no single standard.`, special_flags: (flagsFor(d.ar) ? flagsFor(d.ar) + "; " : "") + "dialect", automated_checks_STRUCTURE_ONLY: `${nfcOk(d.ar)}; excluded from every exercise and review: true`, source: src(`.dialect[${di}]`), suggested_priority: "high", priority_reason: "dialect classification and spelling" }));
+});
+
+/* ---------- reading comprehension passages (Phase 3) ---------- */
+RD.PASSAGES.forEach((p, pi) => {
+  const no = "RP" + (pi + 1), lv = RD.LEVELS[p.level - 1], title = `Reading ${pi + 1}: ${p.title} (level ${p.level}, ${lv.title})`, base = { lesson_no: no, lesson_title: title }, src = x => `assets/js/learn/reading.js → PASSAGES[${pi}]${x}`;
+  add({ ...base, item_id: `${no}-INTRO`, category: "reading-passage", field: "passage title, level and instruction shown to learners", english_text: `${p.title}. Level ${p.level}: ${lv.title}. ${p.intro}`, context_notes: `Harakat shown by default: ${p.marks ? "yes" : "NO (the learner can switch them on)"}. Passage id: ${p.id}. Is the level appropriate for a beginner and the text natural Modern Standard Arabic?`,
+    automated_checks_STRUCTURE_ONLY: `register recorded: ${p.register}; ${p.lines.length} lines`, source: src(""), suggested_priority: "high", priority_reason: "level and register claim" });
+  p.lines.forEach(l => { const sp = flagsFor(l.ar);
+    add({ ...base, item_id: `${no}-L${l.n}`, category: "reading-line", field: `passage line ${l.n}` + (l.speaker ? ` (speaker: ${l.speaker})` : ""), arabic_as_implemented: l.ar, plain_spelling: l.plain, transliteration: l.translit, english_text: l.en,
+      context_notes: p.marks ? "Shown fully vowelled." : "Shown WITHOUT harakat by default; the vowelled form here appears when the learner switches harakat on. Confirm that the plain text is unambiguous for a beginner.", special_flags: sp,
+      automated_checks_STRUCTURE_ONLY: `plain = vowelled after stripping marks: ${strip(l.ar) === strip(l.plain)}; ${nfcOk(l.ar)}`, source: src(`.lines[${l.n - 1}]`), suggested_priority: "high", priority_reason: "full sentence with case endings and verb forms" }); });
+  p.glossary.forEach((g, gi) => add({ ...base, item_id: `${no}-G${gi + 1}`, category: "reading-glossary", field: "vocabulary explanation shown with the passage", arabic_as_implemented: g.ar, plain_spelling: strip(g.ar), transliteration: safe(g.translit), english_text: g.en,
+    context_notes: "Confirm the form, transliteration and the explanation.", special_flags: flagsFor(g.ar, g.en), automated_checks_STRUCTURE_ONLY: nfcOk(g.ar), source: src(`.glossary[${gi}]`) }));
+  p.questions.forEach((q, qi) => add({ ...base, item_id: `${no}-Q${qi + 1}`, category: "comprehension-question", field: "reading comprehension question", arabic_as_implemented: q.arabicOptions ? q.options.join("  ") : "",
+    english_text: `Question: ${q.prompt}  Options: ${q.options.map((o, oi) => (oi === q.answer ? "[CORRECT] " : "") + o).join(" / ")}.  Explanation shown: ${q.explanation}`, context_notes: "Option order is shuffled each time the question is shown; grading uses the option, not its position. Confirm the keyed answer is correct and the other options are wrong.",
+    special_flags: flagsFor(q.options.join(" "), q.explanation), automated_checks_STRUCTURE_ONLY: `keyed index ${q.answer} is within ${q.options.length} distinct options: ${q.answer >= 0 && q.answer < q.options.length && new Set(q.options).size === q.options.length}`, source: src(`.questions[${qi}]`) }));
+});
+
 /* ---------- page text and templates that carry teaching claims ---------- */
 const html = read("learn-arabic/index.html"), app = read("assets/js/learn/app.js");
 const text = h => h.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
@@ -218,7 +273,13 @@ const UI_SENTENCES = [
   ["X-UI-RECALL", "instruction for vocabulary/sentence recall questions", "Type this in Arabic. The check compares letters only, so harakat are optional.", "defines what counts as correct", "high"],
   ["X-UI-PATTERN-PRACTICE", "text above the pattern practice button", "Complete each sentence, then type each one from its English meaning. Your answers schedule these sentences for review.", "", "standard"],
   ["X-UI-REVIEW-RULE", "explanation on the Daily review page", "A correct answer moves an item to a longer interval; a miss brings it back tomorrow.", "scheduling rule shown to learners", "standard"],
-  ["X-UI-REVIEW-LADDER", "explanation on the Daily review page", "The questions get harder as you learn an item.", "", "standard"]
+  ["X-UI-REVIEW-LADDER", "explanation on the Daily review page", "The questions get harder as you learn an item.", "", "standard"],
+  ["X-UI-JOURNEY-RULE", "completion rule on the Learning path page", "A step is marked complete only when you have really passed it: a quiz score, or most of its words answered correctly. Nothing is locked, so you may open any step at any time, but the current step is the best place to continue.", "defines when progress counts; claims nothing is locked", "high"],
+  ["X-UI-CONV-INTRO", "introduction on the Conversations page", "The dialogues are Modern Standard Arabic; spoken dialect forms appear only in labelled notes and are never quizzed.", "register claim", "high"],
+  ["X-UI-CONV-DIALECT", "caution in the spoken-variants box of a conversation", "The device voice reads Arabic with a standard pronunciation, so it may not sound like speech in that region.", "dialect statement", "high"],
+  ["X-UI-SPEAKING", "instruction for the speaking activity", "This course cannot hear you, so this activity is self-checked, and it does not count toward completing the unit.", "states how speaking practice is (not) assessed", "standard"],
+  ["X-UI-READING-COMP", "introduction on the Reading comprehension page", "levels 1–3 are fully vowelled, and level 4 starts without harakat (you can switch them on).", "describes the harakat policy of the texts", "high"],
+  ["X-UI-LISTEN-HIDDEN", "note on a vocabulary topic when the device has no Arabic voice", "Listening practice is hidden because this device has no Arabic voice for speech. Install one in your system settings to enable it.", "", "standard"]
 ];
 UI_SENTENCES.forEach(([id, field, sentence, why, prio]) => {
   if (!app.includes(sentence)) throw new Error(`UI sentence for ${id} not found in app.js: the app wording changed; update UI_SENTENCES in build-review-package.mjs`);
@@ -240,7 +301,7 @@ export function toMarkdown() {
   const out = [`# Arabic course review sheet`, ``, `Generated from the implementation by \`docs/arabic-course-review/build-review-package.mjs\`. **Every item below is UNREVIEWED.** Nothing here has been approved by a qualified Arabic teacher.`, `Read \`REVIEWER-GUIDE.md\` first. Record decisions in \`review-items.csv\` (same item IDs) or tick the boxes here.`, ``,
     `Decision key: ☐ approved · ☐ correction needed · ☐ uncertain. “Priority” is a machine-assigned suggestion (see the guide), not a linguistic judgement. Arabic text is shown exactly as implemented; open this file in a viewer with an Arabic font.`, ``];
   const lessons = []; rows.forEach(r => { if (!lessons.includes(r.lesson_no)) lessons.push(r.lesson_no); });
-  const order = l => (/^\d+$/.test(l) ? Number(l) : { H1: 100, H2: 101, R1: 110, R2: 111, R3: 112, R4: 113, R5: 114, R6: 115, X: 200, P: 300 }[l] ?? 400);
+  const order = l => (/^\d+$/.test(l) ? Number(l) : /^V\d+$/.test(l) ? 400 + Number(l.slice(1)) : /^S\d+$/.test(l) ? 500 + Number(l.slice(1)) : /^C\d+$/.test(l) ? 600 + Number(l.slice(1)) : /^RP\d+$/.test(l) ? 700 + Number(l.slice(1)) : { H1: 100, H2: 101, R1: 110, R2: 111, R3: 112, R4: 113, R5: 114, R6: 115, X: 800, P: 900 }[l] ?? 950);
   lessons.sort((a, b) => order(a) - order(b)).forEach(l => {
     const rs = rows.filter(r => r.lesson_no === l); out.push(`## ${rs[0].lesson_title}`, ``);
     out.push(`| ID | Category | Arabic (as implemented) | Plain / transliteration | English / explanation / notes | Flags | Priority | Decision |`, `|---|---|---|---|---|---|---|---|`);
@@ -264,6 +325,7 @@ The Learn Arabic course (alphabet, harakat, reading practice) was written and te
 |---|---|
 | \`review-items.csv\` | One row per reviewable item (${rows.length} rows). Open in Excel/Sheets (UTF-8 with BOM, so Arabic displays correctly). **Fill in the last three columns.** |
 | \`review-sheet.md\` | The same items grouped by lesson, easier to read straight through. |
+| \`recording-script.csv\` | The exact Arabic text of every word and sentence the course can speak aloud, one row per audio key (${recordingRows.length} rows), with blank columns for who recorded and who verified it. Nothing is recorded yet: the course uses a device voice. Record only text you have approved in the review above. |
 | \`build-review-package.mjs\` | Regenerates both files from the course source, so every value traces to a source location (the \`source\` column). |
 
 ## Contents
@@ -286,7 +348,14 @@ ${hi} items are marked **high** priority. This is a rule-based suggestion (empha
 - **harakat:** definitions, sounds, where each mark is written, and the notes about tanween and shadda.
 - **quick-check / missing-letter exercise:** is the keyed answer correct; is the explanation shown to learners accurate; could a distractor also produce a valid word with the stated meaning.
 - **reading-stage / reading-item:** spelling and vowelling, transliteration, meaning; whether the stage order is a sensible beginner progression; whether the stated grading (letters only, or letters and harakat) suits the stage.
-- **page-text / page-template:** statements the page makes to every learner about joining rules, audio and dialects.
+- **vocabulary / vocabulary-topic:** Arabic with harakat, plain spelling, transliteration, English meaning, register (Modern Standard Arabic) and the grammar note on each topic. Each word also appears in spelling exercises as the plain spelling plus machine-made misspellings (see the context column).
+- **vocabulary-variant / vocabulary-dialect / dialect-note:** regional or dialect forms shown only for recognition. Check the form, the region label, and whether it is correctly described as dialect or as standard Arabic used regionally (for example the Levantine month names). They are never quizzed.
+- **conversation-unit / dialogue-line / conversation-vocabulary:** the dialogue text with harakat, its transliteration and English translation, speaker gender agreement, and the key-vocabulary list.
+- **sentence-example:** fill-in sentences. Confirm the keyed word is right and that every distractor is wrong.
+- **comprehension-question:** the keyed answer and explanation for dialogue and reading questions (option order is shuffled each time).
+- **pronunciation:** the English-speaker pronunciation tips used in the speaking activities.
+- **reading-passage / reading-line / reading-glossary:** the reading texts, their level, whether harakat are hidden at first, and the vocabulary explanations.
+- **page-text / page-template:** statements the page makes to every learner about joining rules, audio, dialects, progress and completion.
 
 ## Special cases that need extra care
 ${Object.keys(idx).sort().map(k => `- **${k}**: ${idx[k].length} items (listed at the end of \`review-sheet.md\`)`).join("\n")}
@@ -295,8 +364,10 @@ ${Object.keys(idx).sort().map(k => `- **${k}**: ${idx[k].length} items (listed a
 The column \`automated_checks_STRUCTURE_ONLY\` records what software verified. It never means a row is approved. In particular, software has **not** checked: pronunciation, naturalness of usage, correctness of English meanings, correctness of vowel marks beyond consistency with the plain spelling, or dialect statements.
 
 ## Known limits of the course content (for context)
-- Examples are Modern Standard Arabic; dialect pronunciations are mentioned only briefly.
-- Transliteration is a rough guide; audio uses a device text-to-speech voice (not native recordings) where available.
+- Examples are Modern Standard Arabic; dialect forms are shown only in labelled notes and are never quizzed.
+- Transliteration is a rough guide; audio uses a device text-to-speech voice (not native recordings) where available. The architecture can play verified human recordings later, once the Arabic text and the recording script are approved; none exist today.
+- Vocabulary is given in dictionary (pausal) form without case endings, except in dialogues and sentences where an ending is part of the sentence.
+- Month names follow the Gregorian names used in Egypt, the Gulf and North Africa; the Levant and Iraq names are shown as regional variants.
 - Words containing hamza, ta marbuta or alif maqsura use characters beyond the 28-letter table; they are flagged \`uses-character-outside-the-28-letter-table\`.
 
 ## After the review
@@ -313,10 +384,20 @@ This folder sits inside the website repository's root. If the site is published 
 - Overall comments:
 `;
 }
-export function buildPackage() { return { rows, csv: toCsv(), markdown: toMarkdown(), guide: toGuide(), special: specialIndex() }; }
+/* ---------- recording script: the text of every audio key, for a future verified human recording (nothing is recorded today) ---------- */
+export const RECORDING_COLUMNS = ["audio_key", "kind", "arabic_text", "plain_spelling", "transliteration", "english_text", "source", "script_status", "text_approved_by_teacher", "recorded_by", "verified_by", "recording_file", "date_verified"];
+const recordingRows = [];
+V.ITEMS.forEach(i => recordingRows.push({ audio_key: `vocab-${i.id}`, kind: "vocabulary", arabic_text: i.ar, plain_spelling: i.plain, transliteration: i.translit, english_text: i.en, source: `assets/js/learn/vocab-data.js → ITEMS (${i.id})` }));
+CV.UNITS.forEach(u => u.lines.forEach(l => recordingRows.push({ audio_key: l.audioKey, kind: "dialogue line", arabic_text: l.ar, plain_spelling: l.plain, transliteration: l.translit, english_text: l.en, source: `assets/js/learn/conversations.js → ${u.id} line ${l.n}` })));
+RD.PASSAGES.forEach(p => p.lines.forEach(l => recordingRows.push({ audio_key: l.audioKey, kind: "reading line", arabic_text: l.ar, plain_spelling: l.plain, transliteration: l.translit, english_text: l.en, source: `assets/js/learn/reading.js → ${p.id} line ${l.n}` })));
+export function toRecordingCsv() {
+  const full = recordingRows.map(r => Object.assign(Object.fromEntries(RECORDING_COLUMNS.map(c => [c, ""])), r, { script_status: "UNREVIEWED" }));   // approval / recording columns stay blank
+  return "\uFEFF" + [RECORDING_COLUMNS.join(","), ...full.map(r => RECORDING_COLUMNS.map(c => q(r[c])).join(","))].join("\r\n") + "\r\n";
+}
+export function buildPackage() { return { rows, csv: toCsv(), markdown: toMarkdown(), guide: toGuide(), recording: toRecordingCsv(), recordingRows, special: specialIndex() }; }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const p = buildPackage();
-  fs.writeFileSync(path.join(HERE, "review-items.csv"), p.csv); fs.writeFileSync(path.join(HERE, "review-sheet.md"), p.markdown); fs.writeFileSync(path.join(HERE, "REVIEWER-GUIDE.md"), p.guide);
+  fs.writeFileSync(path.join(HERE, "review-items.csv"), p.csv); fs.writeFileSync(path.join(HERE, "review-sheet.md"), p.markdown); fs.writeFileSync(path.join(HERE, "REVIEWER-GUIDE.md"), p.guide); fs.writeFileSync(path.join(HERE, "recording-script.csv"), p.recording);
   console.log(`rows: ${p.rows.length}; csv: ${p.csv.length} chars; sheet: ${p.markdown.length} chars; high priority: ${p.rows.filter(r => r.suggested_priority === "high").length}`);
 }

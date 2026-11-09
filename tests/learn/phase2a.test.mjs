@@ -17,8 +17,8 @@ const CORE = coreOf(sw);
 const onDisk = u => fs.existsSync(path.join(REPO, u === "/" ? "index.html" : u.endsWith("/") ? u.slice(1) + "index.html" : u.slice(1)));
 
 /* ---------- service worker ---------- */
-test("sw.js: new cache version v17 (stale v16/v11/v10 assets cannot be served)", () => {
-  assert.equal(sw.match(/const CACHE_NAME = "([^"]+)"/)[1], "arabic-keyboard-shell-v17");
+test("sw.js: new cache version v18 (stale v17/v16/v11/v10 assets cannot be served)", () => {
+  assert.equal(sw.match(/const CACHE_NAME = "([^"]+)"/)[1], "arabic-keyboard-shell-v18");
   assert.equal(sw.match(/const VENDOR_CACHE = "([^"]+)"/)[1], "arabic-keyboard-vendor-v1", "vendor cache name must not change (19 MB model)");
 });
 test("sw.js: every precache path exists on disk (one bad path makes cache.addAll fail silently for ALL assets)", () => {
@@ -26,7 +26,7 @@ test("sw.js: every precache path exists on disk (one bad path makes cache.addAll
   for (const u of CORE) assert.ok(onDisk(u), "missing file for " + u);
 });
 test("sw.js: Learn page, CSS and every Learn script are precached", () => {
-  for (const u of ["/learn-arabic/", "/assets/css/learn.css", ...["data", "vocab-data", "srs", "engine", "review", "progress", "audio", "typing-dock", "app"].map(n => `/assets/js/learn/${n}.js`), "/assets/js/keyboard-tool.js"]) assert.ok(CORE.includes(u), u);
+  for (const u of ["/learn-arabic/", "/assets/css/learn.css", ...["data", "vocab-packs", "vocab-data", "conversations", "reading", "srs", "engine", "review", "journey", "progress", "audio", "typing-dock", "app"].map(n => `/assets/js/learn/${n}.js`), "/assets/js/keyboard-tool.js"]) assert.ok(CORE.includes(u), u);
 });
 test("sw.js: every local script/stylesheet the Learn page references is precached (nothing needed offline is left out)", () => {
   const refs = [...html.matchAll(/(?:src|href)="(\.\.\/assets\/[^"]+)"/g)].map(m => m[1].replace("..", ""));
@@ -56,7 +56,7 @@ test("Learn page: keyboard-tool.js is NOT a static script tag (it must be lazy-l
 });
 test("Learn page: scripts load in dependency order, with typing-dock before app", () => {
   const order = [...html.matchAll(/<script src="\.\.\/assets\/js\/learn\/(\w[\w-]*)\.js"/g)].map(m => m[1]);
-  assert.deepEqual(order, ["data", "vocab-data", "srs", "engine", "review", "progress", "audio", "typing-dock", "app"]);
+  assert.deepEqual(order, ["data", "vocab-packs", "vocab-data", "conversations", "reading", "srs", "engine", "review", "journey", "progress", "audio", "typing-dock", "app"]);
 });
 test("Learn page: dock markup is complete, hidden by default, persistent (outside #learnApp), with an accessible toggle", () => {
   for (const id of ["lxTypePanel", "lxTPrompt", "lxEditor", "lxKbToggle", "lxKbWrap", "lxKb", "lxKbStatus", "lxKbRetry", "lxKbAnnounce", "lxTCheck", "lxTNext", "lxTFb"]) assert.ok(new RegExp(`id="${id}"`).test(html), id);
@@ -216,15 +216,15 @@ function readZip(buf) { // minimal reader: end-of-central-directory -> central d
     assert.equal(zipMod.crc32(data), buf.readUInt32LE(p + 16), "CRC mismatch for " + name); assert.equal(data.length, buf.readUInt32LE(p + 24)); out[name] = data; p += 46 + nl; }
   return out;
 }
-test("reviewer zip: valid archive with the three review files plus a manifest, identical to the repo files", () => {
+test("reviewer zip: valid archive with the review files, the recording script and a manifest, identical to the repo files", () => {
   const z = readZip(zipMod.buildZip()), dir = "docs/arabic-course-review/";
-  assert.deepEqual(Object.keys(z).sort(), ["arabic-course-review/MANIFEST.txt", "arabic-course-review/REVIEWER-GUIDE.md", "arabic-course-review/review-items.csv", "arabic-course-review/review-sheet.md"]);
-  for (const n of ["REVIEWER-GUIDE.md", "review-sheet.md", "review-items.csv"]) assert.ok(z["arabic-course-review/" + n].equals(fs.readFileSync(path.join(REPO, dir + n))), n);
+  assert.deepEqual(Object.keys(z).sort(), ["arabic-course-review/MANIFEST.txt", "arabic-course-review/REVIEWER-GUIDE.md", "arabic-course-review/recording-script.csv", "arabic-course-review/review-items.csv", "arabic-course-review/review-sheet.md"]);
+  for (const n of ["REVIEWER-GUIDE.md", "review-sheet.md", "review-items.csv", "recording-script.csv"]) assert.ok(z["arabic-course-review/" + n].equals(fs.readFileSync(path.join(REPO, dir + n))), n);
 });
 test("reviewer zip: deterministic (two builds are byte-identical) and the manifest states UNREVIEWED and fingerprints both files and course sources", () => {
   assert.ok(zipMod.buildZip().equals(zipMod.buildZip()));
   const m = readZip(zipMod.buildZip())["arabic-course-review/MANIFEST.txt"].toString("utf8");
   assert.ok(/STATUS: UNREVIEWED/.test(m) && /All teacher_decision fields are blank/.test(m));
-  for (const f of ["review-items.csv", "review-sheet.md", "REVIEWER-GUIDE.md", "assets/js/learn/data.js", "assets/js/learn/engine.js", "assets/js/learn/app.js", "learn-arabic/index.html"]) assert.ok(new RegExp(`[0-9a-f]{64}  ${f.replace(/[./]/g, "\\$&")}`).test(m), "no hash for " + f);
+  for (const f of ["review-items.csv", "review-sheet.md", "REVIEWER-GUIDE.md", "recording-script.csv", "assets/js/learn/data.js", "assets/js/learn/engine.js", "assets/js/learn/app.js", "assets/js/learn/vocab-packs.js", "assets/js/learn/conversations.js", "assets/js/learn/reading.js", "learn-arabic/index.html"]) assert.ok(new RegExp(`[0-9a-f]{64}  ${f.replace(/[./]/g, "\\$&")}`).test(m), "no hash for " + f);
   assert.ok(!/approved by a qualified Arabic teacher\.?\s*$/m.test(m.replace("Nothing in this package has been approved by a qualified Arabic teacher.", "")), "manifest must not claim approval");
 });

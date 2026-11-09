@@ -24,8 +24,8 @@ test("vocabulary: stable unique ids that are valid scheduler ids; every field pr
     assert.equal(i.ar, i.ar.normalize("NFC"), i.id + " not NFC"); if (!i.slot) assert.ok(["word", "phrase"].includes(i.kind), i.id);   // sentence-pattern examples have no kind
   }
 });
-test("vocabulary: the four required topics exist with the expected coverage", () => {
-  assert.deepEqual(V.TOPICS.map(t => t.id), ["numbers", "colours", "family", "greetings"]);
+test("vocabulary: the four V1 topics still exist, first and unchanged in id and size (Phase 3 only adds topics after them)", () => {
+  assert.deepEqual(V.TOPICS.slice(0, 4).map(t => t.id), ["numbers", "colours", "family", "greetings"]); assert.deepEqual(V.V1_TOPIC_IDS, ["numbers", "colours", "family", "greetings"]);
   const n = t => V.ITEMS.filter(i => i.topic === t).length;
   assert.equal(n("numbers"), 11); assert.equal(n("colours"), 10); assert.equal(n("family"), 12); assert.ok(n("greetings") >= 16);
   for (const i of V.ITEMS) assert.ok(V.TOPICS.some(t => t.id === i.topic), i.id);
@@ -231,5 +231,5 @@ test("review package covers every new item: vocabulary, dialect, patterns and ex
   for (const d of V.DIALECT) assert.ok(/dialect/.test(by["V-" + d.id.toUpperCase()].special_flags) && by["V-" + d.id.toUpperCase()].context_notes.includes(d.region));
   for (const pt of V.PATTERNS) { assert.ok(by["PAT-" + pt.id.toUpperCase()]); for (const e of pt.examples) { const r = by["PAT-" + e.id.slice(4).toUpperCase()]; assert.ok(r, e.id); assert.equal(r.arabic_as_implemented, e.ar + (e.punct || "")); assert.ok(r.context_notes.includes(e.pool[0])); } }
   assert.ok(by["V-NUM-2"].special_flags.includes("hamzat-wasl") && by["V-NUM-2"].suggested_priority === "high");
-  assert.equal(rows.filter(r => r.category === "vocabulary").length, 51); assert.ok(rows.filter(r => r.item_id.startsWith("X-UI-")).length >= 17);
+  assert.equal(rows.filter(r => r.category === "vocabulary").length, V.ITEMS.length); assert.ok(rows.filter(r => r.item_id.startsWith("X-UI-")).length >= 17);
 });

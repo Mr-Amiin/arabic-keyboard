@@ -11,7 +11,7 @@ export const todayNo = p => p.evaluate(() => LearnSRS.dayNumber(Date.now()));
 // Works out, inside the page, how to answer the CURRENT question correctly (or wrongly).
 export async function planAnswer(p, wrong = false) {
   return p.evaluate(w => {
-    const D = LearnData, V = LearnVocab, W = V.ITEMS, PT = V.PATTERN_ITEMS, panel = document.getElementById("lxTypePanel");
+    const D = LearnData, V = LearnVocab, W = V.ITEMS, PT = V.PATTERN_ITEMS.concat(window.LearnConversations ? LearnConversations.SENTENCE_ITEMS : []), panel = document.getElementById("lxTypePanel");
     const lbl = i => i.ar + (i.punct || "");
     if (panel && !panel.hidden) {                                   // typing question
       const pr = document.getElementById("lxTPrompt"), en = ((pr.querySelector(".lx-q-en") || {}).textContent || "").replace(/^“|”$/g, "");
