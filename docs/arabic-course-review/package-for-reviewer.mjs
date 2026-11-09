@@ -1,6 +1,6 @@
 // Packages the review files into ONE zip for a qualified Arabic teacher (no dependencies, deterministic output).
 //   node docs/arabic-course-review/package-for-reviewer.mjs [output-directory]      (default: current directory)
-// The zip holds REVIEWER-GUIDE.md, review-sheet.md, review-items.csv and MANIFEST.txt. It refuses to build if the committed review
+// The zip holds REVIEWER-GUIDE.md, review-sheet.md, review-items.csv, recording-script.csv and MANIFEST.txt. It refuses to build if the committed review
 // files are stale compared with the course source (regenerate first with build-review-package.mjs).
 import fs from "node:fs";
 import path from "node:path";
@@ -16,12 +16,12 @@ const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n+
 export const crc32 = buf => { let c = 0xFFFFFFFF; for (const b of buf) c = CRC[(c ^ b) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
 
 // Files that define "the course as reviewed": their hashes go into the manifest so the reviewed version is identifiable.
-const SOURCES = ["assets/js/learn/data.js", "assets/js/learn/engine.js", "assets/js/learn/app.js", "learn-arabic/index.html"];
+const SOURCES = ["assets/js/learn/data.js", "assets/js/learn/engine.js", "assets/js/learn/app.js", "assets/js/learn/vocab-data.js", "assets/js/learn/vocab-packs.js", "assets/js/learn/conversations.js", "assets/js/learn/reading.js", "learn-arabic/index.html"];
 
 export function collect() {
-  const files = ["REVIEWER-GUIDE.md", "review-sheet.md", "review-items.csv"].map(n => [n, fs.readFileSync(path.join(HERE, n))]);
+  const files = ["REVIEWER-GUIDE.md", "review-sheet.md", "review-items.csv", "recording-script.csv"].map(n => [n, fs.readFileSync(path.join(HERE, n))]);
   const fresh = buildPackage();
-  const want = { "REVIEWER-GUIDE.md": fresh.guide, "review-sheet.md": fresh.markdown, "review-items.csv": fresh.csv };
+  const want = { "REVIEWER-GUIDE.md": fresh.guide, "review-sheet.md": fresh.markdown, "review-items.csv": fresh.csv, "recording-script.csv": fresh.recording };
   for (const [n, buf] of files) if (buf.toString("utf8") !== want[n]) throw new Error(`${n} is stale compared with the course source: run node docs/arabic-course-review/build-review-package.mjs first`);
   const manifest = [
     "ARABIC COURSE REVIEW PACKAGE", "",

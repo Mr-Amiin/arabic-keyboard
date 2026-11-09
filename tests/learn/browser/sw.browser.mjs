@@ -7,7 +7,7 @@ const H = await harness("service-worker"); const { base, ok } = H;
 const src = fs.readFileSync(path.join(REPO, "sw.js"), "utf8");
 const CACHE = src.match(/CACHE_NAME = "([^"]+)"/)[1], VENDOR = src.match(/VENDOR_CACHE = "([^"]+)"/)[1];
 const CORE = eval(src.match(/const CORE_ASSETS = (\[[\s\S]*?\]);/)[1]);
-ok(CACHE === "arabic-keyboard-shell-v17", "sw.js CACHE_NAME is v17 (above the live v16) (" + CACHE + ")");
+ok(CACHE === "arabic-keyboard-shell-v18", "sw.js CACHE_NAME is v18 (above the live v17) (" + CACHE + ")");
 const p = await H.page({ sw: true }); let N = 0;
 const U = h => `${base}/learn-arabic/?n=${++N}${h || ""}`;
 const settle = async () => { await p.evaluate(() => navigator.serviceWorker.ready); await sleep(2500); };
@@ -91,6 +91,19 @@ await p.evaluate(() => { location.hash = "#/review"; }); await p.waitForFunction
 ok(/caught up/.test(await txt(p, "#learnApp")) && /Next review: in 2 days/.test(await txt(p, "#learnApp")), "OFFLINE: the Daily review page works and reports the next review time");
 r = await nav("/learn-arabic/?lang=ar#/patterns/this-f"); await p.waitForSelector(".lx-ex", { timeout: 8000 }).catch(() => {});
 ok((await p.$$(".lx-ex")).length === 3, "OFFLINE: a sentence-pattern page opens through a ?lang=ar URL");
+/* 4d. Phase 3 offline: conversations, reading and the journey open from the cache; a comprehension check is scored and saved with the server stopped */
+r = await nav("/learn-arabic/#/conversation/greet"); await p.waitForSelector(".lx-dl", { timeout: 8000 }).catch(() => {});
+ok((await p.$$(".lx-dl")).length >= 5 && (await p.$$(".lx-dl .lx-hear")).length >= 5, "OFFLINE: a conversation unit opens with its dialogue and Hear buttons");
+await p.evaluate(() => localStorage.removeItem("ak-learn-progress-v1")); await p.click('[data-action="ccheck"]');
+for (let i = 0; i < 12; i++) { await p.waitForFunction(() => document.querySelector(".lx-score") || document.querySelector(".lx-opt"), { timeout: 8000 }); if (await p.$(".lx-score")) break;
+  const idx = await p.evaluate(() => { const pr = document.querySelector(".lx-q").textContent, q = LearnConversations.UNITS.flatMap(u => u.questions).find(x => pr.includes(x.prompt)); return [...document.querySelectorAll(".lx-opt")].map(o => o.textContent.trim()).indexOf(q.options[q.answer]); });
+  await (await p.$$(".lx-opt"))[idx].click(); await p.waitForSelector("#lxNextBtn"); await p.click("#lxNextBtn"); }
+const offUnit = await readStore(p);
+ok(offUnit.units && offUnit.units["conv-greet"] && offUnit.units["conv-greet"].best === 100, "OFFLINE: a conversation comprehension check is scored and the result is saved");
+r = await nav("/learn-arabic/#/reading/read-t1"); await p.waitForSelector(".lx-rd-l", { timeout: 8000 }).catch(() => {});
+ok((await p.$$(".lx-rd-l")).length >= 4, "OFFLINE: a reading passage opens");
+r = await nav("/learn-arabic/#/journey"); await p.waitForSelector(".lx-stage", { timeout: 8000 }).catch(() => {});
+ok((await p.$$(".lx-stage")).length === 8, "OFFLINE: the learning journey opens with all eight stages");
 /* 5. offline AND the keyboard script is missing from every cache -> native fallback */
 await p.evaluate(async () => { for (const k of await caches.keys()) await (await caches.open(k)).delete("/assets/js/keyboard-tool.js"); });
 await p.evaluate(() => { location.hash = "#/read"; }); await p.reload({ waitUntil: "domcontentloaded" }).catch(() => {}); await p.waitForSelector('[data-action="stage"][data-id="joined"]', { timeout: 10000 }).catch(() => {});

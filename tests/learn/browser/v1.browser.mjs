@@ -13,14 +13,14 @@ let p = await fresh(); await go(p, ""); await reset(p); await go(p, "");
 const dash = await p.evaluate(() => ({ stats: document.querySelector(".lx-stats").innerText.replace(/\s+/g, " "), review: document.getElementById("lxDailyReview").innerText.replace(/\s+/g, " "), topics: [...document.querySelectorAll('a[href^="#/vocab/"]')].map(a => a.getAttribute("href")), patterns: !!document.querySelector('a[href="#/patterns"]'), tiles: document.querySelectorAll(".lx-tile").length }));
 ok(dash.tiles === 28 && dash.stats.includes("0 / 30") && /0\s*reviews due/.test(dash.stats), "fresh dashboard: 28 letter tiles, 0 / 30 lessons, 0 reviews due: " + dash.stats.slice(0, 80));
 ok(/Nothing is scheduled yet/.test(dash.review), "fresh dashboard: Daily review explains that nothing is scheduled (empty state)");
-ok(JSON.stringify(dash.topics) === JSON.stringify(["#/vocab/numbers", "#/vocab/colours", "#/vocab/family", "#/vocab/greetings"]) && dash.patterns, "dashboard links to the four vocabulary topics and the sentence patterns");
+ok(JSON.stringify(dash.topics.slice(0, 4)) === JSON.stringify(["#/vocab/numbers", "#/vocab/colours", "#/vocab/family", "#/vocab/greetings"]) && dash.topics.length === 16 && dash.patterns, "dashboard links to the four V1 vocabulary topics first, then the 12 Phase 3 topics, and the sentence patterns");
 ok(/Beta/.test(await txt(p, ".lx-intro")) && /not yet been reviewed by a qualified Arabic teacher/.test(await txt(p, ".lx-intro")), "page states plainly that the Arabic content is not yet teacher-reviewed (beta notice)");
 /* 2. alphabet still complete ----------------------------------------------------------------------------------------- */
 const letters = await p.evaluate(() => LearnData.LETTERS.map(l => [l.id, l.letter]));
 let alphabetOk = 0; for (const [id, ch] of letters) { await p.evaluate(h => { location.hash = h; }, "#/letter/" + id); await p.waitForFunction(c => (document.querySelector(".lx-hero-ar") || {}).textContent === c, {}, ch); alphabetOk++; }
 ok(alphabetOk === 28, "all 28 alphabet lessons still open and show the right letter");
 /* 3. vocabulary topic pages ------------------------------------------------------------------------------------------ */
-await go(p, "#/vocab"); ok((await p.$$('#learnApp a.lx-card[href^="#/vocab/"]')).length === 4, "vocabulary home lists the 4 topics");
+await go(p, "#/vocab"); ok((await p.$$('#learnApp a.lx-card[href^="#/vocab/"]')).length === 16, "vocabulary home lists the 16 topics (4 starter + 12 everyday)");
 const topicChecks = await p.evaluate(() => LearnVocab.TOPICS.map(t => ({ id: t.id, n: LearnVocab.ITEMS.filter(i => i.topic === t.id).length })));
 for (const t of topicChecks) {
   await p.evaluate(h => { location.hash = h; }, "#/vocab/" + t.id); await p.waitForSelector(".lx-exs");
@@ -88,7 +88,7 @@ const seed = T => ({ v: 2, lessons: {}, stats: {}, sessions: [], days: [], srs: 
 p = await fresh(); await go(p, ""); const T = await todayNo(p); await writeStore(p, seed(T)); await go(p, "");
 const rv = await p.evaluate(() => ({ stat: document.querySelector(".lx-stats").innerText.replace(/\s+/g, " "), panel: document.getElementById("lxDailyReview").innerText.replace(/\s+/g, " ") }));
 ok(/6\s*reviews due/.test(rv.stat) && /6 item/.test(rv.panel) && /2 in your schedule|8 in your schedule/.test(rv.panel), "dashboard shows exactly the 6 due items (the 2 future items are excluded): " + rv.panel.slice(0, 90));
-await p.click('#lxDailyReview a.lx-btn'); await p.waitForSelector(".lx-h");
+await p.click('#lxDailyReview a.lx-btn'); await p.waitForSelector('[data-action="review-start"]');   // wait for the review page itself (the dashboard also has an .lx-h)
 const page = await txt(p, "#learnApp");
 ok(/6 items are due now \(1 letter, 3 words, 2 sentences\)/.test(page), "review page summarises what is due by kind: " + (page.match(/\d+ items are due now \([^)]*\)/) || [""])[0]);
 // The six due items are: letter ba, num-1 (one), num-2 (two), col-red (red), pat-this-m-1 and pat-where-1. None of their answers may appear (whole words only).

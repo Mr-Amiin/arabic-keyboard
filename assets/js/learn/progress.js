@@ -1,15 +1,24 @@
 /* Learn Arabic — progress store. localStorage with safe fallbacks; no accounts, no network. */
 (function (root, factory) {
-  if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./srs.js"));
-  else root.LearnProgress = factory(root.LearnData, root.LearnSRS);
-})(typeof self !== "undefined" ? self : this, function (D, S) {
+  if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./srs.js"), require("./conversations.js"), require("./reading.js"));
+  else root.LearnProgress = factory(root.LearnData, root.LearnSRS, root.LearnConversations, root.LearnReading);
+})(typeof self !== "undefined" ? self : this, function (D, S, C, RD) {
   "use strict";
   // The storage KEY keeps its original name so existing learners keep their data; the schema version lives inside the data (v: 2).
   const KEY = "ak-learn-progress-v1", VERSION = 2, MAX_SESSIONS = 60, MAX_DAYS = 400, MAX_SRS = 2000;
   const SRS_ID = /^[a-z0-9:_-]{1,40}$/;
   const LESSON_IDS = D.LETTERS.map(function (l) { return "letter-" + l.id; }).concat(D.HARAKAT_LESSONS.map(function (h) { return h.id; }));
 
-  function empty() { return { v: VERSION, lessons: {}, stats: {}, sessions: [], days: [], srs: {} }; }
+  /* Phase 3 "units": conversation units (conv-*), reading passages (read-*) and the Reading and typing stages (stage-*).
+     unit = { at: first completion time (0 until passed), best: best comprehension percent, tries: attempts, spoke: speaking practice self-marked }.
+     A unit is COMPLETE only when its best score reaches the pass mark (set per unit kind below); an attempt below it is recorded but does not complete it.
+     This is an additive field: stored data without it (every V1 learner) loads unchanged. */
+  const UNIT_PASS = {};
+  (C ? C.UNITS : []).forEach(function (u) { UNIT_PASS[u.id] = C.PASS_PERCENT; });
+  (RD ? RD.PASSAGES : []).forEach(function (p) { UNIT_PASS[p.id] = RD.PASS_PERCENT; });
+  D.READING_STAGES.forEach(function (s) { UNIT_PASS["stage-" + s.id] = 70; });
+  const UNIT_IDS = Object.keys(UNIT_PASS);
+  function empty() { return { v: VERSION, lessons: {}, stats: {}, sessions: [], days: [], srs: {}, units: {} }; }
   const isObj = function (x) { return x && typeof x === "object" && !Array.isArray(x); };
   const nn = function (x) { return typeof x === "number" && isFinite(x) && x >= 0 ? Math.floor(x) : 0; };
   function dayKey(ms) { const d = new Date(ms); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
@@ -23,6 +32,7 @@
     if (isObj(raw.stats)) D.LETTERS.forEach(function (l) { const s = raw.stats[l.id]; if (isObj(s) && (nn(s.c) || nn(s.w))) out.stats[l.id] = { c: nn(s.c), w: nn(s.w) }; });
     if (Array.isArray(raw.sessions)) out.sessions = raw.sessions.filter(isObj).slice(-MAX_SESSIONS).map(function (s) { return { at: nn(s.at), kind: String(s.kind || "practice").slice(0, 20), correct: nn(s.correct), total: nn(s.total) }; });
     if (Array.isArray(raw.days)) out.days = raw.days.filter(function (d) { return /^\d{4}-\d{2}-\d{2}$/.test(d); }).slice(-MAX_DAYS);
+    if (isObj(raw.units)) UNIT_IDS.forEach(function (id) { const u = raw.units[id]; if (isObj(u)) out.units[id] = { at: nn(u.at), best: Math.min(100, nn(u.best)), tries: nn(u.tries), spoke: !!u.spoke }; });
     // Review schedule (schema v2): keep only well-formed entries.
     if (isObj(raw.srs)) Object.keys(raw.srs).slice(0, MAX_SRS).forEach(function (id) {
       const e = raw.srs[id]; if (!SRS_ID.test(id) || !isObj(e)) return;
@@ -72,6 +82,17 @@
       data.lessons[id] = { at: prev ? prev.at : now(), best: Math.max(prev ? prev.best : 0, Math.min(100, nn(percent))) };
       touchDay(); save(); return true;
     }
+    // Records an attempt at a unit. Completion needs the pass mark; the first passing time is kept; the best score never goes down.
+    function recordUnit(id, percent) {
+      if (!Object.prototype.hasOwnProperty.call(UNIT_PASS, id)) return null;
+      refresh(); const prev = data.units[id] || { at: 0, best: 0, tries: 0, spoke: false }, p = Math.min(100, nn(percent)), passed = p >= UNIT_PASS[id];
+      data.units[id] = { at: prev.at || (passed ? now() : 0), best: Math.max(prev.best, p), tries: prev.tries + 1, spoke: prev.spoke };
+      touchDay(); save(); return { complete: unitDone(id), passed: passed, best: data.units[id].best, tries: data.units[id].tries };
+    }
+    function unitDone(id) { const u = data.units[id]; return !!u && u.at > 0 && u.best >= UNIT_PASS[id]; }
+    function unit(id) { return data.units[id] ? Object.assign({}, data.units[id], { complete: unitDone(id), pass: UNIT_PASS[id] }) : null; }
+    // Speaking practice is self-assessed (the course cannot hear the learner), so it is recorded separately and never counts toward completion.
+    function markSpoke(id) { if (!Object.prototype.hasOwnProperty.call(UNIT_PASS, id)) return false; refresh(); const u = data.units[id] || (data.units[id] = { at: 0, best: 0, tries: 0, spoke: false }); u.spoke = true; touchDay(); save(); return true; }
     // Calendar-day arithmetic (not "minus 24h"), so a 23/25-hour daylight-saving day cannot skip or repeat a date.
     function prevDay(k) { const p = k.split("-").map(Number); return dayKey(new Date(p[0], p[1] - 1, p[2] - 1).getTime()); }
     function streak() {
@@ -117,7 +138,7 @@
     const srsSummary = function (catalog) { heal(); return Object.assign({ today: today() }, S.summary(data.srs, today(), catalog)); };
     const dueIds = function (catalog) { heal(); return S.dueIds(data.srs, today(), catalog); };
     function reset() { data = empty(); if (persistent) { try { storage.removeItem(KEY); } catch (e) { /* ignore */ } } }
-    return { load: load, save: save, reviewAnswers: reviewAnswers, srsSummary: srsSummary, dueIds: dueIds, srsEntry: function (id) { return data.srs[id] ? Object.assign({}, data.srs[id]) : null; }, today: today, recordSession: recordSession, completeLesson: completeLesson, summary: summary, isDone: isDone, reset: reset, get data() { return data; }, get persistent() { return persistent; } };
+    return { recordUnit: recordUnit, unitDone: unitDone, unit: unit, markSpoke: markSpoke, load: load, save: save, reviewAnswers: reviewAnswers, srsSummary: srsSummary, dueIds: dueIds, srsEntry: function (id) { return data.srs[id] ? Object.assign({}, data.srs[id]) : null; }, today: today, recordSession: recordSession, completeLesson: completeLesson, summary: summary, isDone: isDone, reset: reset, get data() { return data; }, get persistent() { return persistent; } };
   }
-  return { KEY, LESSON_IDS, createStore, sanitize, dayKey };
+  return { KEY, LESSON_IDS, UNIT_IDS, UNIT_PASS, createStore, sanitize, dayKey };
 });

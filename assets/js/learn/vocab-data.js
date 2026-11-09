@@ -2,11 +2,11 @@
    reg: "msa" = Modern Standard Arabic (used in all exercises); "dialect" = regional, shown for information only and never quizzed.
    `ar` is vowelled; `plain` is the spelling without harakat; `punct` (e.g. a question mark) is displayed after `ar` but is not part of the word. */
 (function (root, factory) {
-  if (typeof module === "object" && module.exports) module.exports = factory();
-  else root.LearnVocab = factory();
-})(typeof self !== "undefined" ? self : this, function () {
+  if (typeof module === "object" && module.exports) module.exports = factory(require("./vocab-packs.js"));
+  else root.LearnVocab = factory(root.LearnVocabPacks);
+})(typeof self !== "undefined" ? self : this, function (PK) {
   "use strict";
-  const TOPICS = [
+  const V1_TOPICS = [
     { id: "numbers", title: "Numbers 0–10", blurb: "Count from zero to ten.", note: "These are the bare counting forms. Numbers 3–10 follow special gender rules when counting nouns, which this course does not teach yet." },
     { id: "colours", title: "Colours", blurb: "Ten common colours.", note: "Colour words agree with the noun they describe. These are the masculine singular forms (for example the feminine of أَحْمَر is حَمْرَاء)." },
     { id: "family", title: "Family", blurb: "Close family members.", note: "Arabic has separate words for paternal and maternal relatives (for example عَمّ and خَال)." },
@@ -66,7 +66,12 @@
     ["greet-name-q", "greetings", "مَا اسْمُكَ", "ما اسمك", "mā smuka", "what is your name? (to a man)", "phrase", "؟", "To a woman: مَا اسْمُكِ؟"],
     ["greet-name-a", "greetings", "اِسْمِي أَحْمَد", "اسمي أحمد", "ismī aḥmad", "my name is Ahmad", "phrase", "", "Replace أَحْمَد with your own name."]
   ];
-  const ITEMS = RAW.map(r => ({ id: r[0], topic: r[1], ar: r[2], plain: r[3], translit: r[4], en: r[5], kind: r[6], punct: r[7], note: r[8], reg: "msa" }));
+  // V1 topics and items keep their ids and content. Phase 3 adds a `group` (starter / everyday), a `difficulty` and the new packs after them.
+  const V1_ITEMS = RAW.map(r => ({ id: r[0], topic: r[1], ar: r[2], plain: r[3], translit: r[4], en: r[5], kind: r[6], punct: r[7], note: r[8], reg: "msa", difficulty: "Easy" }));
+  const TOPICS = V1_TOPICS.map(t => Object.assign({ group: "starter" }, t)).concat(PK ? PK.TOPICS : []);
+  const ITEMS = V1_ITEMS.concat(PK ? PK.ITEMS : []);
+  // Regional words and regional month names: display only, never quizzed, never scheduled (ids start "var-").
+  const VARIANTS = PK ? PK.VARIANTS : [];
 
   // Regional greetings: shown for information on the greetings page, never used in exercises or reviews.
   const DIALECT = [
@@ -104,5 +109,5 @@
   ].map(p => ({ id: p.id, title: p.title, template: p.template, explain: p.explain, examples: p.examples.map(e => ({ id: e[0], pattern: p.id, ar: e[1], plain: e[2], translit: e[3], en: e[4], slot: e[5], pool: e[6], punct: e[7] })) }));
 
   const PATTERN_ITEMS = [].concat.apply([], PATTERNS.map(p => p.examples));
-  return { TOPICS, ITEMS, DIALECT, PATTERNS, PATTERN_ITEMS };
+  return { TOPICS, ITEMS, DIALECT, VARIANTS, PATTERNS, PATTERN_ITEMS, V1_TOPIC_IDS: V1_TOPICS.map(t => t.id) };
 });
