@@ -149,14 +149,14 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 .breadcrumbs .current{ color:var(--ink); font-weight:600; }
 
 /* ---------------- HERO / PAGE HEAD ---------------- */
-.hero{ padding:44px 0 28px; text-align:center; }
+.hero{ padding:20px 0 14px; text-align:center; }
 .hero.compact{ padding:10px 0 10px; }
 .eyebrow{
   display:inline-flex; align-items:center; gap:8px; font-family:var(--font-ui); font-size:12.5px; font-weight:600;
   letter-spacing:.04em; color:var(--emerald); background:color-mix(in srgb, var(--emerald) 12%, transparent);
   padding:6px 14px; border-radius:999px; margin-bottom:18px;
 }
-.hero h1{ font-size:clamp(32px,6vw,58px); line-height:1.15; margin-bottom:14px; }
+.hero h1{ font-size:clamp(32px,6vw,58px); line-height:1.15; margin-bottom:10px; }
 .hero.compact h1{ font-size:clamp(24px,4vw,34px); margin-bottom:5px; }
 .hero.compact .eyebrow{ margin-bottom:6px; }
 .hero p.lead{ font-size:16.5px; color:var(--ink-soft); max-width:640px; margin:0 auto; line-height:1.8; }
