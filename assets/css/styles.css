@@ -436,6 +436,10 @@ footer.site{ border-top:1px solid var(--border); padding:44px 0 26px; margin-top
 
   .editor-area{ padding:10px; }
   .editor{ height:180px; min-height:110px; font-size:19px; padding:14px; }
+  /* Keyboard workspace only (home, /arabic-keyboard/, /editor/): editor is 50% shorter (180px -> 90px) so the keys
+     sit higher on screen. Vertical padding drops 14px -> 10px so two full 19px/1.8 lines still fit without a
+     scrollbar. The generic .editor rule above is unchanged for tashkeel, translation, transliteration, learn. */
+  .workspace .editor{ height:90px; min-height:90px; padding-block:10px; }
   .editor-meta{ font-size:11.5px; }
 
   .kb-panel{ width:100%; max-width:none; padding:8px 8px 10px; }
