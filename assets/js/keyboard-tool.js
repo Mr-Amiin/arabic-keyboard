@@ -87,10 +87,123 @@ window.ArabicKeyboardTool = (function () {
     tbody.innerHTML = rows;
   }
 
+  /* ---------------------------------------------------------------
+     Touch-device display editor (opt-in: init({ touchDisplayEditor: true }))
+     -------------------------------------------------------------
+     On phones/tablets whose only input is touch, ANY focused editable element (<input>, <textarea>,
+     contenteditable) summons the OS keyboard, and readonly/CSS tricks do not reliably prevent that.
+     So on those devices the <textarea> is replaced by a plain <div> that is never focusable and never
+     editable. It exposes the few textarea members this tool uses (value, selectionStart/End, select(),
+     setSelectionRange()), backed by plain JS state (text + caret index) and re-rendered from that state,
+     so the rest of the tool (undo/redo, copy, paste, clear, backspace, insert, counters) runs unchanged.
+     Desktop / any device with a mouse keeps the real <textarea> and physical typing. */
+  const TASHKEEL_SPLIT = /([\u064B-\u0652\u0670])/;
+  const TASHKEEL_CHAR = /[\u064B-\u0652\u0670]/;
+  function isTouchOnlyDevice() {
+    return !!(window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches);
+  }
+
+  function makeDisplayEditor(src) {
+    const el = document.createElement("div");
+    el.id = src.id;
+    el.className = src.className + " editor-display";
+    ["dir", "lang", "placeholder", "aria-label"].forEach((a) => { if (src.hasAttribute(a)) el.setAttribute(a, src.getAttribute(a)); });
+    el.setAttribute("role", "textbox");
+    el.setAttribute("aria-multiline", "true");
+    el.setAttribute("aria-readonly", "true");
+    el.setAttribute("translate", "no");          // page auto-translate must never rewrite the user's text (a textarea's value is immune)
+    // No tabindex, no contenteditable: this element can never take focus, so no OS keyboard can be requested for it.
+
+    const content = document.createElement("span");    // holds the rendered text; i18n must not translate user text
+    content.className = "ed-content";
+    content.setAttribute("data-i18n-skip", "");
+    const caretEl = document.createElement("span");
+    caretEl.className = "ed-caret";
+    caretEl.setAttribute("aria-hidden", "true");
+    el.appendChild(content);
+
+    let text = src.value || "";
+    let caret = text.length;
+    const clamp = (n) => Math.max(0, Math.min(text.length, Number(n) || 0));
+
+    function appendRuns(parent, str) {
+      // Tashkeel marks get their own span so they can be coloured, exactly as the textarea's overlay does.
+      str.split(TASHKEEL_SPLIT).forEach((part) => {
+        if (!part) return;
+        if (TASHKEEL_CHAR.test(part)) {
+          const m = document.createElement("span");
+          m.className = "tashkeel-mark";
+          m.textContent = part;
+          parent.appendChild(m);
+        } else parent.appendChild(document.createTextNode(part));
+      });
+    }
+
+    // Keep the caret line inside the box by scrolling only this element (never the page).
+    function reveal() {
+      try {
+        if (el.scrollHeight <= el.clientHeight) return;
+        const cs = getComputedStyle(el);
+        const lh = parseFloat(cs.lineHeight) || 24, pt = parseFloat(cs.paddingTop) || 0, pb = parseFloat(cs.paddingBottom) || 0;
+        const er = el.getBoundingClientRect(), cr = caretEl.getBoundingClientRect();
+        const lineTop = cr.top - er.top - (parseFloat(cs.borderTopWidth) || 0) + el.scrollTop - Math.max(0, (lh - cr.height) / 2);
+        if (lineTop - pt < el.scrollTop) el.scrollTop = Math.max(0, lineTop - pt);
+        else if (lineTop + lh + pb > el.scrollTop + el.clientHeight) el.scrollTop = lineTop + lh + pb - el.clientHeight;
+      } catch (e) { /* cosmetic only */ }
+    }
+
+    function render() {
+      const frag = document.createDocumentFragment();
+      appendRuns(frag, text.slice(0, caret));
+      frag.appendChild(caretEl);
+      appendRuns(frag, text.slice(caret));
+      content.replaceChildren(frag);
+      el.classList.toggle("is-empty", text === "");
+      reveal();
+    }
+
+    Object.defineProperties(el, {
+      value: { get: () => text, set: (v) => { text = String(v == null ? "" : v); caret = text.length; render(); } },
+      selectionStart: { get: () => caret, set: (n) => { caret = clamp(n); render(); } },
+      selectionEnd: { get: () => caret, set: (n) => { caret = clamp(n); render(); } }
+    });
+    el.setSelectionRange = (a, b) => { caret = clamp(b == null ? a : b); render(); };
+    // Fallback for "copy" only: briefly allow a real DOM selection of the (non-editable) text, then drop it.
+    el.select = () => {
+      el.style.userSelect = el.style.webkitUserSelect = "text";
+      const r = document.createRange(), sel = window.getSelection();
+      r.selectNodeContents(content); sel.removeAllRanges(); sel.addRange(r);
+      setTimeout(() => { sel.removeAllRanges(); el.style.userSelect = el.style.webkitUserSelect = ""; }, 150);
+    };
+
+    // Tap to place the caret: map the tapped point to a character index in the text state.
+    el.addEventListener("click", (ev) => {
+      let node = null, off = 0;
+      if (document.caretPositionFromPoint) { const p = document.caretPositionFromPoint(ev.clientX, ev.clientY); if (p) { node = p.offsetNode; off = p.offset; } }
+      else if (document.caretRangeFromPoint) { const r = document.caretRangeFromPoint(ev.clientX, ev.clientY); if (r) { node = r.startContainer; off = r.startOffset; } }
+      let idx = text.length;
+      if (node && (node === el || content.contains(node))) {
+        const r = document.createRange();
+        r.setStart(content, 0);
+        r.setEnd(node, off);
+        idx = Math.min(text.length, r.toString().length);
+      }
+      while (idx < text.length && TASHKEEL_CHAR.test(text[idx])) idx++;   // never park the caret between a letter and its mark
+      caret = idx;
+      render();
+    });
+
+    src.parentNode.replaceChild(el, src);
+    render();
+    return el;
+  }
+
   function init(opts) {
     opts = opts || {};
-    const editor = document.getElementById(opts.editorId || "editor");
-    if (!editor) return null;
+    const editorEl = document.getElementById(opts.editorId || "editor");
+    if (!editorEl) return null;
+    const displayMode = !!(opts.touchDisplayEditor && editorEl.tagName === "TEXTAREA" && isTouchOnlyDevice());
+    const editor = displayMode ? makeDisplayEditor(editorEl) : editorEl;
     const kb = document.getElementById(opts.keyboardId || "virtualKeyboard");
     if (kb) {
       // Google Translate (and similar page-translation tools) must never rewrite
@@ -107,6 +220,8 @@ window.ArabicKeyboardTool = (function () {
     const charCount = document.getElementById(opts.charCountId || "charCount");
     const wordCount = document.getElementById(opts.wordCountId || "wordCount");
     const dirIndicator = document.getElementById(opts.dirIndicatorId || "dirIndicator");
+    // Phonetic mode types Latin letters on a native keyboard, which this mode deliberately never opens; the on-screen keys already carry Latin hints.
+    if (displayMode && modeTranslit) modeTranslit.style.display = "none";
 
     let undoStack = [""], redoStack = [], suppressPush = false, translitOn = false, fontSize = 24;
     // A single-line <input> (e.g. the /typing-test/ field) cannot hold line breaks: browsers strip them from its value.
@@ -200,7 +315,7 @@ window.ArabicKeyboardTool = (function () {
       if (el) el.addEventListener("click", fn);
     }
 
-    bind(opts.clearId || "btnClear", () => { editor.value = ""; updateMeta(); pushUndo(); window.showToast?.("تم مسح النص"); editor.focus(); });
+    bind(opts.clearId || "btnClear", () => { editor.value = ""; updateMeta(); pushUndo(); window.showToast?.("تم مسح النص"); if (!displayMode) editor.focus(); });
     bind(opts.undoId || "btnUndo", () => {
       if (undoStack.length > 1) { redoStack.push(undoStack.pop()); suppressPush = true; editor.value = undoStack[undoStack.length - 1]; suppressPush = false; updateMeta(); }
     });
@@ -213,7 +328,10 @@ window.ArabicKeyboardTool = (function () {
     });
     bind(opts.pasteId || "btnPaste", async () => {
       try { const t = await navigator.clipboard.readText(); editor.value += t; updateMeta(); pushUndo(); window.showToast?.("تم اللصق"); }
-      catch (e) { window.showToast?.("تعذّر الوصول إلى الحافظة — الصق يدويًا (Ctrl+V)"); editor.focus(); }
+      catch (e) {
+        if (displayMode) window.showToast?.("تعذّر الوصول إلى الحافظة");      // no field to paste into by hand on a touch device
+        else { window.showToast?.("تعذّر الوصول إلى الحافظة — الصق يدويًا (Ctrl+V)"); editor.focus(); }
+      }
     });
     bind(opts.downloadId || "btnDownload", () => {
       const blob = new Blob([editor.value], { type: "text/plain;charset=utf-8" });
@@ -259,7 +377,7 @@ window.ArabicKeyboardTool = (function () {
        A plain focus() scrolls the editor into view, so with the editor above the keyboard
        on a short or phone screen every key tap would yank the page back up and move the
        keys from under the finger. */
-    function focusEditor() { editor.focus({ preventScroll: true }); revealCaret(); }
+    function focusEditor() { if (displayMode) return; editor.focus({ preventScroll: true }); revealCaret(); }
 
     /* preventScroll also skips the browser's own "scroll the textarea to its caret", so in a long
        text the new character would be typed out of sight. Do that part ourselves: scroll only the
@@ -353,6 +471,8 @@ window.ArabicKeyboardTool = (function () {
 
     /* build virtual keyboard */
     if (kb) {
+      // Pressing a key must not move focus anywhere (there is no editable element to give it to on a touch device).
+      if (displayMode) kb.addEventListener("mousedown", (e) => e.preventDefault());
       function makeKey(label, hintText, onClick, extraClass, isPrimaryArabic) {
         const btn = document.createElement("button");
         btn.className = "key notranslate" + (extraClass ? " " + extraClass : "");

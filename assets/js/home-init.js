@@ -1,3 +1,3 @@
 document.addEventListener("DOMContentLoaded", () => {
-  window.ArabicKeyboardTool.init({});
+  window.ArabicKeyboardTool.init({ touchDisplayEditor: true });
 });

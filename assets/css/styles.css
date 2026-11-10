@@ -210,6 +210,18 @@ nav.primary a[aria-current="page"]{ color:var(--emerald); font-weight:700; }
 .editor:focus{ border-color:var(--emerald); box-shadow:0 0 0 3px color-mix(in srgb, var(--emerald) 18%, transparent); }
 .editor[dir="ltr"]{ font-family:var(--font-ui); }
 
+/* Touch devices: the editor is a non-editable <div> (see keyboard-tool.js makeDisplayEditor) so the OS keyboard can never open.
+   The user-select/callout rules only stop text-selection handles; they are not what keeps the keyboard closed. */
+.editor.editor-display{
+  position:relative; display:inline-block; overflow-y:auto; white-space:pre-wrap; overflow-wrap:break-word; word-break:break-word; cursor:text;
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent;
+}
+.editor-display .tashkeel-mark{ color:var(--key-arabic-red); }
+.editor-display .ed-caret{ border-inline-start:2px solid var(--ink); margin-inline:-1px; animation:ed-caret-blink 1.1s steps(1,end) infinite; }
+.editor-display.is-empty::after{ content:attr(placeholder); color:var(--ink-soft); }
+@keyframes ed-caret-blink{ 50%{ opacity:0; } }
+@media (prefers-reduced-motion:reduce){ .editor-display .ed-caret{ animation:none; } }
+
 /* Tashkeel highlight overlay (built by keyboard-tool.js). A second,
    non-interactive copy of the editor's text is layered directly behind
    the real <textarea>, sized/positioned to match it exactly. Only this

@@ -290,6 +290,7 @@
  "تم النسخ": "Copied",
  "تم اللصق": "Pasted",
  "تعذّر الوصول إلى الحافظة — الصق يدويًا (Ctrl+V)": "Couldn't access the clipboard — paste manually (Ctrl+V)",
+ "تعذّر الوصول إلى الحافظة": "Couldn't access the clipboard",
  "جارٍ تنزيل الملف": "Downloading file",
  "من اليمين لليسار": "right to left",
  "من اليسار لليمين": "left to right",
