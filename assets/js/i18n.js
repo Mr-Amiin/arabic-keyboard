@@ -362,8 +362,8 @@
     if (headActions && !headActions.querySelector(".lang-switch")) headActions.insertBefore(buildSwitcher(), headActions.firstChild);
     var closeRow = document.querySelector("#mobileNav .mobile-panel .close-x");
     if (closeRow && !document.querySelector("#mobileNav .lang-switch")) closeRow.parentNode.insertBefore(buildSwitcher("lang-switch-mobile"), closeRow.nextSibling);
-    var editorBar = document.querySelector("#top-bar .bar-right");
-    if (editorBar && !editorBar.querySelector(".lang-switch")) editorBar.insertBefore(buildSwitcher("lang-switch-editor"), editorBar.firstChild);
+    // The Calligraphy Editor has no switcher of its own: the site header (and the mobile menu) is the single
+    // language control, and its setLang() already retranslates the editor in place.
   }
 
   /* ---------- boot ---------- */

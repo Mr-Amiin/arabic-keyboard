@@ -1,0 +1,655 @@
+diff --git a/about/index.html b/about/index.html
+index 18de60c..d169464 100644
+--- a/about/index.html
++++ b/about/index.html
+@@ -124,7 +124,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/arabic-alphabet/index.html b/arabic-alphabet/index.html
+index bb128d2..8b46146 100644
+--- a/arabic-alphabet/index.html
++++ b/arabic-alphabet/index.html
+@@ -114,7 +114,7 @@
+   <div class="section-head"><span class="kicker lang-en">Related</span><h2>أدوات ذات صلة</h2></div>
+   <div class="grid-cards">
+       <a href="../transliteration/" class="card"><div class="ic">🔤</div><h3>التحويل الصوتي</h3><p>حوّل الكتابة اللاتينية (Arabizi) إلى نص عربي فوريًا مع مرجع تحويل كامل.</p></a>
+-      <a href="../arabic-typing-test/" class="card"><div class="ic">🏁</div><h3>اختبار الطباعة العربي</h3><p>نسخة مخصّصة لاختبار سرعة الطباعة بالعربية الفصحى.</p></a>
++      <a href="../typing-test/" class="card"><div class="ic">🏁</div><h3>اختبار الطباعة العربي</h3><p>قِس سرعتك ودقتك في الكتابة بالعربية بمدد زمنية متعددة.</p></a>
+       <a href="../learn-arabic/" class="card"><div class="ic">🎓</div><h3>تعلّم العربية</h3><p>دروس منظمة تغطي الحروف والأرقام والتشكيل وأساسيات الكتابة.</p></a></div>
+ </section>
+ 
+@@ -146,7 +146,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/arabic-keyboard/index.html b/arabic-keyboard/index.html
+index f384f91..fac7faa 100644
+--- a/arabic-keyboard/index.html
++++ b/arabic-keyboard/index.html
+@@ -200,7 +200,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/arabic-typing-test/index.html b/arabic-typing-test/index.html
+index 400b991..847af72 100644
+--- a/arabic-typing-test/index.html
++++ b/arabic-typing-test/index.html
+@@ -1,165 +1,14 @@
+ <!DOCTYPE html>
+ <html lang="ar" dir="rtl">
+ <head>
+-<meta charset="UTF-8">
+-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+-<title>اختبار الطباعة العربي — تدرّب على الكتابة بالفصحى</title>
+-<meta name="description" content="اختبار طباعة مخصّص للعربية الفصحى: قِس عدد الكلمات في الدقيقة والدقة، وتدرّب على الكتابة السريعة بنصوص عربية متنوعة.">
+-<link rel="canonical" href="https://www.arabic-keyboard.live/arabic-typing-test/">
+-<meta property="og:title" content="اختبار الطباعة العربي — تدرّب على الكتابة بالفصحى">
+-<meta property="og:description" content="اختبار طباعة مخصّص للعربية الفصحى: قِس عدد الكلمات في الدقيقة والدقة، وتدرّب على الكتابة السريعة بنصوص عربية متنوعة.">
+-<meta property="og:type" content="website">
+-<meta property="og:url" content="https://www.arabic-keyboard.live/arabic-typing-test/">
+-<meta name="theme-color" content="#1F6F53">
+-<link rel="manifest" href="../manifest.json">
+-<link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+-<link rel="icon" href="../favicon.ico" sizes="48x48">
+-<link rel="icon" href="../assets/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+-<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png" sizes="180x180">
+-<link rel="preconnect" href="https://fonts.googleapis.com">
+-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+-<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+-<link rel="stylesheet" href="../assets/css/styles.css">
+-
+-
+-<meta name="google-adsense-account" content="ca-pub-2057098005458261">
+-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+-     crossorigin="anonymous"></script>
+-<script src="../assets/js/theme-init.js"></script>
+-<script src="../assets/js/i18n.js"></script>
+-<!-- Google tag (gtag.js) -->
+-<script async src="https://www.googletagmanager.com/gtag/js?id=G-S07J4DS20K"></script>
+-<script>
+-  window.dataLayer = window.dataLayer || [];
+-  function gtag(){dataLayer.push(arguments);}
+-  gtag('js', new Date());
+-
+-  gtag('config', 'G-S07J4DS20K');
+-</script>
++<meta charset="utf-8">
++<meta name="viewport" content="width=device-width, initial-scale=1">
++<title>اختبار الطباعة العربي — انتقلت الصفحة</title>
++<link rel="canonical" href="https://www.arabic-keyboard.live/typing-test/">
++<meta http-equiv="refresh" content="0; url=/typing-test/">
++<script>location.replace("/typing-test/");</script>
+ </head>
+ <body>
+-
+-<a href="#main" class="skip-link lang-en">تخطَّ إلى المحتوى</a>
+-<header class="site">
+-  <div class="wrap nav-row">
+-    <a href="../" class="brand"><img class="logo logo-light" src="../assets/brand/arabic-keyboard-logo.svg" alt="كيبورد عربي" width="99" height="44"><img class="logo logo-dark" src="../assets/brand/arabic-keyboard-logo-dark.svg" alt="كيبورد عربي" width="99" height="44"></a>
+-    <nav class="primary" aria-label="التنقل الرئيسي">
+-      <div class="nav-item">
+-        <button type="button" aria-haspopup="true">الأدوات <span aria-hidden="true">▾</span></button>
+-        <div class="dropdown"><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../translation/">الترجمة</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a></div>
+-      </div>
+-      <div class="nav-item">
+-        <a href="../tashkeel/">التشكيل</a>
+-      </div>
+-      <div class="nav-item">
+-        <a href="../translation/">الترجمة</a>
+-      </div>
+-      <div class="nav-item">
+-        <a href="../calligraphy-editor/">محرر الخط العربي</a>
+-      </div>
+-      <div class="nav-item">
+-        <button type="button" aria-haspopup="true">تعلّم <span aria-hidden="true">▾</span></button>
+-        <div class="dropdown"><a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a></div>
+-      </div>
+-      <div class="nav-item">
+-        <button type="button" aria-haspopup="true">موارد <span aria-hidden="true">▾</span></button>
+-        <div class="dropdown"><a href="../faq/">الأسئلة الشائعة</a><a href="../about/">من نحن</a><a href="../contact/">تواصل معنا</a></div>
+-      </div>
+-    </nav>
+-    <div class="head-actions">
+-      
+-      <button class="icon-btn" id="themeToggle" aria-label="تبديل الوضع الداكن" title="الوضع الداكن">🌙</button>
+-      <button class="icon-btn hamburger" id="menuToggle" aria-label="فتح القائمة">☰</button>
+-    </div>
+-  </div>
+-</header>
+-
+-<div id="mobileNav" aria-hidden="true">
+-  <div class="mobile-panel">
+-    <div class="close-x"><button class="icon-btn" id="mobileNavClose" aria-label="إغلاق القائمة">✕</button></div>
+-    <a href="../">الرئيسية</a>
+-    <a href="../tashkeel/">التشكيل</a>
+-    <a href="../translation/">الترجمة</a>
+-    <a href="../calligraphy-editor/">محرر الخط العربي</a>
+-    <div class="grp-label lang-en">Tools</div>
+-    <a href="../arabic-keyboard/">لوحة المفاتيح العربية</a><a href="../transliteration/">التحويل الصوتي</a><a href="../tashkeel/">التشكيل</a><a href="../translation/">الترجمة</a><a href="../editor/">المحرر</a><a href="../typing-test/">اختبار الطباعة</a>
+-    <div class="grp-label lang-en">Learn</div>
+-    <a href="../arabic-alphabet/">الأبجدية العربية</a><a href="../learn-arabic/">تعلّم العربية</a>
+-    <div class="grp-label lang-en">Resources</div>
+-    <a href="../faq/">الأسئلة الشائعة</a><a href="../about/">من نحن</a><a href="../contact/">تواصل معنا</a>
+-  </div>
+-</div>
+-
+-<nav class="breadcrumbs wrap lang-en" aria-label="Breadcrumb"><a href="../">الرئيسية</a><span class="sep" aria-hidden="true">/</span><a href="../learn-arabic/">تعلّم العربية</a><span class="sep" aria-hidden="true">/</span><span class="current" aria-current="page">اختبار الطباعة العربي</span></nav>
+-<main id="main">
+-  <div class="wrap">
+-    
+-<section class="hero compact">
+-  <span class="eyebrow lang-en">Speed test</span>
+-  <h1>اختبار الطباعة العربي</h1>
+-  <p class="lead">اكتب النص المعروض بأسرع وقت ممكن وبأعلى دقة، واختر مدة الاختبار المناسبة لك.</p>
+-</section>
+-
+-<div class="duration-select lang-en">
+-  <button data-duration="15">15s</button>
+-  <button class="active" data-duration="30">30s</button>
+-  <button data-duration="60">60s</button>
+-</div>
+-
+-<div class="stat-grid lang-en">
+-  <div class="stat"><div class="num" id="statWpm">0</div><div class="lbl">WPM</div></div>
+-  <div class="stat"><div class="num" id="statAcc">100%</div><div class="lbl">Accuracy</div></div>
+-  <div class="stat"><div class="num" id="statErr">0</div><div class="lbl">Errors</div></div>
+-  <div class="stat"><div class="num" id="statTime">30</div><div class="lbl">Seconds</div></div>
+-</div>
+-<div data-i18n-skip class="prompt-text" id="promptText" dir="rtl"></div>
+-<input type="text" id="typing-input" class="editor" style="min-height:auto; padding:14px 16px; font-size:20px;" dir="rtl" placeholder="ابدأ الكتابة هنا لتشغيل المؤقت…" autocomplete="off">
+-<div style="text-align:center; margin-top:14px;">
+-  <button class="tb-btn primary" id="restartTest">إعادة الاختبار ↻</button>
+-</div>
+-<div class="result-panel" id="resultPanel">
+-  <h3 style="margin-bottom:8px;">🎉 انتهى الاختبار</h3>
+-  <p style="color:var(--ink-soft);">راجع نتائجك أعلاه، ثم اضغط «إعادة الاختبار» لمحاولة تحسين رقمك.</p>
+-</div>
+-
+-<article class="content-block wrap-narrow" style="padding:32px 20px 0;">
+-  <h2>اختبار طباعة مخصّص للعربية الفصحى</h2>
+-  <p>يقيس الاختبار عدد الكلمات في الدقيقة (WPM) ونسبة الدقة بمقارنة كل حرف تكتبه بالنص الأصلي لحظيًا، مع عداد أخطاء تراكمي.</p>
+-</article>
+-
+-<section class="section">
+-  <div class="section-head"><span class="kicker lang-en">Related</span><h2>أدوات ذات صلة</h2></div>
+-  <div class="grid-cards">
+-      <a href="../arabic-keyboard/" class="card"><div class="ic">⌨️</div><h3>لوحة المفاتيح العربية</h3><p>اكتب بالعربية باستخدام لوحة مفاتيح افتراضية أو تحويل صوتي أو لوحتك الفعلية.</p></a>
+-      <a href="../editor/" class="card"><div class="ic">📝</div><h3>المحرر العربي</h3><p>بيئة كتابة عربية كاملة مع تنسيق واتجاه نص وإحصائيات.</p></a>
+-      <a href="../arabic-alphabet/" class="card"><div class="ic">📚</div><h3>الأبجدية العربية</h3><p>تعلم الحروف وأشكالها المتصلة ونطقها بشكل تفاعلي.</p></a></div>
+-</section>
+-
+-  </div>
+-</main>
+-
+-<footer class="site">
+-  <div class="wrap">
+-    <div class="foot-grid">
+-      <div>
+-        <a href="../" class="brand" style="margin-bottom:10px;"><img class="logo logo-light" src="../assets/brand/arabic-keyboard-logo.svg" alt="كيبورد عربي" width="99" height="44"><img class="logo logo-dark" src="../assets/brand/arabic-keyboard-logo-dark.svg" alt="كيبورد عربي" width="99" height="44"></a>
+-        <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+-      </div>
+-      <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+-      <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+-      <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+-    </div>
+-    <div class="foot-bottom">
+-      <span>© 2026 لوحة عربي</span>
+-      <span>صُنع بعناية للكتابة العربية</span>
+-    </div>
+-  </div>
+-</footer>
+-
+-<div class="toast" id="toast" role="status"></div>
+-<script src="../assets/js/app.js" defer></script>
+-  <script src="../assets/js/typing-test.js" defer></script>
+-  <script src="../assets/js/typing-test-init.js" defer></script>
++<p>انتقلت هذه الصفحة إلى <a href="/typing-test/">اختبار الطباعة العربي</a>.</p>
+ </body>
+-</html>
+\ No newline at end of file
++</html>
+diff --git a/assets/js/i18n-en.js b/assets/js/i18n-en.js
+index 257f0d2..3f21650 100644
+--- a/assets/js/i18n-en.js
++++ b/assets/js/i18n-en.js
+@@ -283,6 +283,10 @@
+  "اختبار سرعة الطباعة العربية — قِس WPM ودقتك": "Arabic Typing Speed Test — Measure Your WPM and Accuracy",
+  "اختبر سرعة طباعتك بالعربية ودقّتك مع مؤقت قابل للتخصيص (15، 30، 60 ثانية) ونتائج فورية لعدد الكلمات في الدقيقة والأخطاء.": "Test your Arabic typing speed and accuracy with a customizable timer (15, 30 or 60 seconds) and instant results for words per minute and errors.",
+  "اختبار سرعة الطباعة": "Typing Speed Test",
++ "اختبار الطباعة العربي — قِس سرعتك ودقتك (WPM)": "Arabic Typing Test — Measure Your Speed and Accuracy (WPM)",
++ "اختبار طباعة للعربية الفصحى: قِس سرعتك (WPM) ودقتك بمؤقت قابل للتخصيص (15، 30، 60 ثانية) مع لوحة مفاتيح عربية على الشاشة ونتائج فورية.": "A typing test for Modern Standard Arabic: measure your speed (WPM) and accuracy with a customizable timer (15, 30, 60 seconds), an on-screen Arabic keyboard and instant results.",
++ "اختبار سرعة الطباعة العربي": "Arabic Typing Speed Test",
++ "صُمّم الاختبار لنصوص عربية فصحى. اكتب بلوحة مفاتيحك أو بلوحة المفاتيح العربية المعروضة على الشاشة، وراجع سرعتك ودقتك فورًا.": "The test is designed for Modern Standard Arabic text. Type with your own keyboard or the on-screen Arabic keyboard, and review your speed and accuracy instantly.",
+  "كيف يعمل اختبار الطباعة؟": "How does the typing test work?",
+  "تم مسح النص": "Text cleared",
+  "تم النسخ إلى الحافظة": "Copied to clipboard",
+diff --git a/assets/js/learn/app.js b/assets/js/learn/app.js
+index e28adbd..10d60a4 100644
+--- a/assets/js/learn/app.js
++++ b/assets/js/learn/app.js
+@@ -49,7 +49,7 @@
+       '<h3 class="lx-h3">Harakat and pronunciation</h3><div class="lx-cards">' + hk + "</div>" +
+       '<h3 class="lx-h3">Vocabulary · <a href="' + href("vocab") + '">all topics</a></h3><div class="lx-cards">' + V.TOPICS.map(function (t) { const p = topicProgress(t.id); return '<a class="lx-card" href="' + href("vocab/" + t.id) + '"><span class="lx-badge lx-d-easy">Beginner</span><h3>' + esc(t.title) + "</h3><p>" + esc(t.blurb) + '</p><p class="lx-small">' + p.seen + " of " + p.total + " practised · " + p.mastered + " mastered</p></a>"; }).join("") + "</div>" +
+       '<h3 class="lx-h3">Practice and reading</h3><div class="lx-cards"><a class="lx-card" href="' + href("practice") + '"><span class="lx-badge lx-d-easy">All levels</span><h3>Letter practice</h3><p>Six exercise types with instant feedback and explanations.</p></a><a class="lx-card" href="' + href("read") + '"><span class="lx-badge lx-d-medium">Beginner</span><h3>Reading and typing</h3><p>Six stages from single letters to short sentences, answered by typing.</p></a><a class="lx-card" href="#/patterns"><span class="lx-badge lx-d-medium">Beginner</span><h3>Sentence patterns</h3><p>Build simple sentences: “This is a …”, “I am a …”, “Where is …?”.</p></a></div>' +
+-      '<h3 class="lx-h3">Related tools</h3><div class="lx-tools"><a href="../arabic-keyboard/">Arabic keyboard</a><a href="../tashkeel/">Tashkeel (add harakat)</a><a href="../arabic-typing-test/">Typing test</a><a href="../transliteration/">Transliteration</a><a href="../arabic-alphabet/">Alphabet reference</a></div>' +
++      '<h3 class="lx-h3">Related tools</h3><div class="lx-tools"><a href="../arabic-keyboard/">Arabic keyboard</a><a href="../tashkeel/">Tashkeel (add harakat)</a><a href="../typing-test/">Typing test</a><a href="../transliteration/">Transliteration</a><a href="../arabic-alphabet/">Alphabet reference</a></div>' +
+       '<p class="lx-reset"><button type="button" class="lx-link" data-action="reset">Reset all progress…</button></p>');
+   }
+ 
+diff --git a/assets/js/typing-test-init.js b/assets/js/typing-test-init.js
+index 053cac0..0ac8e4b 100644
+--- a/assets/js/typing-test-init.js
++++ b/assets/js/typing-test-init.js
+@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
+   /* On-screen Arabic keyboard (/typing-test/ only): the same shared component as /arabic-keyboard/ and /tashkeel/
+      (assets/js/keyboard-tool.js), attached to the test's own input. It inserts at the caret / over the selection and
+      fires one normal "input" event, so the test treats on-screen typing exactly like physical typing. Always visible:
+-     there is deliberately no ON/OFF switch. Pages without #typingKbPanel (e.g. /arabic-typing-test/) are unaffected. */
++     there is deliberately no ON/OFF switch. If #typingKbPanel is absent, the guard below leaves the plain test unaffected. */
+   const panel = document.getElementById("typingKbPanel");
+   const input = document.getElementById("typing-input");
+   if (!panel || !input) return;
+diff --git a/contact/index.html b/contact/index.html
+index 18cd5ca..a726322 100644
+--- a/contact/index.html
++++ b/contact/index.html
+@@ -130,7 +130,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/editor/index.html b/editor/index.html
+index a84124e..426f319 100644
+--- a/editor/index.html
++++ b/editor/index.html
+@@ -188,7 +188,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/faq/index.html b/faq/index.html
+index 3e39722..a5b44c6 100644
+--- a/faq/index.html
++++ b/faq/index.html
+@@ -138,7 +138,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/index.html b/index.html
+index 1b2c4d4..c923609 100644
+--- a/index.html
++++ b/index.html
+@@ -148,7 +148,7 @@
+ </section>
+ 
+ <div class="grid-cards" aria-label="أدوات سريعة">
+-  <a href="arabic-keyboard/" class="card"><div class="ic">⌨️</div><h3>لوحة المفاتيح العربية</h3><p>اكتب بالعربية باستخدام لوحة مفاتيح افتراضية أو تحويل صوتي أو لوحتك الفعلية.</p></a><a href="transliteration/" class="card"><div class="ic">🔤</div><h3>التحويل الصوتي</h3><p>حوّل الكتابة اللاتينية (Arabizi) إلى نص عربي فوريًا مع مرجع تحويل كامل.</p></a><a href="tashkeel/" class="card"><div class="ic">✨</div><h3>التشكيل</h3><p>أضف الحركات الإعرابية إلى نصك العربي تلقائيًا بنموذج يعمل داخل متصفحك.</p></a><a href="editor/" class="card"><div class="ic">📝</div><h3>المحرر العربي</h3><p>بيئة كتابة عربية كاملة مع تنسيق واتجاه نص وإحصائيات.</p></a><a href="typing-test/" class="card"><div class="ic">⏱️</div><h3>اختبار الطباعة</h3><p>قِس سرعتك ودقتك في الكتابة بالعربية بمدد زمنية متعددة.</p></a><a href="arabic-typing-test/" class="card"><div class="ic">🏁</div><h3>اختبار الطباعة العربي</h3><p>نسخة مخصّصة لاختبار سرعة الطباعة بالعربية الفصحى.</p></a><a href="arabic-alphabet/" class="card"><div class="ic">📚</div><h3>الأبجدية العربية</h3><p>تعلم الحروف وأشكالها المتصلة ونطقها بشكل تفاعلي.</p></a><a href="learn-arabic/" class="card"><div class="ic">🎓</div><h3>تعلّم العربية</h3><p>دروس منظمة تغطي الحروف والأرقام والتشكيل وأساسيات الكتابة.</p></a><a href="calligraphy-editor/" class="card"><div class="ic">🖋️</div><h3>محرر الخط العربي</h3><p>صمّم نصوصك بالخط العربي وصدّرها بصيغة PNG أو SVG أو PDF.</p></a>
++  <a href="arabic-keyboard/" class="card"><div class="ic">⌨️</div><h3>لوحة المفاتيح العربية</h3><p>اكتب بالعربية باستخدام لوحة مفاتيح افتراضية أو تحويل صوتي أو لوحتك الفعلية.</p></a><a href="transliteration/" class="card"><div class="ic">🔤</div><h3>التحويل الصوتي</h3><p>حوّل الكتابة اللاتينية (Arabizi) إلى نص عربي فوريًا مع مرجع تحويل كامل.</p></a><a href="tashkeel/" class="card"><div class="ic">✨</div><h3>التشكيل</h3><p>أضف الحركات الإعرابية إلى نصك العربي تلقائيًا بنموذج يعمل داخل متصفحك.</p></a><a href="editor/" class="card"><div class="ic">📝</div><h3>المحرر العربي</h3><p>بيئة كتابة عربية كاملة مع تنسيق واتجاه نص وإحصائيات.</p></a><a href="typing-test/" class="card"><div class="ic">⏱️</div><h3>اختبار الطباعة</h3><p>قِس سرعتك ودقتك في الكتابة بالعربية بمدد زمنية متعددة.</p></a><a href="arabic-alphabet/" class="card"><div class="ic">📚</div><h3>الأبجدية العربية</h3><p>تعلم الحروف وأشكالها المتصلة ونطقها بشكل تفاعلي.</p></a><a href="learn-arabic/" class="card"><div class="ic">🎓</div><h3>تعلّم العربية</h3><p>دروس منظمة تغطي الحروف والأرقام والتشكيل وأساسيات الكتابة.</p></a><a href="calligraphy-editor/" class="card"><div class="ic">🖋️</div><h3>محرر الخط العربي</h3><p>صمّم نصوصك بالخط العربي وصدّرها بصيغة PNG أو SVG أو PDF.</p></a>
+ </div>
+ 
+ <article class="content-block wrap-narrow" lang="en" dir="ltr" style="padding:0;">
+@@ -160,7 +160,7 @@
+     <li>Write your Arabic text in the box. Use the direction button to switch between right-to-left and left-to-right.</li>
+     <li>Copy the text to paste into messages, documents or a search box, download it as a text file, or print it.</li>
+   </ol>
+-  <p>Want more? Try the <a href="transliteration/">Arabic transliteration keyboard</a> for typing Arabic with English letters, add vowel marks with the <a href="tashkeel/">tashkeel tool</a>, or practise with the <a href="arabic-typing-test/">Arabic typing test</a>.</p>
++  <p>Want more? Try the <a href="transliteration/">Arabic transliteration keyboard</a> for typing Arabic with English letters, add vowel marks with the <a href="tashkeel/">tashkeel tool</a>, or practise with the <a href="typing-test/">Arabic typing test</a>.</p>
+ </article>
+ 
+ <section class="section">
+@@ -210,7 +210,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="./arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="./transliteration/">التحويل الصوتي</a></li><li><a href="./tashkeel/">التشكيل</a></li><li><a href="./translation/">الترجمة</a></li><li><a href="./editor/">المحرر</a></li><li><a href="./typing-test/">اختبار الطباعة</a></li><li><a href="./tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="./arabic-alphabet/">الأبجدية العربية</a></li><li><a href="./learn-arabic/">تعلّم العربية</a></li><li><a href="./arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="./arabic-alphabet/">الأبجدية العربية</a></li><li><a href="./learn-arabic/">تعلّم العربية</a></li><li><a href="./typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="./faq/">الأسئلة الشائعة</a></li><li><a href="./about/">من نحن</a></li><li><a href="./contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="./privacy/">الخصوصية</a></li><li><a href="./terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/learn-arabic/index.html b/learn-arabic/index.html
+index f92e7bf..239a62d 100644
+--- a/learn-arabic/index.html
++++ b/learn-arabic/index.html
+@@ -149,7 +149,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/privacy/index.html b/privacy/index.html
+index fd01217..1ec955e 100644
+--- a/privacy/index.html
++++ b/privacy/index.html
+@@ -118,7 +118,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/sitemap.xml b/sitemap.xml
+index 7da5d96..d274b70 100644
+--- a/sitemap.xml
++++ b/sitemap.xml
+@@ -4,7 +4,6 @@
+   <url><loc>https://www.arabic-keyboard.live/about/</loc></url>
+   <url><loc>https://www.arabic-keyboard.live/arabic-alphabet/</loc></url>
+   <url><loc>https://www.arabic-keyboard.live/arabic-keyboard/</loc></url>
+-  <url><loc>https://www.arabic-keyboard.live/arabic-typing-test/</loc></url>
+   <url><loc>https://www.arabic-keyboard.live/calligraphy-editor/</loc></url>
+   <url><loc>https://www.arabic-keyboard.live/contact/</loc></url>
+   <url><loc>https://www.arabic-keyboard.live/editor/</loc></url>
+diff --git a/sw.js b/sw.js
+index b7dbdd4..744a88e 100644
+--- a/sw.js
++++ b/sw.js
+@@ -10,7 +10,7 @@
+    not throw away a visitor's 19 MB download. Bump VENDOR_CACHE only when
+    the files under /assets/vendor/ themselves change.
+ */
+-const CACHE_NAME = "arabic-keyboard-shell-v16";
++const CACHE_NAME = "arabic-keyboard-shell-v17";
+ const VENDOR_CACHE = "arabic-keyboard-vendor-v1";
+ const isVendor = (url) => new URL(url).pathname.startsWith("/assets/vendor/");
+ const CORE_ASSETS = [
+diff --git a/tashkeel/index.html b/tashkeel/index.html
+index 8f87237..42a5cd0 100644
+--- a/tashkeel/index.html
++++ b/tashkeel/index.html
+@@ -193,7 +193,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/terms/index.html b/terms/index.html
+index 4e89ab6..79860c4 100644
+--- a/terms/index.html
++++ b/terms/index.html
+@@ -114,7 +114,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/tests/learn/browser/sw.browser.mjs b/tests/learn/browser/sw.browser.mjs
+index 93d207a..ee1711c 100644
+--- a/tests/learn/browser/sw.browser.mjs
++++ b/tests/learn/browser/sw.browser.mjs
+@@ -1,4 +1,4 @@
+-// Service-worker suite: the REAL worker (v16) in headless Chromium, served from the repo root.
++// Service-worker suite: the REAL worker (v17) in headless Chromium, served from the repo root.
+ import fs from "node:fs";
+ import path from "node:path";
+ import { harness, sleep, txt, REPO } from "./lib.mjs";
+@@ -7,7 +7,7 @@ const H = await harness("service-worker"); const { base, ok } = H;
+ const src = fs.readFileSync(path.join(REPO, "sw.js"), "utf8");
+ const CACHE = src.match(/CACHE_NAME = "([^"]+)"/)[1], VENDOR = src.match(/VENDOR_CACHE = "([^"]+)"/)[1];
+ const CORE = eval(src.match(/const CORE_ASSETS = (\[[\s\S]*?\]);/)[1]);
+-ok(CACHE === "arabic-keyboard-shell-v16", "sw.js CACHE_NAME is v16 (above the live v15) (" + CACHE + ")");
++ok(CACHE === "arabic-keyboard-shell-v17", "sw.js CACHE_NAME is v17 (above v16) (" + CACHE + ")");
+ const p = await H.page({ sw: true }); let N = 0;
+ const U = h => `${base}/learn-arabic/?n=${++N}${h || ""}`;
+ const settle = async () => { await p.evaluate(() => navigator.serviceWorker.ready); await sleep(2500); };
+diff --git a/tests/learn/phase2a.test.mjs b/tests/learn/phase2a.test.mjs
+index cebe3f6..f2491f5 100644
+--- a/tests/learn/phase2a.test.mjs
++++ b/tests/learn/phase2a.test.mjs
+@@ -18,7 +18,7 @@ const onDisk = u => fs.existsSync(path.join(REPO, u === "/" ? "index.html" : u.e
+ 
+ /* ---------- service worker ---------- */
+ test("sw.js: new cache version v16 (stale v11/v10 Learn assets cannot be served)", () => {
+-  assert.equal(sw.match(/const CACHE_NAME = "([^"]+)"/)[1], "arabic-keyboard-shell-v16");
++  assert.equal(sw.match(/const CACHE_NAME = "([^"]+)"/)[1], "arabic-keyboard-shell-v17");
+   assert.equal(sw.match(/const VENDOR_CACHE = "([^"]+)"/)[1], "arabic-keyboard-vendor-v1", "vendor cache name must not change (19 MB model)");
+ });
+ test("sw.js: every precache path exists on disk (one bad path makes cache.addAll fail silently for ALL assets)", () => {
+diff --git a/tests/tashkeel/i18n.mjs b/tests/tashkeel/i18n.mjs
+index 79690fa..cd25357 100644
+--- a/tests/tashkeel/i18n.mjs
++++ b/tests/tashkeel/i18n.mjs
+@@ -15,7 +15,7 @@ const srv = http.createServer((q, r) => {
+ const results = []; const bad = [];
+ const ck = (n, ok, d = "") => { results.push(ok); if (!ok) bad.push(n); console.log((ok ? "PASS " : "FAIL ") + n + (!ok && d ? "  — " + d : "")); };
+ const browser = await puppeteer.launch({ args: [...chromium.args.filter(a => !/single-process|no-zygote/.test(a)), "--no-sandbox", "--lang=en-US"], executablePath: await chromium.executablePath(), headless: "shell" });
+-const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
++const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
+ 
+ async function fresh(w = 1280, h = 900) {            // brand-new visitor: empty storage
+   const ctx = await browser.createBrowserContext();
+diff --git a/tests/tashkeel/qa-final.mjs b/tests/tashkeel/qa-final.mjs
+index 0404a4e..f9ad940 100644
+--- a/tests/tashkeel/qa-final.mjs
++++ b/tests/tashkeel/qa-final.mjs
+@@ -244,7 +244,7 @@ ck("3d. offline: a visitor who used English once still gets the English page (di
+ await pg.setOfflineMode(false); await pg.ctx.close();
+ 
+ /* 3e script paths on nested routes + no 4xx anywhere, both languages */
+-const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/", "/calligraphy-editor/"];
++const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/", "/calligraphy-editor/"];
+ pg = await fresh(); const badAll = [], tagBad = [];
+ for (const l of ["ar", "en"]) for (const u of PAGES) {
+   pg.bad.length = 0; await go(pg, u + "?lang=" + l); await ready(pg, l); await sleep(150);
+diff --git a/tests/theme/theme-persistence.mjs b/tests/theme/theme-persistence.mjs
+index bea63b2..25b177e 100644
+--- a/tests/theme/theme-persistence.mjs
++++ b/tests/theme/theme-persistence.mjs
+@@ -14,7 +14,7 @@ const browser = await launchBrowser();
+ const wait = ms => new Promise(r => setTimeout(r, ms));
+ 
+ // Every page that has the shared header + #themeToggle.
+-const PAGES = ["/", "/arabic-keyboard/", "/tashkeel/", "/editor/", "/translation/", "/learn-arabic/", "/tools/", "/typing-test/", "/arabic-typing-test/", "/arabic-alphabet/", "/transliteration/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
++const PAGES = ["/", "/arabic-keyboard/", "/tashkeel/", "/editor/", "/translation/", "/learn-arabic/", "/tools/", "/typing-test/", "/arabic-alphabet/", "/transliteration/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
+ const SAMPLE = ["/", "/arabic-keyboard/", "/tashkeel/", "/translation/", "/learn-arabic/", "/editor/"];   // the pages named in the task
+ 
+ // A fresh browser context = empty localStorage; `scheme` is the emulated OS preference.
+diff --git a/tests/typing-test/keyboard-browser.mjs b/tests/typing-test/keyboard-browser.mjs
+index ec1b25b..960753c 100644
+--- a/tests/typing-test/keyboard-browser.mjs
++++ b/tests/typing-test/keyboard-browser.mjs
+@@ -189,10 +189,17 @@ for (const device of ["iPhone 12", "Pixel 5"]) {
+   await press(ak, "م"); await press(ak, "سطر جديد"); await press(ak, "ن");
+   ck("R6. /arabic-keyboard/: keyboard still types, incl. new line", (await $v(ak, "#editor")) === "م\nن");
+   ck("R7. /arabic-keyboard/: no errors", ak.errs.length === 0, ak.errs.join(" | ")); await ak.ctx.close();
++  // /arabic-typing-test/ is now a redirect stub (meta refresh 0s + location.replace) onto /typing-test/.
+   const alt = await open("/arabic-typing-test/");
+-  ck("R8. /arabic-typing-test/: unchanged (no keyboard panel, test still works)", await alt.evaluate(() => !document.getElementById("typingKbPanel") && !document.getElementById("virtualKeyboard")));
++  await alt.waitForFunction(() => location.pathname === "/typing-test/", { timeout: 8000 }).catch(() => { });
++  ck("R8. /arabic-typing-test/: redirect stub lands on /typing-test/", new URL(alt.url()).pathname === "/typing-test/", alt.url());
++  await alt.waitForSelector("#typing-input", { timeout: 8000 }).catch(() => { }); await wait(300);
++  ck("R9. after the redirect: keyboard panel is present and typing still starts the test", await alt.evaluate(() => !!document.getElementById("typingKbPanel")));
+   await alt.focus("#typing-input"); await alt.keyboard.type("ا"); await wait(100);
+-  ck("R9. /arabic-typing-test/: typing still starts the test", (await $v(alt, "#typing-input")) === "ا" && (await alt.$$eval("#promptText span.correct, #promptText span.wrong", (a) => a.length)) === 1);
++  ck("R9b. after the redirect: physical typing starts the test", (await $v(alt, "#typing-input")) === "ا" && (await alt.$$eval("#promptText span.correct, #promptText span.wrong", (a) => a.length)) === 1);
++  const stub = await alt.evaluate(() => fetch("/arabic-typing-test/").then((r) => r.text()));
++  ck("R10. stub source: canonical, meta refresh, visible link; no AdSense / analytics / noindex",
++     /rel="canonical" href="https:\/\/www\.arabic-keyboard\.live\/typing-test\/"/.test(stub) && /http-equiv="refresh" content="0; url=\/typing-test\/"/.test(stub) && /<a href="\/typing-test\/">/.test(stub) && !/adsbygoogle|googletagmanager|gtag\(|noindex/i.test(stub));
+   await alt.ctx.close();
+ }
+ 
+diff --git a/tests/typing-test/keyboard.test.mjs b/tests/typing-test/keyboard.test.mjs
+index e5455bd..2211997 100644
+--- a/tests/typing-test/keyboard.test.mjs
++++ b/tests/typing-test/keyboard.test.mjs
+@@ -16,6 +16,7 @@ const ttJs = read("assets/js/typing-test.js");
+ const kbJs = read("assets/js/keyboard-tool.js");
+ const initJs = read("assets/js/typing-test-init.js");
+ const swJs = read("sw.js");
++const sitemapXml = read("sitemap.xml");
+ const tick = (ms = 0) => new Promise((r) => setTimeout(r, ms));
+ 
+ async function loaded(html, url) {
+@@ -271,14 +272,17 @@ test("15. duration buttons and Restart keep working; the OS keyboard is suppress
+   noKb.close(); t.close();
+ });
+ 
+-test("16. other pages are unaffected: /arabic-typing-test/ has no keyboard; Tashkeel and /arabic-keyboard/ keep their «new line» key and switch", async () => {
++test("16. /arabic-typing-test/ is a redirect stub; Tashkeel and /arabic-keyboard/ keep their «new line» key and switch", async () => {
++  // /arabic-typing-test/ is now a redirect stub (consolidated into /typing-test/): no test UI, no keyboard, no ads/analytics.
+   const alt = await loaded(altTypingHtml, "https://www.arabic-keyboard.live/arabic-typing-test/");
+-  alt.window.showToast = () => {};
+-  alt.window.eval(ttJs); alt.window.eval(initJs);
+-  alt.window.document.dispatchEvent(new alt.window.Event("DOMContentLoaded"));
+   assert.equal(alt.window.document.getElementById("typingKbPanel"), null);
+-  assert.equal(alt.window.document.getElementById("typing-input").hasAttribute("inputmode"), false);
+-  alt.window.document.getElementById("restartTest").click(); alt.window.close();
++  assert.equal(alt.window.document.getElementById("typing-input"), null);
++  assert.equal(alt.window.document.querySelector('link[rel="canonical"]').href, "https://www.arabic-keyboard.live/typing-test/");
++  assert.equal(alt.window.document.querySelector('meta[http-equiv="refresh"]').getAttribute("content"), "0; url=/typing-test/");
++  assert.equal(alt.window.document.querySelector("body a").getAttribute("href"), "/typing-test/", "visible fallback link");
++  assert.ok(altTypingHtml.includes('location.replace("/typing-test/")'), "JS redirect fallback");
++  assert.doesNotMatch(altTypingHtml, /adsbygoogle|googletagmanager|gtag\(|noindex/i, "stub must not carry ads, analytics or noindex");
++  alt.window.close();
+ 
+   const tk = await loaded(tashkeelHtml, "https://www.arabic-keyboard.live/tashkeel/");
+   tk.window.eval(kbJs);
+@@ -304,3 +308,14 @@ test("17. service worker: shell cache bumped to v15 (or later) so returning visi
+   assert.ok(v >= 15, "cache version must be v15 or later, got v" + v);
+   for (const a of ["/typing-test/", "/assets/css/styles.css", "/assets/js/keyboard-tool.js", "/assets/js/typing-test.js"]) assert.ok(swJs.includes(`"${a}"`), a);
+ });
++
++test("18. consolidation: /typing-test/ is the single canonical typing-test URL (canonical, og:url, sitemap) and the stub points at it", () => {
++  const canon = (h) => (h.match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
++  assert.equal(canon(typingHtml), "https://www.arabic-keyboard.live/typing-test/");
++  assert.equal((typingHtml.match(/<meta property="og:url" content="([^"]+)"/) || [])[1], "https://www.arabic-keyboard.live/typing-test/");
++  assert.equal(canon(altTypingHtml), "https://www.arabic-keyboard.live/typing-test/");
++  assert.equal(sitemapXml.split("<loc>https://www.arabic-keyboard.live/typing-test/</loc>").length - 1, 1);
++  assert.equal(sitemapXml.includes("arabic-typing-test"), false);
++  assert.ok(typingHtml.includes("<h1>اختبار سرعة الطباعة العربي</h1>") && typingHtml.includes("<h2>كيف يعمل اختبار الطباعة؟</h2>"));
++  assert.ok(!/متنوعة/.test(typingHtml.replace(/<script[\s\S]*?<\/script>/g, "")), "must not claim varied texts while the pool has five sentences");
++});
+diff --git a/tools/index.html b/tools/index.html
+index a73fca9..022d516 100644
+--- a/tools/index.html
++++ b/tools/index.html
+@@ -107,7 +107,6 @@
+       <a href="../translation/" class="card"><div class="ic">🌐</div><h3>الترجمة</h3><p>ترجم النص من العربية وإليها بترجمة آلية عصبية بين لغات عديدة.</p></a>
+       <a href="../editor/" class="card"><div class="ic">📝</div><h3>المحرر العربي</h3><p>بيئة كتابة عربية كاملة مع تنسيق واتجاه نص وإحصائيات.</p></a>
+       <a href="../typing-test/" class="card"><div class="ic">⏱️</div><h3>اختبار الطباعة</h3><p>قِس سرعتك ودقتك في الكتابة بالعربية بمدد زمنية متعددة.</p></a>
+-      <a href="../arabic-typing-test/" class="card"><div class="ic">🏁</div><h3>اختبار الطباعة العربي</h3><p>نسخة مخصّصة لاختبار سرعة الطباعة بالعربية الفصحى.</p></a>
+       <a href="../arabic-alphabet/" class="card"><div class="ic">📚</div><h3>الأبجدية العربية</h3><p>تعلم الحروف وأشكالها المتصلة ونطقها بشكل تفاعلي.</p></a>
+       <a href="../learn-arabic/" class="card"><div class="ic">🎓</div><h3>تعلّم العربية</h3><p>دروس منظمة تغطي الحروف والأرقام والتشكيل وأساسيات الكتابة.</p></a></div>
+ </section>
+@@ -123,7 +122,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/translation/index.html b/translation/index.html
+index d3ca108..78dc786 100644
+--- a/translation/index.html
++++ b/translation/index.html
+@@ -189,7 +189,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/transliteration/index.html b/transliteration/index.html
+index 06717bc..1cea365 100644
+--- a/transliteration/index.html
++++ b/transliteration/index.html
+@@ -193,7 +193,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>
+diff --git a/typing-test/index.html b/typing-test/index.html
+index b02cd74..10c3cb3 100644
+--- a/typing-test/index.html
++++ b/typing-test/index.html
+@@ -3,11 +3,11 @@
+ <head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-<title>اختبار سرعة الطباعة العربية — قِس WPM ودقتك</title>
+-<meta name="description" content="اختبر سرعة طباعتك بالعربية ودقّتك مع مؤقت قابل للتخصيص (15، 30، 60 ثانية) ونتائج فورية لعدد الكلمات في الدقيقة والأخطاء.">
++<title>اختبار الطباعة العربي — قِس سرعتك ودقتك (WPM)</title>
++<meta name="description" content="اختبار طباعة للعربية الفصحى: قِس سرعتك (WPM) ودقتك بمؤقت قابل للتخصيص (15، 30، 60 ثانية) مع لوحة مفاتيح عربية على الشاشة ونتائج فورية.">
+ <link rel="canonical" href="https://www.arabic-keyboard.live/typing-test/">
+-<meta property="og:title" content="اختبار سرعة الطباعة العربية — قِس WPM ودقتك">
+-<meta property="og:description" content="اختبر سرعة طباعتك بالعربية ودقّتك مع مؤقت قابل للتخصيص (15، 30، 60 ثانية) ونتائج فورية لعدد الكلمات في الدقيقة والأخطاء.">
++<meta property="og:title" content="اختبار الطباعة العربي — قِس سرعتك ودقتك (WPM)">
++<meta property="og:description" content="اختبار طباعة للعربية الفصحى: قِس سرعتك (WPM) ودقتك بمؤقت قابل للتخصيص (15، 30، 60 ثانية) مع لوحة مفاتيح عربية على الشاشة ونتائج فورية.">
+ <meta property="og:type" content="website">
+ <meta property="og:url" content="https://www.arabic-keyboard.live/typing-test/">
+ <meta name="theme-color" content="#1F6F53">
+@@ -96,7 +96,7 @@
+     
+ <section class="hero compact">
+   <span class="eyebrow lang-en">Speed test</span>
+-  <h1>اختبار سرعة الطباعة</h1>
++  <h1>اختبار سرعة الطباعة العربي</h1>
+   <p class="lead">اكتب النص المعروض بأسرع وقت ممكن وبأعلى دقة، واختر مدة الاختبار المناسبة لك.</p>
+ </section>
+ 
+@@ -128,6 +128,8 @@
+ <article class="content-block wrap-narrow" style="padding:32px 20px 0;">
+   <h2>كيف يعمل اختبار الطباعة؟</h2>
+   <p>يقيس الاختبار عدد الكلمات في الدقيقة (WPM) ونسبة الدقة بمقارنة كل حرف تكتبه بالنص الأصلي لحظيًا، مع عداد أخطاء تراكمي.</p>
++  <h2>اختبار طباعة مخصّص للعربية الفصحى</h2>
++  <p>صُمّم الاختبار لنصوص عربية فصحى. اكتب بلوحة مفاتيحك أو بلوحة المفاتيح العربية المعروضة على الشاشة، وراجع سرعتك ودقتك فورًا.</p>
+ </article>
+ 
+ <section class="section">
+@@ -149,7 +151,7 @@
+         <p style="color:var(--ink-soft); font-size:13.5px; line-height:1.8; max-width:280px;">منصة أدوات نصية عربية حديثة للكتابة والتعلم والتحويل — تعمل مباشرة في متصفحك دون الحاجة لتثبيت أي برنامج.</p>
+       </div>
+       <div><h4 class="lang-en">Tools</h4><ul><li><a href="../arabic-keyboard/">لوحة المفاتيح العربية</a></li><li><a href="../transliteration/">التحويل الصوتي</a></li><li><a href="../tashkeel/">التشكيل</a></li><li><a href="../translation/">الترجمة</a></li><li><a href="../editor/">المحرر</a></li><li><a href="../typing-test/">اختبار الطباعة</a></li><li><a href="../tools/">كل الأدوات</a></li></ul></div>
+-      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../arabic-typing-test/">اختبار الطباعة العربي</a></li></ul></div>
++      <div><h4 class="lang-en">Learn</h4><ul><li><a href="../arabic-alphabet/">الأبجدية العربية</a></li><li><a href="../learn-arabic/">تعلّم العربية</a></li><li><a href="../typing-test/">اختبار الطباعة العربي</a></li></ul></div>
+       <div><h4 class="lang-en">Resources</h4><ul><li><a href="../faq/">الأسئلة الشائعة</a></li><li><a href="../about/">من نحن</a></li><li><a href="../contact/">تواصل معنا</a></li></ul></div>
+       <div><h4 class="lang-en">Company</h4><ul><li><a href="../privacy/">الخصوصية</a></li><li><a href="../terms/">الشروط</a></li></ul></div>
+     </div>

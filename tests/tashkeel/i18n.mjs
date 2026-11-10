@@ -154,9 +154,9 @@ for (const w of [861, 880, 920, 1024]) for (const l of ["ar", "en"]) {
 
 /* 9 — Calligraphy Editor */
 pg = await fresh(1280, 800); await go(pg, "/calligraphy-editor/");
-ck("9. editor opens in Arabic mode for a first-time visitor and has the switcher", (await state(pg)).lang === "ar" && (await pg.$("#top-bar .lang-switch")) !== null);
+ck("9. editor opens in Arabic mode for a first-time visitor; the site header holds the single switcher (none in the editor toolbar)", (await state(pg)).lang === "ar" && (await pg.$("header.site .lang-switch")) !== null && (await pg.$("#app .lang-switch")) === null && (await pg.$$(".lang-switch")).length === 2);
 const arEd = await pg.evaluate(() => document.querySelector("#btn-export").innerText.trim().replace(/\s+/g, " "));
-await pg.click('#top-bar .lang-opt[data-lang="en"]'); await pg.waitForFunction(() => document.documentElement.lang === "en");
+await pg.click('header.site .lang-opt[data-lang="en"]'); await pg.waitForFunction(() => document.documentElement.lang === "en");
 const ed = await pg.evaluate(() => ({ exp: document.querySelector("#btn-export").innerText.trim().replace(/\s+/g, " "), prj: document.querySelector("#btn-project").innerText.trim(), name: document.querySelector("#project-name").textContent, hint: document.querySelector("#empty-state-hint").textContent, dock: [...document.querySelectorAll(".dock-btn")].map(b => b.title) }));
 ck("9b. editor chrome is English", ed.exp === "Export ▾" && ed.prj === "Project" && ed.name === "Untitled composition" && ["Decorations","Tashkeel","Elements","Designs","Trace Image"].every(t => ed.dock.includes(t)), JSON.stringify(ed));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -170,9 +170,9 @@ for (const [name, sel, marker] of [["export", "#btn-export", "Export format"], [
   ck(`9c. editor ${name} panel opens and is fully English (no Arabic words left)`, opened && left.length === 0, JSON.stringify({ opened, left }));
   await pg.keyboard.press("Escape"); await sleep(150);
 }
-await pg.click('#top-bar .lang-opt[data-lang="ar"]'); await pg.waitForFunction(() => document.documentElement.lang === "ar");
+await pg.click('header.site .lang-opt[data-lang="ar"]'); await pg.waitForFunction(() => document.documentElement.lang === "ar");
 ck("9d. switching back restores the original Arabic editor labels", (await pg.evaluate(() => document.querySelector("#btn-export").innerText.trim().replace(/\s+/g, " "))) === arEd);
-await pg.click('#top-bar .lang-opt[data-lang="en"]'); await pg.waitForFunction(() => document.documentElement.lang === "en"); await pg.screenshot({ path: "/tmp/snap-editor-en.png" });
+await pg.click('header.site .lang-opt[data-lang="en"]'); await pg.waitForFunction(() => document.documentElement.lang === "en"); await pg.screenshot({ path: "/tmp/snap-editor-en.png" });
 ck("9e. no JS errors in the editor", pg.errs.length === 0, pg.errs.join("|")); await pg.ctx.close();
 
 const ok = results.filter(Boolean).length;

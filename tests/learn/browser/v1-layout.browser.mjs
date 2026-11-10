@@ -3,7 +3,7 @@ import { harness, sleep, txt } from "./lib.mjs";
 import { KEY, writeStore, todayNo, finishSession, planAnswer, dupIds } from "./v1-lib.mjs";
 const H = await harness("v1-layout"); const { base, ok } = H; let N = 0;
 const url = (h, q = "") => `${base}/learn-arabic/?n=${++N}${q}${h || ""}`;
-const KNOWN = new Set(["speak", "check", "practice", "practice-weak", "stage", "answer", "typecheck", "next", "retry", "reset", "vpractice", "ppractice", "review-start"]);
+const KNOWN = new Set(["speak", "check", "practice", "practice-weak", "stage", "answer", "typecheck", "next", "retry", "reset", "vpractice", "ppractice", "review-start", "mixed", "cvocab", "csent", "ccheck", "rcheck", "spoke", "rd-toggle"]);
 const seed = T => ({ v: 2, lessons: {}, stats: {}, sessions: [], days: [], srs: { "letter:ba": { b: 2, d: T - 1, n: 1, w: 0, l: T - 3 }, "num-1": { b: 1, d: T - 1, n: 1, w: 1, l: T - 2 }, "col-red": { b: 4, d: T - 1, n: 3, w: 0, l: T - 8 }, "pat-where-1": { b: 4, d: T, n: 3, w: 0, l: T - 7 }, "fam-son": { b: 2, d: T + 3, n: 1, w: 0, l: T - 1 } } });
 const VIEWS = ["", "#/vocab", "#/vocab/numbers", "#/vocab/colours", "#/vocab/family", "#/vocab/greetings", "#/patterns", "#/patterns/this-m", "#/patterns/this-f", "#/patterns/i-am", "#/patterns/where-is", "#/review", "#/practice", "#/read"];
 const overflow = p => p.evaluate(() => ({ over: document.documentElement.scrollWidth - document.documentElement.clientWidth, wide: [...document.querySelectorAll("#learnApp *")].filter(e => { const r = e.getBoundingClientRect(); return r.width > 0 && (r.right > document.documentElement.clientWidth + 1 || r.left < -1); }).slice(0, 3).map(e => e.tagName + "." + (e.className || "").toString().slice(0, 24)) }));
@@ -54,7 +54,7 @@ for (const theme of ["light", "dark"]) {
 /* 4. English-mode URLs work online ---------------------------------------------------------------------------------------------------------- */
 {
   const p = await H.page({ w: 1100 }); const bad = [];
-  for (const [hash, check] of [["#/vocab", () => document.querySelectorAll('a.lx-card[href^="#/vocab/"]').length === 4], ["#/vocab/numbers", () => document.querySelectorAll(".lx-ex").length === 11], ["#/vocab/greetings", () => document.querySelectorAll(".lx-dialect .lx-ex").length === 3], ["#/patterns/where-is", () => document.querySelectorAll(".lx-ex").length === 3], ["#/review", () => /Daily review/.test(document.querySelector(".lx-h").textContent)], ["#/letter/qaf", () => document.querySelector(".lx-hero-ar").textContent === "ق"]]) {
+  for (const [hash, check] of [["#/vocab", () => document.querySelectorAll('a.lx-card[href^="#/vocab/"]').length === 16], ["#/vocab/numbers", () => document.querySelectorAll(".lx-ex").length === 11], ["#/vocab/greetings", () => document.querySelectorAll(".lx-dialect .lx-ex").length === 3], ["#/patterns/where-is", () => document.querySelectorAll(".lx-ex").length === 3], ["#/review", () => /Daily review/.test(document.querySelector(".lx-h").textContent)], ["#/letter/qaf", () => document.querySelector(".lx-hero-ar").textContent === "ق"]]) {
     await p.goto(url(hash, "&lang=en").replace("&lang=en#", "&lang=en#"), { waitUntil: "load" }); await p.waitForSelector("#learnApp .lx-h"); await sleep(500);
     const r = await p.evaluate(c => ({ h1: document.querySelector("h1").textContent, okView: (new Function("return (" + c + ")()"))(), arabic: [...document.querySelectorAll(".lx-ex-ar")].slice(0, 2).map(e => e.textContent) }), check.toString());
     if (r.h1 !== "Learn Arabic" || !r.okView) bad.push(hash + " " + JSON.stringify(r)); }

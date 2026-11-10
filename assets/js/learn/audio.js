@@ -56,8 +56,23 @@ window.LearnAudio = (function () {
     }
     return speakSynth(text);
   }
+  /* Verified human recordings (architecture only: NONE are shipped, so everything the learner hears is device speech).
+     A recording is accepted only from a manifest entry that names its file under /assets/audio/, the person who verified it, and confirms that the
+     Arabic text and recording script were reviewed: { "dlg-intro-1": { src: "/assets/audio/dlg-intro-1.mp3", verifiedBy: "Name", scriptReviewed: true } }.
+     Anything else is ignored, so an unreviewed file can never be presented as a verified native recording. Keys are the audioKey values of dialogue
+     lines ("dlg-<unit>-<n>"), reading lines ("rd-<passage>-<n>") and vocabulary ("vocab-<id>"). */
+  function registerRecordings(manifest) {
+    let n = 0; if (!manifest || typeof manifest !== "object") return 0;
+    Object.keys(manifest).forEach(function (k) {
+      const e = manifest[k];
+      if (e && typeof e.src === "string" && /^\/assets\/audio\/[\w.\-\/]+\.(mp3|ogg|m4a|wav)$/.test(e.src) && typeof e.verifiedBy === "string" && e.verifiedBy.trim() && e.scriptReviewed === true) { RECORDINGS[k] = e.src; n++; }
+    });
+    return n;
+  }
+  // True when something can actually be played for listening exercises: a registered recording, or a device Arabic voice.
+  function canListen() { return Object.keys(RECORDINGS).length > 0 || status().hasVoice; }
   function setSpeed(s) { if (s !== "slow" && s !== "normal") return speed; speed = s; try { window.localStorage.setItem(PREF_KEY, s); } catch (e) { /* ignore */ } return speed; }
   if (synth) { try { synth.getVoices(); } catch (e) { /* ignore */ } if (synth.addEventListener) synth.addEventListener("voiceschanged", function () { document.dispatchEvent(new CustomEvent("learn-voices")); }); }
-  return { speak: speak, status: status, voices: voices, errorMessage: errorMessage, RECORDINGS: RECORDINGS, hasRecording: function (k) { return !!RECORDINGS[k]; },
+  return { speak: speak, registerRecordings: registerRecordings, canListen: canListen, status: status, voices: voices, errorMessage: errorMessage, RECORDINGS: RECORDINGS, hasRecording: function (k) { return !!RECORDINGS[k]; },
     getSpeed: function () { return speed; }, setSpeed: setSpeed, toggleSpeed: function () { return setSpeed(speed === "slow" ? "normal" : "slow"); }, RATES: RATES };
 })();

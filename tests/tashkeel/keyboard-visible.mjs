@@ -80,7 +80,7 @@ for (const u of ["/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/calli
   if (u === "/arabic-keyboard/") { const s = await audit(p); const [w, g] = await typeCheck(p); ok = ok && s.letters >= 28 && s.clipped === 0 && g === w; }
   if (u === "/transliteration/") { await p.type("#translitInput", "salam"); ok = ok && /[\u0600-\u06FF]{3}/.test(await p.$eval("#translitOutput", e => e.textContent)); }
   if (u === "/tashkeel/") ok = ok && !!(await p.$("#tashkeelRun"));
-  if (u === "/calligraphy-editor/") ok = ok && !!(await p.$("#top-bar .lang-switch")) && !!(await p.$("#scene"));
+  if (u === "/calligraphy-editor/") ok = ok && !!(await p.$("header.site .lang-switch")) && !(await p.$("#app .lang-switch")) && !!(await p.$("#scene"));
   ck(`5. ${u} (${lang}) loads and works`, ok, p.errs.join("|")); await p.ctx.close();
 }
 
