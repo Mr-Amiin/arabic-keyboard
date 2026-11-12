@@ -34,6 +34,7 @@
  "المحرر": "Editor",
  "اختبار الطباعة": "Typing Test",
  "محرر الخط العربي": "Calligraphy Editor",
+ "محرر الخط العربي – صمّم نصوصًا وزخارف عربية أونلاين": "Arabic Calligraphy Editor – Create Beautiful Arabic Text Art Online",
  "تعلّم": "Learn",
  "الأبجدية العربية": "Arabic Alphabet",
  "تعلّم العربية": "Learn Arabic",

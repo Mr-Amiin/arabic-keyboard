@@ -7,7 +7,7 @@ const H = await harness("service-worker"); const { base, ok } = H;
 const src = fs.readFileSync(path.join(REPO, "sw.js"), "utf8");
 const CACHE = src.match(/CACHE_NAME = "([^"]+)"/)[1], VENDOR = src.match(/VENDOR_CACHE = "([^"]+)"/)[1];
 const CORE = eval(src.match(/const CORE_ASSETS = (\[[\s\S]*?\]);/)[1]);
-ok(CACHE === "arabic-keyboard-shell-v18", "sw.js CACHE_NAME is v18 (above the live v17) (" + CACHE + ")");
+ok(CACHE === "arabic-keyboard-shell-v19", "sw.js CACHE_NAME is v19 (above the live v18) (" + CACHE + ")");
 const p = await H.page({ sw: true }); let N = 0;
 const U = h => `${base}/learn-arabic/?n=${++N}${h || ""}`;
 const settle = async () => { await p.evaluate(() => navigator.serviceWorker.ready); await sleep(2500); };

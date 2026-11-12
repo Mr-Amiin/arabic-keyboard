@@ -1453,14 +1453,36 @@ html[lang="en"] .lang-secondary{ display: none; }
   --site-header-h: 69px;     /* header.site: .nav-row 68px + 1px border (assets/css/styles.css) */
   --site-gap: 40px;          /* = footer.site margin-top: a strip of page below the editor, so there is
                                 always page (not canvas) under a finger/cursor to scroll down to the footer */
-  --app-h: calc(100vh - var(--site-header-h) - var(--site-gap));
+  --seo-h1-h: 40px;          /* the visible page H1 strip above #editor-host (.page-h1 below) */
+  --app-h: calc(100vh - var(--site-header-h) - var(--seo-h1-h) - var(--site-gap));
 }
 @supports (height: 100dvh){
-  :root{ --app-h: calc(100dvh - var(--site-header-h) - var(--site-gap)); }
+  :root{ --app-h: calc(100dvh - var(--site-header-h) - var(--seo-h1-h) - var(--site-gap)); }
+}
+@media (max-width: 900px){
+  :root{ --seo-h1-h: 46px; }  /* room for the heading to wrap to two lines on narrow screens */
 }
 #editor-host{
   position: relative;
   height: var(--app-h);      /* replaces the old 100vh: every "viewport height" the editor used means this */
+}
+/* Visible page H1. Fixed height (so the editor's --app-h maths stays exact), centred, quiet, theme-aware via the
+   shared site tokens. Placed outside #app, so editor.css's #app-scoped rules never touch it. */
+.page-h1{
+  box-sizing: border-box;
+  height: var(--seo-h1-h);
+  margin: 0;
+  padding: 0 16px;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  font-size: 18px; font-weight: 700; line-height: 1.4;   /* font-family: inherited from the site's h1 rules */
+  color: var(--ink);
+}
+@media (max-width: 900px){
+  .page-h1{ font-size: 14.5px; padding: 0 12px; }
+}
+@media (max-width: 360px){
+  .page-h1{ font-size: 13px; }
 }
 .visually-hidden{
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
