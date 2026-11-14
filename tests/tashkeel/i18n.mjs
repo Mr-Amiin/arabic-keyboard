@@ -15,7 +15,7 @@ const srv = http.createServer((q, r) => {
 const results = []; const bad = [];
 const ck = (n, ok, d = "") => { results.push(ok); if (!ok) bad.push(n); console.log((ok ? "PASS " : "FAIL ") + n + (!ok && d ? "  — " + d : "")); };
 const browser = await puppeteer.launch({ args: [...chromium.args.filter(a => !/single-process|no-zygote/.test(a)), "--no-sandbox", "--lang=en-US"], executablePath: await chromium.executablePath(), headless: "shell" });
-const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
+const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
 
 async function fresh(w = 1280, h = 900) {            // brand-new visitor: empty storage
   const ctx = await browser.createBrowserContext();

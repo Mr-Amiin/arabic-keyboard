@@ -244,7 +244,7 @@ ck("3d. offline: a visitor who used English once still gets the English page (di
 await pg.setOfflineMode(false); await pg.ctx.close();
 
 /* 3e script paths on nested routes + no 4xx anywhere, both languages */
-const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/", "/calligraphy-editor/"];
+const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/", "/calligraphy-editor/"];
 pg = await fresh(); const badAll = [], tagBad = [];
 for (const l of ["ar", "en"]) for (const u of PAGES) {
   pg.bad.length = 0; await go(pg, u + "?lang=" + l); await ready(pg, l); await sleep(150);

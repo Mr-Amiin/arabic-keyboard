@@ -189,10 +189,17 @@ for (const device of ["iPhone 12", "Pixel 5"]) {
   await press(ak, "م"); await press(ak, "سطر جديد"); await press(ak, "ن");
   ck("R6. /arabic-keyboard/: keyboard still types, incl. new line", (await $v(ak, "#editor")) === "م\nن");
   ck("R7. /arabic-keyboard/: no errors", ak.errs.length === 0, ak.errs.join(" | ")); await ak.ctx.close();
+  // /arabic-typing-test/ is a static redirect page (meta refresh 0s + location.replace) onto /typing-test/.
   const alt = await open("/arabic-typing-test/");
-  ck("R8. /arabic-typing-test/: unchanged (no keyboard panel, test still works)", await alt.evaluate(() => !document.getElementById("typingKbPanel") && !document.getElementById("virtualKeyboard")));
+  await alt.waitForFunction(() => location.pathname === "/typing-test/", { timeout: 8000 }).catch(() => { });
+  ck("R8. /arabic-typing-test/: redirect page lands on /typing-test/", new URL(alt.url()).pathname === "/typing-test/", alt.url());
+  await alt.waitForSelector("#typing-input", { timeout: 8000 }).catch(() => { }); await wait(300);
+  ck("R9. after the redirect: keyboard panel is present and typing still starts the test", await alt.evaluate(() => !!document.getElementById("typingKbPanel")));
   await alt.focus("#typing-input"); await alt.keyboard.type("ا"); await wait(100);
-  ck("R9. /arabic-typing-test/: typing still starts the test", (await $v(alt, "#typing-input")) === "ا" && (await alt.$$eval("#promptText span.correct, #promptText span.wrong", (a) => a.length)) === 1);
+  ck("R9b. after the redirect: physical typing starts the test", (await $v(alt, "#typing-input")) === "ا" && (await alt.$$eval("#promptText span.correct, #promptText span.wrong", (a) => a.length)) === 1);
+  const stub = await alt.evaluate(() => fetch("/arabic-typing-test/").then((r) => r.text()));
+  ck("R10. redirect page source: canonical, meta refresh, visible link; no AdSense / analytics / noindex",
+     /rel="canonical" href="https:\/\/www\.arabic-keyboard\.live\/typing-test\/"/.test(stub) && /http-equiv="refresh" content="0; url=\/typing-test\/"/.test(stub) && /<a href="\/typing-test\/">/.test(stub) && !/adsbygoogle|googletagmanager|gtag\(|noindex/i.test(stub));
   await alt.ctx.close();
 }
 

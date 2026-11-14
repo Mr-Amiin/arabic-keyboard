@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* On-screen Arabic keyboard (/typing-test/ only): the same shared component as /arabic-keyboard/ and /tashkeel/
      (assets/js/keyboard-tool.js), attached to the test's own input. It inserts at the caret / over the selection and
      fires one normal "input" event, so the test treats on-screen typing exactly like physical typing. Always visible:
-     there is deliberately no ON/OFF switch. Pages without #typingKbPanel (e.g. /arabic-typing-test/) are unaffected. */
+     there is deliberately no ON/OFF switch. If #typingKbPanel is absent, the guard below leaves the plain test unaffected. */
   const panel = document.getElementById("typingKbPanel");
   const input = document.getElementById("typing-input");
   if (!panel || !input) return;

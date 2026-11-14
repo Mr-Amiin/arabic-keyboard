@@ -14,7 +14,7 @@ const browser = await launchBrowser();
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
 // Every page that has the shared header + #themeToggle.
-const PAGES = ["/", "/arabic-keyboard/", "/tashkeel/", "/editor/", "/translation/", "/learn-arabic/", "/tools/", "/typing-test/", "/arabic-typing-test/", "/arabic-alphabet/", "/transliteration/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
+const PAGES = ["/", "/arabic-keyboard/", "/tashkeel/", "/editor/", "/translation/", "/learn-arabic/", "/tools/", "/typing-test/", "/arabic-alphabet/", "/transliteration/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
 const SAMPLE = ["/", "/arabic-keyboard/", "/tashkeel/", "/translation/", "/learn-arabic/", "/editor/"];   // the pages named in the task
 
 // A fresh browser context = empty localStorage; `scheme` is the emulated OS preference.

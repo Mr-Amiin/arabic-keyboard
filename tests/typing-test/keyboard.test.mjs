@@ -10,6 +10,7 @@ import { JSDOM } from "jsdom";
 const read = (p) => fs.readFileSync(new URL("../../" + p, import.meta.url), "utf8");
 const typingHtml = read("typing-test/index.html");
 const altTypingHtml = read("arabic-typing-test/index.html");
+const sitemapXml = read("sitemap.xml");
 const tashkeelHtml = read("tashkeel/index.html");
 const keyboardHtml = read("arabic-keyboard/index.html");
 const ttJs = read("assets/js/typing-test.js");
@@ -271,14 +272,17 @@ test("15. duration buttons and Restart keep working; the OS keyboard is suppress
   noKb.close(); t.close();
 });
 
-test("16. other pages are unaffected: /arabic-typing-test/ has no keyboard; Tashkeel and /arabic-keyboard/ keep their «new line» key and switch", async () => {
+test("16. /arabic-typing-test/ is a redirect page; Tashkeel and /arabic-keyboard/ keep their «new line» key and switch", async () => {
+  // /arabic-typing-test/ is a static redirect page (consolidated into /typing-test/): no test UI, no keyboard, no ads/analytics, no noindex.
   const alt = await loaded(altTypingHtml, "https://www.arabic-keyboard.live/arabic-typing-test/");
-  alt.window.showToast = () => {};
-  alt.window.eval(ttJs); alt.window.eval(initJs);
-  alt.window.document.dispatchEvent(new alt.window.Event("DOMContentLoaded"));
   assert.equal(alt.window.document.getElementById("typingKbPanel"), null);
-  assert.equal(alt.window.document.getElementById("typing-input").hasAttribute("inputmode"), false);
-  alt.window.document.getElementById("restartTest").click(); alt.window.close();
+  assert.equal(alt.window.document.getElementById("typing-input"), null);
+  assert.equal(alt.window.document.querySelector('link[rel="canonical"]').href, "https://www.arabic-keyboard.live/typing-test/");
+  assert.equal(alt.window.document.querySelector('meta[http-equiv="refresh"]').getAttribute("content"), "0; url=/typing-test/");
+  assert.equal(alt.window.document.querySelector("body a").getAttribute("href"), "/typing-test/", "visible fallback link");
+  assert.ok(altTypingHtml.includes('location.replace("/typing-test/")'), "JS redirect fallback");
+  assert.doesNotMatch(altTypingHtml, /adsbygoogle|googletagmanager|gtag\(|noindex/i, "redirect page must not carry ads, analytics or noindex");
+  alt.window.close();
 
   const tk = await loaded(tashkeelHtml, "https://www.arabic-keyboard.live/tashkeel/");
   tk.window.eval(kbJs);
@@ -303,4 +307,14 @@ test("17. service worker: shell cache bumped to v15 (or later) so returning visi
   const v = Number((swJs.match(/CACHE_NAME = "arabic-keyboard-shell-v(\d+)"/) || [])[1]);
   assert.ok(v >= 15, "cache version must be v15 or later, got v" + v);
   for (const a of ["/typing-test/", "/assets/css/styles.css", "/assets/js/keyboard-tool.js", "/assets/js/typing-test.js"]) assert.ok(swJs.includes(`"${a}"`), a);
+});
+
+test("18. consolidation: /typing-test/ is the single canonical typing-test page (canonical, og:url, sitemap) and the legacy page points at it", () => {
+  const canon = (h) => (h.match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
+  assert.equal(canon(typingHtml), "https://www.arabic-keyboard.live/typing-test/");
+  assert.equal((typingHtml.match(/<meta property="og:url" content="([^"]+)"/) || [])[1], "https://www.arabic-keyboard.live/typing-test/");
+  assert.equal(canon(altTypingHtml), "https://www.arabic-keyboard.live/typing-test/");
+  assert.equal(sitemapXml.split("<loc>https://www.arabic-keyboard.live/typing-test/</loc>").length - 1, 1);
+  assert.equal(sitemapXml.includes("arabic-typing-test"), false, "legacy URL must not be listed as a normal page");
+  assert.ok(typingHtml.includes('id="typingKbPanel"') && typingHtml.includes("keyboard-tool.js"), "primary page keeps the on-screen keyboard");
 });
