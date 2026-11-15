@@ -118,3 +118,31 @@
 .lx-toggles{ display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
 .lx-hear[aria-pressed="true"]{ background:var(--emerald-deep); border-color:var(--emerald-deep); color:#fff; }
 @media (max-width:520px){ .lx-rd-ar{ font-size:1.7rem; } .lx-path{ grid-template-columns:1fr 1fr; } }
+
+/* Phase 4: Stories and Sentence Workshop. Uses the same variables as the rest of Learn Arabic, so light and dark themes follow automatically. */
+.st-t{ display:none; flex-wrap:wrap; gap:4px 6px; direction:rtl; }
+.lx-rd.is-tap:not(.is-marks) .st-t{ display:flex; }
+.lx-rd.is-tap:not(.is-marks) .rd-p{ display:none; }
+.st-w{ background:transparent; border:1px solid transparent; border-radius:var(--radius-sm); padding:2px 8px; min-height:44px; min-width:44px; cursor:pointer; color:inherit; font:inherit; touch-action:manipulation; }
+.st-w:hover{ border-color:var(--emerald); }
+.st-w[aria-pressed="true"]{ border-color:var(--emerald-deep); background:color-mix(in srgb, var(--emerald) 14%, var(--surface)); }
+.st-w-ar{ font-size:2rem; }
+.st-q{ font-size:1.1rem; font-weight:600; margin:10px 0; }
+.st-bank,.st-slots{ display:flex; flex-wrap:wrap; gap:10px; margin:12px 0; padding:0; list-style:none; }
+.st-slots{ min-height:64px; padding:10px; border:2px dashed var(--border); border-radius:var(--radius-md); background:var(--surface-2); align-items:center; }
+.st-tile{ min-height:48px; min-width:48px; padding:6px 14px; border:2px solid var(--border); border-radius:var(--radius-md); background:var(--surface); color:var(--ink); font-size:1.7rem; line-height:1.5; cursor:pointer; touch-action:manipulation; }
+.st-tile:not(:disabled):hover{ border-color:var(--emerald); }
+.st-tile.is-placed{ border-color:var(--emerald); }
+.st-tile:disabled{ opacity:.85; cursor:default; }
+.st-ph{ color:var(--ink-soft); font-size:.95rem; }
+.st-match{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.st-col{ display:grid; gap:10px; align-content:start; }
+.st-item{ min-height:56px; padding:10px 12px; border:2px solid var(--border); border-radius:var(--radius-md); background:var(--surface); color:var(--ink); font-size:1.15rem; text-align:start; cursor:pointer; touch-action:manipulation; }
+.st-item:not(:disabled):hover{ border-color:var(--emerald); }
+.st-item[aria-pressed="true"]{ border-color:var(--emerald); background:color-mix(in srgb, var(--emerald) 16%, var(--surface)); }
+.st-pairs{ list-style:none; padding:0; margin:8px 0; display:grid; gap:8px; }
+.st-pairs li{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 12px; }
+.st-aids .lx-hear,.st-rd .lx-hear{ min-height:44px; }
+.st-w:focus-visible,.st-tile:focus-visible,.st-item:focus-visible{ outline:3px solid var(--emerald); outline-offset:2px; }
+@media (max-width:520px){ .st-match{ grid-template-columns:1fr; } .st-w-ar{ font-size:1.7rem; } .st-tile{ font-size:1.5rem; } }
+@media (forced-colors: active){ .st-w[aria-pressed="true"],.st-item[aria-pressed="true"],.st-tile.is-placed{ outline:2px solid; } }

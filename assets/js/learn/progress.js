@@ -1,8 +1,8 @@
 /* Learn Arabic — progress store. localStorage with safe fallbacks; no accounts, no network. */
 (function (root, factory) {
-  if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./srs.js"), require("./conversations.js"), require("./reading.js"));
-  else root.LearnProgress = factory(root.LearnData, root.LearnSRS, root.LearnConversations, root.LearnReading);
-})(typeof self !== "undefined" ? self : this, function (D, S, C, RD) {
+  if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./srs.js"), require("./conversations.js"), require("./reading.js"), require("./stories.js"), require("./sentences.js"));
+  else root.LearnProgress = factory(root.LearnData, root.LearnSRS, root.LearnConversations, root.LearnReading, root.LearnStories, root.LearnSentences);
+})(typeof self !== "undefined" ? self : this, function (D, S, C, RD, ST, SW) {
   "use strict";
   // The storage KEY keeps its original name so existing learners keep their data; the schema version lives inside the data (v: 2).
   const KEY = "ak-learn-progress-v1", VERSION = 2, MAX_SESSIONS = 60, MAX_DAYS = 400, MAX_SRS = 2000;
@@ -17,7 +17,15 @@
   (C ? C.UNITS : []).forEach(function (u) { UNIT_PASS[u.id] = C.PASS_PERCENT; });
   (RD ? RD.PASSAGES : []).forEach(function (p) { UNIT_PASS[p.id] = RD.PASS_PERCENT; });
   D.READING_STAGES.forEach(function (s) { UNIT_PASS["stage-" + s.id] = 70; });
+  // Phase 4 (Stories and Sentence Workshop): story units and workshop sets, only when they have content, and never over an existing id. Pass mark 70, as everywhere.
+  (ST ? ST.STORIES : []).forEach(function (s) { if (!Object.prototype.hasOwnProperty.call(UNIT_PASS, s.id)) UNIT_PASS[s.id] = ST.PASS_PERCENT; });
+  (SW ? SW.SETS.filter(function (set) { return SW.itemsOf(SW.ITEMS, set.n).length > 0; }) : []).forEach(function (set) { if (!Object.prototype.hasOwnProperty.call(UNIT_PASS, set.id)) UNIT_PASS[set.id] = SW.PASS_PERCENT; });
   const UNIT_IDS = Object.keys(UNIT_PASS);
+  // DORMANT PHASE 4 RECORDS (rollback safety). A story or workshop unit that this build does not list (a rollback to an earlier Phase 4 build, or a
+  // catalogue that changed) is KEPT through load and save instead of being dropped, so a learner's Phase 4 progress is never silently erased. Only ids of
+  // exactly the Phase 4 shape are kept, with the same sanitised fields; anything else is dropped as before. A dormant record is inert (it is not a
+  // completed unit and recordUnit ignores it) until a build that lists the unit brings it back to life.
+  const PHASE4_UNIT = /^(?:story-s[123]-[a-z0-9]+(?:-[a-z0-9]+)*|build-set-[123])$/, MAX_DORMANT = 60;
   function empty() { return { v: VERSION, lessons: {}, stats: {}, sessions: [], days: [], srs: {}, units: {} }; }
   const isObj = function (x) { return x && typeof x === "object" && !Array.isArray(x); };
   const nn = function (x) { return typeof x === "number" && isFinite(x) && x >= 0 ? Math.floor(x) : 0; };
@@ -33,6 +41,7 @@
     if (Array.isArray(raw.sessions)) out.sessions = raw.sessions.filter(isObj).slice(-MAX_SESSIONS).map(function (s) { return { at: nn(s.at), kind: String(s.kind || "practice").slice(0, 20), correct: nn(s.correct), total: nn(s.total) }; });
     if (Array.isArray(raw.days)) out.days = raw.days.filter(function (d) { return /^\d{4}-\d{2}-\d{2}$/.test(d); }).slice(-MAX_DAYS);
     if (isObj(raw.units)) UNIT_IDS.forEach(function (id) { const u = raw.units[id]; if (isObj(u)) out.units[id] = { at: nn(u.at), best: Math.min(100, nn(u.best)), tries: nn(u.tries), spoke: !!u.spoke }; });
+    if (isObj(raw.units)) Object.keys(raw.units).filter(function (id) { return !out.units[id] && id.length <= 32 && PHASE4_UNIT.test(id) && isObj(raw.units[id]); }).slice(0, MAX_DORMANT).forEach(function (id) { const u = raw.units[id]; out.units[id] = { at: nn(u.at), best: Math.min(100, nn(u.best)), tries: nn(u.tries), spoke: !!u.spoke }; });
     // Review schedule (schema v2): keep only well-formed entries.
     if (isObj(raw.srs)) Object.keys(raw.srs).slice(0, MAX_SRS).forEach(function (id) {
       const e = raw.srs[id]; if (!SRS_ID.test(id) || !isObj(e)) return;

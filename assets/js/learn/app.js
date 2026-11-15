@@ -1,10 +1,11 @@
-/* Learn Arabic — UI. Hash-routed single page: #/ (dashboard), #/letter/<id>, #/harakat/<id>, #/practice, #/read, #/vocab, #/patterns, #/review, #/journey, #/conversations, #/conversation/<unit>, #/reading, #/reading/<passage> */
+/* Learn Arabic — UI. Hash-routed single page: #/ (dashboard), #/letter/<id>, #/harakat/<id>, #/practice, #/read, #/vocab, #/patterns, #/review, #/journey, #/conversations, #/conversation/<unit>, #/reading, #/reading/<passage>; Phase 4 (via window.LearnExt): #/stories, #/story/<id>, #/workshop, #/workshop/<n> */
 (function () {
   "use strict";
   const D = window.LearnData, E = window.LearnEngine, A = window.LearnAudio, V = window.LearnVocab, S = window.LearnSRS, R = window.LearnReview, C = window.LearnConversations, RD = window.LearnReading, J = window.LearnJourney;
   const root = document.getElementById("learnApp");
   if (!root || !D || !E || !V || !S || !R || !C || !RD || !J) return;
   const dock = window.LearnTypingDock || null;
+  const EXT = window.LearnExt || null, XP = window.LearnExercises || null;   // Phase 4 (Stories and Sentence Workshop). Optional: every use below is guarded, so without them nothing changes.
   let ls = null; try { ls = window.localStorage; } catch (e) { ls = null; }
   const store = window.LearnProgress.createStore(ls); store.load();
   let session = null, first = true;
@@ -50,6 +51,7 @@
       '<h3 class="lx-h3">Harakat and pronunciation</h3><div class="lx-cards">' + hk + "</div>" +
       '<h3 class="lx-h3">Vocabulary · <a href="' + href("vocab") + '">all topics</a></h3><div class="lx-cards">' + V.TOPICS.map(function (t) { const p = topicProgress(t.id); return '<a class="lx-card" href="' + href("vocab/" + t.id) + '"><span class="lx-badge lx-d-easy">Beginner</span><h3>' + esc(t.title) + "</h3><p>" + esc(t.blurb) + '</p><p class="lx-small">' + p.seen + " of " + p.total + " practised · " + p.mastered + " mastered</p></a>"; }).join("") + "</div>" +
       '<h3 class="lx-h3">Practice and reading</h3><div class="lx-cards"><a class="lx-card" href="' + href("practice") + '"><span class="lx-badge lx-d-easy">All levels</span><h3>Letter practice</h3><p>Six exercise types with instant feedback and explanations.</p></a><a class="lx-card" href="' + href("read") + '"><span class="lx-badge lx-d-medium">Beginner</span><h3>Reading and typing</h3><p>Six stages from single letters to short sentences, answered by typing.</p></a><a class="lx-card" href="#/patterns"><span class="lx-badge lx-d-medium">Beginner</span><h3>Sentence patterns</h3><p>Build simple sentences: “This is a …”, “I am a …”, “Where is …?”.</p></a><a class="lx-card" href="#/conversations"><span class="lx-badge lx-d-medium">Beginner</span><h3>Conversations</h3><p>Eight short dialogues: introductions, greetings, ordering, shopping and directions.</p></a><a class="lx-card" href="#/reading"><span class="lx-badge lx-d-medium">Beginner</span><h3>Reading comprehension</h3><p>Sentences, paragraphs, stories and dialogues with questions.</p></a></div>' +
+      (EXT && EXT.dashboard ? EXT.dashboard(UI) : "") +
       '<h3 class="lx-h3">Related tools</h3><div class="lx-tools"><a href="../arabic-keyboard/">Arabic keyboard</a><a href="../tashkeel/">Tashkeel (add harakat)</a><a href="../typing-test/">Typing test</a><a href="../transliteration/">Transliteration</a><a href="../arabic-alphabet/">Alphabet reference</a></div>' +
       '<p class="lx-reset"><button type="button" class="lx-link" data-action="reset">Reset all progress…</button></p>');
   }
@@ -140,19 +142,20 @@
   }
   function advance() { if (!session.answered) return; session.answered = false; if (session.i < session.qs.length - 1) { session.i++; drawQ(); } else finish(); }
   function finish() {
+    if (session.ext) session.results = session.ext.results;   // Phase 4 session: the graded results from the frozen finish package only (anything else the runner held is discarded)
     const sc = E.scoreSession(session.results); store.recordSession(session.kind, session.results.map(function (r) { return { letterId: r.letterId, correct: r.correct }; }));
     // Spaced repetition: every answer that belongs to an item (a letter, a word, a sentence) is scheduled from what the learner REALLY answered.
-    store.reviewAnswers(session.results.map(function (r) { return { id: r.q.itemId || (r.letterId ? R.letterId(r.letterId) : null), correct: r.correct }; }).filter(function (a) { return a.id && R.kindOf(a.id); }));
-    const rv = store.srsSummary(CATALOG), tracked = session.kind === "vocab" || session.kind === "review" || session.kind === "pattern" || session.kind === "sentence";
+    store.reviewAnswers(session.ext ? session.ext.reviewRows : session.results.map(function (r) { return { id: r.q.itemId || (r.letterId ? R.letterId(r.letterId) : null), correct: r.correct }; }).filter(function (a) { return a.id && R.kindOf(a.id); }));   // Phase 4: rows come ONLY from reviewRowsFor (inside the package)
+    const rv = store.srsSummary(CATALOG), tracked = session.kind === "vocab" || session.kind === "review" || session.kind === "pattern" || session.kind === "sentence" || !!session.showSchedule;
     const sched = tracked ? '<p class="lx-small">' + (rv.due ? rv.due + " item" + (rv.due === 1 ? " is" : "s are") + " due for review now." : rv.nextInDays === null ? "" : "Next review: " + whenText(rv.nextInDays) + ".") + "</p>" : "";
     const again = session.kind === "review" ? (rv.due ? '<button type="button" class="lx-btn" data-action="review-start">Review more (' + rv.due + " due)</button>" : "") : '<button type="button" class="lx-btn" data-action="retry">Try again</button>';
-    const backLabel = session.kind === "vocab" ? (session.ret === href("vocab") ? "Back to vocabulary" : "Back to topic") : session.kind === "pattern" ? "Back to pattern" : session.kind === "sentence" ? "Back to conversation" : session.kind === "review" ? "Review page" : session.kind === "conversation" ? "Back to conversation" : session.kind === "reading-comp" ? "Back to the text" : "Back to lesson";
+    const backLabel = session.backLabel ? session.backLabel : session.kind === "vocab" ? (session.ret === href("vocab") ? "Back to vocabulary" : "Back to topic") : session.kind === "pattern" ? "Back to pattern" : session.kind === "sentence" ? "Back to conversation" : session.kind === "review" ? "Review page" : session.kind === "conversation" ? "Back to conversation" : session.kind === "reading-comp" ? "Back to the text" : "Back to lesson";
     let msg = "";
     if (session.lessonId) { const pass = sc.correct >= 2; if (pass) store.completeLesson(session.lessonId, sc.percent); msg = pass ? '<p class="lx-ok"><b>Lesson complete!</b> ✓ Your progress was saved.</p>' : '<p class="lx-bad"><b>Not yet.</b> You need at least 2 of 3. Review the lesson and try again.</p>'; }
     let unitNext = "";
     if (session.unitId) {
       const ur = store.recordUnit(session.unitId, sc.percent), need = (store.unit(session.unitId) || {}).pass || 70;
-      msg = ur && ur.passed ? '<p class="lx-ok"><b>' + (session.kind === "conversation" ? "Unit complete!" : session.kind === "read" ? "Stage complete!" : "Text complete!") + "</b> ✓ You scored " + sc.percent + "%. Your best score is " + ur.best + "%.</p>" : '<p class="lx-bad"><b>Not yet.</b> You scored ' + sc.percent + "%; you need at least " + need + "% to complete this. Read it again and retry.</p>";
+      msg = ur && ur.passed ? '<p class="lx-ok"><b>' + (session.doneLabel ? session.doneLabel : session.kind === "conversation" ? "Unit complete!" : session.kind === "read" ? "Stage complete!" : "Text complete!") + "</b> ✓ You scored " + sc.percent + "%. Your best score is " + ur.best + "%.</p>" : '<p class="lx-bad"><b>Not yet.</b> You scored ' + sc.percent + "%; you need at least " + need + "% to complete this. Read it again and retry.</p>";
       if (ur && ur.passed && session.nextHref) unitNext = '<a class="lx-btn lx-btn-alt" href="' + session.nextHref + '">' + esc(session.nextLabel || "Next") + " →</a>";
     }
     const wrong = session.results.filter(function (r) { return !r.correct; });
@@ -315,7 +318,7 @@
 
   function route() {
     session = null; store.load(); const p = (location.hash || "").replace(/^#\/?/, "").split("/");
-    if (p[0] === "letter" && p[1]) letter(p[1]); else if (p[0] === "harakat" && p[1]) harakat(p[1]); else if (p[0] === "practice") practice(); else if (p[0] === "read") read(); else if (p[0] === "vocab") (p[1] ? topicPage(p[1]) : vocabHome()); else if (p[0] === "patterns") (p[1] ? patternPage(p[1]) : patternsHome()); else if (p[0] === "review") reviewPage(); else if (p[0] === "journey") journeyPage(); else if (p[0] === "conversations") conversationsHome(); else if (p[0] === "conversation" && p[1]) conversationPage(p[1]); else if (p[0] === "reading") (p[1] ? readingPage(p[1]) : readingHome()); else home();
+    if (p[0] === "letter" && p[1]) letter(p[1]); else if (p[0] === "harakat" && p[1]) harakat(p[1]); else if (p[0] === "practice") practice(); else if (p[0] === "read") read(); else if (p[0] === "vocab") (p[1] ? topicPage(p[1]) : vocabHome()); else if (p[0] === "patterns") (p[1] ? patternPage(p[1]) : patternsHome()); else if (p[0] === "review") reviewPage(); else if (p[0] === "journey") journeyPage(); else if (p[0] === "conversations") conversationsHome(); else if (p[0] === "conversation" && p[1]) conversationPage(p[1]); else if (p[0] === "reading") (p[1] ? readingPage(p[1]) : readingHome()); else if (EXT && EXT.routes && Object.prototype.hasOwnProperty.call(EXT.routes, p[0])) EXT.routes[p[0]](UI, p); else home();
   }
   function onAction(e) {
     const b = e.target.closest("[data-action]"); if (!b || b.disabled) return; const a = b.dataset.action;
@@ -335,15 +338,34 @@
     else if (a === "rd-toggle") toggleReading(b.dataset.what, b);
     else if (a === "spoke") { if (store.markSpoke(b.dataset.id)) { b.disabled = true; b.textContent = "✓ Marked as practised aloud"; } }
     else if (a === "answer") answer(b.dataset.v);
-    else if (a === "typecheck") typeCheck();
+    else if (a === "typecheck") { if (EXT && EXT.typingSubmit && EXT.typingSubmit()) return; typeCheck(); }
     else if (a === "next") advance();
     else if (a === "retry") { const s = session; if (s.again) { s.again(); return; } if (s.vtopic) startVocab(s.vtopic, s.vtype); else if (s.pid) startPattern(s.pid); else if (s.lessonId) { const id = s.lessonId; if (id.indexOf("letter-") === 0) startSession({ kind: "check", title: s.title, lessonId: id, qs: E.quickCheck(id.slice(7)), ret: s.ret }); else startSession({ kind: "check", title: s.title, lessonId: id, qs: E.harakatCheck(D.HARAKAT_LESSONS.find(function (x) { return x.id === id; })), ret: s.ret }); } else if (s.stage) startStage(s.stage); else if (s.type === "weak") { const w = store.summary().review; startSession({ kind: "practice", title: s.title, qs: E.buildSession({ count: 10, weakIds: w.length ? w : null }), ret: s.ret, type: "weak" }); } else startSession({ kind: "practice", title: s.title, qs: E.buildSession({ count: 10, types: s.type === "mixed" ? null : [s.type] }), ret: s.ret, type: s.type }); }
     else if (a === "reset") { if (window.confirm("Reset all Learn Arabic progress on this device? Completed lessons, scores, your review schedule and your streak will be erased. This cannot be undone.")) { store.reset(); home(); } }
+    else if (a.indexOf("x-") === 0 && EXT && EXT.action) EXT.action(UI, a, b, e);   // Phase 4 actions
   }
+  // The narrow, read-only interface Phase 4 receives. It has NO handle on the progress store (so it cannot call reviewAnswers); it can only look units up and hand a
+  // finished session to finish(), which accepts it only with a frozen Phase 4 finish package (graded results + review rows from reviewRowsFor).
+  const UI = Object.freeze({
+    esc: esc, ar: ar, hear: hear, href: href, set: set, notFound: notFound, unitBadge: unitBadge,
+    unit: function (id) { return store.unit(id); },
+    typing: Object.freeze({
+      available: usingDock,
+      open: function (promptHtml) { dock.open(); dock.lock(false); dock.clear(); dock.setPrompt(promptHtml); document.getElementById("lxTFb").innerHTML = ""; document.getElementById("lxTNext").innerHTML = ""; dock.focus(); },
+      value: function () { const el = document.getElementById("lxEditor"); return el ? el.value : ""; },
+      lock: function () { dock.lock(true); },
+      feedback: function (html) { document.getElementById("lxTFb").innerHTML = html; },
+      next: function (html, id) { document.getElementById("lxTNext").innerHTML = html; const b = document.getElementById(id); if (b) b.focus(); }
+    }),
+    finish: function (s) {
+      if (!s || !XP || !XP.isFinishPackage(s.ext)) throw new Error("finish needs a Phase 4 finish package");
+      session = s; finish();
+    }
+  });
   root.addEventListener("click", onAction);
   const typePanel = document.getElementById("lxTypePanel"); if (typePanel) typePanel.addEventListener("click", onAction);
-  if (dock) dock.onSubmit(function () { if (!session || !isTypingQ() || !usingDock()) return; if (!session.answered) typeCheck(); else advance(); });
-  root.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target && e.target.id === "lxType") { e.preventDefault(); if (session && !session.answered) typeCheck(); else if (session) advance(); } });
+  if (dock) dock.onSubmit(function () { if (EXT && EXT.typingSubmit && EXT.typingSubmit()) return; if (!session || !isTypingQ() || !usingDock()) return; if (!session.answered) typeCheck(); else advance(); });
+  root.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target && e.target.id === "lxType") { e.preventDefault(); if (EXT && EXT.typingSubmit && EXT.typingSubmit()) return; if (session && !session.answered) typeCheck(); else if (session) advance(); } });
   const speedBtn = document.getElementById("lxSpeedBtn"), speechStatus = document.getElementById("lxSpeechStatus"), speechMsg = document.getElementById("lxSpeechMsg");
   function renderSpeech() {
     if (!speechStatus) return; const a = A.status(), slow = A.getSpeed() === "slow";
