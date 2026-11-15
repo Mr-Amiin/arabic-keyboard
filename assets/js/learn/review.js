@@ -2,15 +2,19 @@
    Builds on LearnEngine (letters) and produces questions in the SAME format, so the existing UI renders them.
    Every question carries `itemId`: the stable id that the spaced-repetition store schedules. */
 (function (root, factory) {
-  if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./vocab-data.js"), require("./engine.js"), require("./conversations.js"));
-  else root.LearnReview = factory(root.LearnData, root.LearnVocab, root.LearnEngine, root.LearnConversations);
-})(typeof self !== "undefined" ? self : this, function (D, V, E, C) {
+  if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./vocab-data.js"), require("./engine.js"), require("./conversations.js"), require("./sentences.js"));
+  else root.LearnReview = factory(root.LearnData, root.LearnVocab, root.LearnEngine, root.LearnConversations, root.LearnSentences);
+})(typeof self !== "undefined" ? self : this, function (D, V, E, C, W) {
   "use strict";
   const letterId = id => "letter:" + id;
   // Sentence-completion items from the conversation units (ids "snt-…") have the same shape as the V1 sentence patterns ("pat-…"),
   // so the same fill-in and typing exercises, and the same scheduler, handle both.
-  const SENTENCES = C ? C.SENTENCE_ITEMS : [];
+  const SENTENCES = C ? C.SENTENCE_ITEMS.slice() : [];
   const WORDS = V.ITEMS, BY_ID = {}; WORDS.concat(V.PATTERN_ITEMS, SENTENCES).forEach(i => { BY_ID[i.id] = i; });
+  // Phase 4: the Sentence workshop's completion exercises join the sentence catalogue. They are appended AFTER every existing id (so no existing id
+  // moves), only ids that start with "snt-" are accepted, and an id that already exists is SKIPPED: an existing item (and any learner's schedule for
+  // it) can never be replaced. With no workshop content this adds nothing.
+  if (W && typeof W.reviewSentences === "function") W.reviewSentences().forEach(i => { if (typeof i.id === "string" && i.id.indexOf("snt-") === 0 && !BY_ID[i.id]) { BY_ID[i.id] = i; SENTENCES.push(i); } });
   const ALL_IDS = D.LETTERS.map(l => letterId(l.id)).concat(WORDS.map(i => i.id), V.PATTERN_ITEMS.map(i => i.id), SENTENCES.map(i => i.id));
   const kindOf = id => (id.indexOf("letter:") === 0 ? "letter" : id.indexOf("pat-") === 0 ? "pattern" : id.indexOf("snt-") === 0 && BY_ID[id] ? "sentence" : BY_ID[id] ? "vocab" : null);
   const shuffle = E.shuffle;

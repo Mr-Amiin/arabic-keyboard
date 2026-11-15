@@ -1,0 +1,16 @@
+{
+ "_note": "SHA-256 of the Phase 1-3 files that Phase 4 must NEVER modify, taken from commit 67dca19 and computed over the UTF-8 text with CRLF normalised to LF (so a Windows checkout with autocrlf hashes the same). A deliberate, separately approved correction to one of them must update this fixture in the same change.",
+ "generatedFrom": "67dca19",
+ "hash": "sha256 of text.replace(/\\r\\n/g, \"\\n\")",
+ "files": {
+  "assets/js/learn/reading.js": "3fae6ebdbc106be995c4e1b41ca650e8f6764be04a5d5531764fde0757fd9104",
+  "assets/js/learn/journey.js": "2e0fefd8b704ffbe60e97ce0a44693ed1fe223fd8345d14a832cb0e20b75f42e",
+  "assets/js/learn/data.js": "3a2f1174f88f97157ff9542447508e666e62fe6b034cdc2476113f93da52e066",
+  "assets/js/learn/vocab-data.js": "00118064350bdaf036caa86e085e01b9590094f2a4027b51312cd2050779b19f",
+  "assets/js/learn/vocab-packs.js": "112fb2d84688c9270f8d2ade485cf2ec64f57bb76c685725b014d997c60f0f58",
+  "assets/js/learn/conversations.js": "314315d261d6ee2e5f5addf0db40fe476060d961b3b06c3948165a311737b8ab",
+  "assets/js/learn/srs.js": "59b183cdab75fd4449ee5d640c824afdb2c0f8ae09b05e53edd077ca60ab207f",
+  "assets/js/learn/engine.js": "9a89d25d0e232ad955d594a74d4a962cf1cc2193797d4593c57e1a53fe484bda",
+  "assets/js/learn/audio.js": "d99e8386fdbdbde78427f5f76b63597aa30e207c5cd732c07162dd44c95f3ed2"
+ }
+}

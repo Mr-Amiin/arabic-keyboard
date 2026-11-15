@@ -1,0 +1,107 @@
+{
+ "_note": "SYNTHETIC Phase 3 learner record produced by the real progress store (progress schema v2). Not real learner data. Phase 4 must load it unchanged.",
+ "storageKey": "ak-learn-progress-v1",
+ "clock": {
+  "startUtc": "2026-11-01T09:00:00Z",
+  "reviewUtc": "2026-11-02T09:00:00Z"
+ },
+ "stored": {
+  "v": 2,
+  "lessons": {
+   "letter-alif": {
+    "at": 1793523600000,
+    "best": 100
+   },
+   "letter-ba": {
+    "at": 1793523600000,
+    "best": 90
+   },
+   "letter-ta": {
+    "at": 1793523600000,
+    "best": 80
+   }
+  },
+  "stats": {},
+  "sessions": [
+   {
+    "at": 1793610000000,
+    "kind": "reading-comp",
+    "correct": 1,
+    "total": 2
+   }
+  ],
+  "days": [
+   "2026-11-01",
+   "2026-11-02"
+  ],
+  "srs": {
+   "food-tea": {
+    "b": 2,
+    "d": 20761,
+    "n": 1,
+    "w": 0,
+    "l": 20759
+   },
+   "food-milk": {
+    "b": 1,
+    "d": 20760,
+    "n": 1,
+    "w": 1,
+    "l": 20759
+   },
+   "snt-intro-1": {
+    "b": 2,
+    "d": 20761,
+    "n": 1,
+    "w": 0,
+    "l": 20759
+   },
+   "pat-this-m-1": {
+    "b": 1,
+    "d": 20760,
+    "n": 1,
+    "w": 1,
+    "l": 20759
+   },
+   "letter:alif": {
+    "b": 2,
+    "d": 20761,
+    "n": 1,
+    "w": 0,
+    "l": 20759
+   }
+  },
+  "units": {
+   "conv-intro": {
+    "at": 1793523600000,
+    "best": 100,
+    "tries": 1,
+    "spoke": true
+   },
+   "conv-family": {
+    "at": 0,
+    "best": 60,
+    "tries": 1,
+    "spoke": false
+   },
+   "read-s1": {
+    "at": 1793523600000,
+    "best": 100,
+    "tries": 2,
+    "spoke": false
+   },
+   "read-s2": {
+    "at": 1793523600000,
+    "best": 75,
+    "tries": 1,
+    "spoke": false
+   },
+   "read-p1": {
+    "at": 0,
+    "best": 50,
+    "tries": 1,
+    "spoke": false
+   }
+  }
+ }
+}
