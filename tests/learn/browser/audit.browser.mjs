@@ -1,4 +1,4 @@
-import { harness, sleep, txt } from "./lib.mjs";
+import { harness, sleep, txt, pageUrl, lessonPath } from "./lib.mjs";
 const H = await harness("audit"); const base = H.base; const ok = H.ok;
 const mk = (w = 1000, h = 900) => H.page({ w, h });
 let N = 0; const p = await mk();
@@ -26,10 +26,10 @@ ok(sim === 10, `look-alike round: ${sim}/10 are look-alike questions`);
 const yaOk = await p.evaluate(() => { let bad = 0; for (let s = 1; s <= 300; s++) { const q = LearnEngine.makeQuestion("similar", "ya", LearnEngine.mulberry32(s)); if (!q.options.some(o => o.value === "ya")) bad++; } return bad; });
 ok(yaOk === 0, "Ya look-alike question always contains Ya (300 seeds)");
 // 5. non-joining lesson shows the shapes actually used, not dashes
-await p.goto(base + "/learn-arabic/?n=" + (++N) + "#/letter/dal"); await p.waitForSelector(".lx-forms");
+await p.goto(pageUrl(base, ++N, "#/letter/dal")); await p.waitForSelector(".lx-forms");
 const caps = await p.$$eval(".lx-form", els => els.map(e => e.textContent.replace(/\s+/g, " ").trim()));
 ok(caps[1].includes("same as Alone") && caps[2].includes("same as End") && !caps.join("").includes("—"), "Dal: Beginning/Middle show real shapes: " + JSON.stringify(caps));
-await p.goto(base + "/learn-arabic/?n=" + (++N) + "#/letter/ba"); await p.waitForSelector(".lx-forms");
+await p.goto(pageUrl(base, ++N, "#/letter/ba")); await p.waitForSelector(".lx-forms");
 ok((await p.$$(".lx-form.is-na")).length === 0, "Ba (connecting) has no 'same as' cells");
 // 6. harakat reading stage = choice questions that really test the mark
 await p.goto(base + "/learn-arabic/?n=" + (++N) + "#/read"); await p.waitForSelector('[data-action="stage"][data-id="marked"]');
@@ -54,7 +54,7 @@ await sleep(300);
 ok(p.errs.length === 0, "no page errors: " + JSON.stringify(p.errs));
 // 8. 320px + mobile menu still works on the Learn page
 const m = await mk(320, 640);
-for (const h of ["", "#/letter/dal", "#/practice", "#/read"]) { await m.goto(base + "/learn-arabic/" + h); await m.waitForSelector("#learnApp .lx-h"); const ov = await m.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth); ok(ov <= 1, `320px: no horizontal overflow at '${h || "dashboard"}' (${ov}px)`); }
+for (const h of ["", "#/letter/dal", "#/practice", "#/read"]) { await m.goto(base + (lessonPath(h) || "/learn-arabic/" + h)); await m.waitForSelector("#learnApp .lx-h"); const ov = await m.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth); ok(ov <= 1, `320px: no horizontal overflow at '${h || "dashboard"}' (${ov}px)`); }
 await m.goto(base + "/learn-arabic/"); await m.waitForSelector(".lx-grid"); await m.click("#menuToggle"); await new Promise(r => setTimeout(r, 400));
 ok(await m.evaluate(() => { const n = document.getElementById("mobileNav"); return n && getComputedStyle(n).visibility !== "hidden" && n.getBoundingClientRect().width > 100; }), "site mobile menu opens on the Learn page");
 ok(m.errs.length === 0, "no errors at 320px: " + JSON.stringify(m.errs));

@@ -4,7 +4,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
-import { harness, REPO, sleep } from "./lib.mjs";
+import { harness, REPO, sleep, lessonPath, LearnUrls } from "./lib.mjs";
 import { rawStory, rawOrder, rawComplete, rawMatch } from "../fixtures/phase4-fixtures.mjs";
 
 const h = await harness("phase4");
@@ -14,9 +14,10 @@ const ok = h.ok;
 const RAW_STORIES = [rawStory(1, "a"), rawStory(2, "b"), rawStory(3, "c")];
 const RAW_ITEMS = [rawOrder("bw-1-01", 0), rawMatch("bw-1-02"), Object.assign(rawOrder("bw-2-01", 1), { set: 2 }), rawComplete("bw-2-02", "snt-st-fx-2"),
   Object.assign(rawComplete("bw-3-01", "snt-st-fx-3"), { set: 3 }), Object.assign(rawMatch("bw-3-02"), { set: 3 })];
-const state = { mode: "content" };   // "content" | "empty" | "noext" | "noexercises"
+const state = { mode: "content", down: false };   // mode: "content" | "empty" | "noext" | "noexercises"; down: simulate a dead network for real (see section H)
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".ico": "image/x-icon", ".webmanifest": "application/manifest+json", ".woff2": "font/woff2", ".txt": "text/plain" };
 function serve(req, res) {
+  if (state.down) return req.socket.destroy();   // genuinely offline: even the service worker's own fetches fail (page.setOfflineMode does not cover the worker)
   let u = decodeURIComponent(new URL(req.url, "http://x").pathname); if (u.endsWith("/")) u += "index.html";
   const send = (code, body, type) => { res.writeHead(code, { "Content-Type": type || "text/plain", "Cache-Control": "no-store" }); res.end(body); };
   if (state.mode === "noext" && u === "/assets/js/learn/stories-ui.js") return send(404, "gone");
@@ -32,6 +33,12 @@ function serve(req, res) {
 }
 const server = http.createServer(serve); await new Promise(r => server.listen(0, "127.0.0.1", r));
 const BASE = "http://127.0.0.1:" + server.address().port, LEARN = BASE + "/learn-arabic/";
+
+// The service worker's own declarations are the source of truth: nothing below hard-codes a cache version or a precache list.
+const SWSRC = fs.readFileSync(path.join(REPO, "sw.js"), "utf8");
+const SW_CACHE = /const CACHE_NAME = "([^"]+)"/.exec(SWSRC)[1], SW_VENDOR = /const VENDOR_CACHE = "([^"]+)"/.exec(SWSRC)[1];
+const SW_CORE = [...(/const CORE_ASSETS = \[([\s\S]*?)\];/.exec(SWSRC)[1]).matchAll(/"([^"]+)"/g)].map(m => m[1]);
+const SW_VER = Number(/-v(\d+)$/.exec(SW_CACHE)[1]), SW_PREV = SW_CACHE.replace(/-v\d+$/, "-v" + (SW_VER - 1));
 
 // ------------------------------------------------------------------ helpers
 async function section(name, fn) { try { await fn(); } catch (e) { ok(false, name + ": THREW " + String((e && e.message) || e).split("\n")[0]); } }
@@ -49,8 +56,10 @@ async function newPage(ctx, { w = 1100, hgt = 900, mobile = false, prefs = null,
   await p.evaluateOnNewDocument((pr, pg, th) => { if (sessionStorage.getItem("__seeded")) return; sessionStorage.setItem("__seeded", "1"); if (pr) localStorage.setItem("ak-learn-st-prefs", pr); if (pg) localStorage.setItem("ak-learn-progress-v1", pg); if (th) localStorage.setItem("ak-theme", th); }, prefs && JSON.stringify(prefs), progress && JSON.stringify(progress), theme);
   return p;
 }
-async function go(p, hash) { await p.goto(LEARN + (hash || ""), { waitUntil: "load" }); await p.waitForSelector("#learnApp .lx-h, #learnApp h2", { timeout: 8000 }); await sleep(60); }
-async function nav(p, hash) { await p.evaluate(x => { location.hash = x; }, hash); await sleep(120); }
+// A route that is a lesson (letter, harakat, vocab/<topic>, conversation/<unit>, reading/<passage>) opens at its real individual URL
+// (assets/js/learn/urls.js); every other route (#/stories, #/story/..., #/workshop/..., #/review, ...) is still a dashboard hash route.
+async function go(p, hash) { const lp = lessonPath(hash); await p.goto(lp ? BASE + lp : LEARN + (hash || ""), { waitUntil: "load" }); await p.waitForSelector("#learnApp .lx-h, #learnApp h2", { timeout: 8000 }); await sleep(60); }
+async function nav(p, hash) { if (lessonPath(hash)) return go(p, hash); await p.evaluate(x => { location.hash = x; }, hash); await sleep(120); }
 const bodyText = p => p.$eval("#learnApp", e => e.innerText);
 const stored = (p, key) => p.evaluate(k => JSON.parse(localStorage.getItem(k) || "null"), key);
 const progress = p => stored(p, "ak-learn-progress-v1");
@@ -118,7 +127,7 @@ await section("A empty state", async () => {
 state.mode = "content";
 await section("B phase 3 reading untouched", async () => {
   const ctx = await newContext(), p = await newPage(ctx, { progress: FIXTURE_LEARNER.stored });
-  await go(p, "#/reading"); ok((await p.$$("a[href^='#/reading/read-']")).length === 8, "Phase 3: the reading list still shows all eight passages (Phase 4 content present)");
+  await go(p, "#/reading"); ok((await p.$$eval("a[href^='/learn-arabic/reading/']", a => a.map(x => x.getAttribute("href")))).join() === LearnUrls.entries.filter(e => e.kind === "reading").map(e => e.url).join(), "Phase 3: the reading list still shows all eight passages, each linking to its own URL (Phase 4 content present)");
   await nav(p, "#/reading/read-p2"); ok((await bodyText(p)).length > 100 && (await p.$$(".lx-rd .lx-rd-l")).length === 4, "Phase 3: a reading passage still renders its four lines");
   await clickText(p, "[data-action=rcheck]", "Start the questions");
   for (let q = 0; q < 4; q++) { await (await p.$(".lx-opt:not([disabled])")).click(); await sleep(60); await (await p.$("#lxNextBtn")).click(); await sleep(80); }
@@ -137,7 +146,7 @@ for (const [mode, label] of [["noext", "stories-ui.js missing"], ["noexercises",
   await go(p); const t = await bodyText(p);
   ok(t.length > 100 && !/Stories and sentence building/.test(t), label + ": the dashboard still renders with no Phase 4 card");
   await nav(p, "#/stories"); ok((await bodyText(p)).length > 100, label + ": #/stories falls back to the normal dashboard (no route)");
-  await nav(p, "#/reading"); ok((await p.$$("a[href^='#/reading/read-']")).length === 8, label + ": Phase 3 reading still works");
+  await nav(p, "#/reading"); ok((await p.$$("a[href^='/learn-arabic/reading/']")).length === 8 && LearnUrls.entries.filter(e => e.kind === "reading").length === 8, label + ": Phase 3 reading still works");
   ok(p.errors.length === 0, label + ": no page errors " + JSON.stringify(p.errors));
   ok(JSON.stringify(await progress(p)) === JSON.stringify(FIXTURE_LEARNER.stored), label + ": learner record untouched");
   await ctx.close();
@@ -388,20 +397,39 @@ await section("H offline and cache upgrade", async () => {
   await p.evaluate(async () => { await navigator.serviceWorker.ready; });
   // plant a STALE v18 cache entry the way an older visit would have left it, then let the new worker take over
   const names = await p.evaluate(async () => caches.keys());
-  ok(names.includes("arabic-keyboard-shell-v20"), "service worker: the v20 shell cache exists after install " + JSON.stringify(names));
-  // simulate a returning visitor from the previous release: no worker, a stale v18 cache holding an old review.js, no v20 cache yet
-  await p.evaluate(async () => { for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister(); await caches.delete("arabic-keyboard-shell-v20"); const c = await caches.open("arabic-keyboard-shell-v18"); await c.put("/assets/js/learn/review.js", new Response("/* STALE v18 */")); });
+  ok(names.includes(SW_CACHE), `service worker: the ${SW_CACHE} shell cache (the name declared in sw.js) exists after install ` + JSON.stringify(names));
+  // simulate a returning visitor from earlier releases: no worker, no current cache, stale OLD shell caches (an old one and the immediately
+  // previous release) holding outdated copies of the Learn JavaScript, plus a vendor-cache entry that must survive the upgrade
+  await p.evaluate(async (cur, prev, vend) => { for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister(); await caches.delete(cur);
+    const old = await caches.open("arabic-keyboard-shell-v18"); await old.put("/assets/js/learn/review.js", new Response("/* STALE v18 */"));
+    const pv = await caches.open(prev); await pv.put("/assets/js/learn/urls.js", new Response("/* STALE previous release */")); await pv.put("/assets/js/app.js", new Response("/* STALE previous release */"));
+    const v = await caches.open(vend); await v.put("/__vendor-probe", new Response("kept")); }, SW_CACHE, SW_PREV, SW_VENDOR);
   await p.reload({ waitUntil: "load" }); await p.evaluate(async () => { await navigator.serviceWorker.ready; }); await sleep(1500);
-  const after = await p.evaluate(async () => ({ keys: await caches.keys(), v20: await (async () => { const c = await caches.open("arabic-keyboard-shell-v20"); return (await c.keys()).map(r => new URL(r.url).pathname); })() }));
-  ok(!after.keys.includes("arabic-keyboard-shell-v18"), "cache upgrade: the stale v18 cache is deleted when v20 activates " + JSON.stringify(after.keys));
-  for (const f of ["exercises", "sentences", "stories", "stories-ui", "review", "progress", "app"]) ok(after.v20.includes("/assets/js/learn/" + f + ".js"), "precache: /assets/js/learn/" + f + ".js is in the v20 shell cache");
+  const after = await p.evaluate(async (cur, vend) => ({ keys: await caches.keys(), cur: (await (await caches.open(cur)).keys()).map(r => new URL(r.url).pathname), probe: await (async () => { const r = await (await caches.open(vend)).match("/__vendor-probe"); return r ? await r.text() : null; })() }), SW_CACHE, SW_VENDOR);
+  ok(!after.keys.includes("arabic-keyboard-shell-v18") && !after.keys.includes(SW_PREV), `cache upgrade: obsolete shell caches (v18 and the previous release ${SW_PREV}) are deleted when ${SW_CACHE} activates ` + JSON.stringify(after.keys));
+  ok(after.keys.filter(k => /^arabic-keyboard-shell-/.test(k)).join() === SW_CACHE, "cache upgrade: exactly one shell cache remains, the current one");
+  ok(after.probe === "kept", `cache upgrade: the separate vendor cache (${SW_VENDOR}) and its contents are preserved`);
+  const missing = SW_CORE.filter(a => !after.cur.includes(a.split("?")[0]));
+  ok(SW_CORE.length > 40 && missing.length === 0, `precache: all ${SW_CORE.length} CORE_ASSETS declared in sw.js are in the ${SW_CACHE} cache ` + JSON.stringify(missing));
+  for (const f of ["exercises", "sentences", "stories", "stories-ui", "review", "progress", "urls", "app"]) ok(after.cur.includes("/assets/js/learn/" + f + ".js"), "precache: /assets/js/learn/" + f + ".js is in the current shell cache");
   const served = await p.evaluate(async () => (await (await fetch("/assets/js/learn/review.js")).text()).includes("reviewSentences"));
   ok(served, "cache upgrade: review.js is served from the NEW cache, never the planted stale copy");
-  await ctx.setOfflineMode?.(true).catch(() => {}); await p.setOfflineMode(true);
+  const fresh = await p.evaluate(async () => ({ urls: (await (await fetch("/assets/js/learn/urls.js")).text()).includes("LearnUrls"), site: (await (await fetch("/assets/js/app.js")).text()).includes("SiteAds"), learn: (await (await fetch("/assets/js/learn/app.js")).text()).includes("LearnUrls") }));
+  ok(fresh.urls && fresh.site && fresh.learn, "cache upgrade: the new individual-URL JavaScript (urls.js, learn/app.js) and the shared app.js are served by the new cache, not the planted stale copies " + JSON.stringify(fresh));
+  // visit a lesson page online so it is cached for offline use
+  await p.goto(BASE + LearnUrls.pathFor("letter/ba"), { waitUntil: "load" }); await p.waitForSelector(".lx-hero-ar", { timeout: 8000 }); await sleep(400);
+  await ctx.setOfflineMode?.(true).catch(() => {}); await p.setOfflineMode(true); state.down = true;
   await p.goto(LEARN + "#/stories", { waitUntil: "load" }); await p.waitForSelector("#learnApp .lx-h", { timeout: 8000 });
   const offText = await bodyText(p); ok(/Band 1/.test(offText), "offline: the Stories page loads and shows its content with no network " + JSON.stringify(offText.slice(0, 90)));
   await p.goto(LEARN + "#/story/story-s1-a", { waitUntil: "load" }); await p.waitForSelector("#lxRd", { timeout: 8000 }); ok(true, "offline: a story page opens with no network");
-  ok(p.errors.length === 0, "offline: no page errors " + JSON.stringify(p.errors)); await ctx.close();
+  // individual lesson URLs offline: a visited lesson reloads with its interactive view; an un-visited one redirects to the working dashboard
+  await p.goto(BASE + LearnUrls.pathFor("letter/ba"), { waitUntil: "load" }); await p.waitForSelector(".lx-hero-ar", { timeout: 8000 });
+  ok(new URL(p.url()).pathname === LearnUrls.pathFor("letter/ba") && (await bodyText(p)).includes("Letter 2 of 28") && !!(await p.$('[data-action="check"]')), "offline: a previously visited lesson page (letters/ba) reloads at its own URL with its interactive lesson");
+  await p.goto(BASE + LearnUrls.pathFor("letter/ta"), { waitUntil: "load" }); await p.waitForSelector("#learnApp .lx-h", { timeout: 8000 });
+  { const got = { url: new URL(p.url()).pathname, text: (await bodyText(p)).slice(0, 60) }; ok(got.url === "/learn-arabic/" && /Your learning dashboard/.test(got.text), "offline: an un-visited lesson URL redirects to the precached dashboard, which works " + JSON.stringify(got)); }
+  await p.goto(LEARN, { waitUntil: "load" }); await p.waitForSelector(".lx-grid .lx-tile", { timeout: 8000 });
+  ok((await p.$eval(`a.lx-tile[href="${LearnUrls.pathFor("letter/alif")}"]`, a => a.getAttribute("href"))) === LearnUrls.pathFor("letter/alif"), "offline: the dashboard renders its 28 tiles with real lesson links");
+  ok(p.errors.length === 0, "offline: no page errors " + JSON.stringify(p.errors)); state.down = false; await ctx.close();
 });
 
 server.close();

@@ -10,7 +10,7 @@
    not throw away a visitor's 19 MB download. Bump VENDOR_CACHE only when
    the files under /assets/vendor/ themselves change.
 */
-const CACHE_NAME = "arabic-keyboard-shell-v20";
+const CACHE_NAME = "arabic-keyboard-shell-v21";
 const VENDOR_CACHE = "arabic-keyboard-vendor-v1";
 const isVendor = (url) => new URL(url).pathname.startsWith("/assets/vendor/");
 const CORE_ASSETS = [
@@ -40,6 +40,7 @@ const CORE_ASSETS = [
   "/assets/js/learn/vocab-data.js",
   "/assets/js/learn/conversations.js",
   "/assets/js/learn/reading.js",
+  "/assets/js/learn/urls.js",
   "/assets/js/learn/srs.js",
   "/assets/js/learn/engine.js",
   "/assets/js/learn/exercises.js",
@@ -128,7 +129,13 @@ self.addEventListener("fetch", (event) => {
             // from the cache ignoring the query; only if that also misses fall back to the home page, as before.
             // ignoreSearch is deliberately limited to this offline navigation fallback: online requests, exact cached
             // variants and every non-navigation request keep exact-URL behaviour.
-            return (await caches.match(event.request, { ignoreSearch: true })) || caches.match("/");
+            // Individual lesson pages (/learn-arabic/<category>/<lesson>/) are cached when first visited, not precached. An
+            // un-visited one offline is redirected to the precached course dashboard (which can still open visited lessons) rather
+            // than the home page. It must be a redirect, not the dashboard HTML served at the lesson URL: the dashboard's relative
+            // asset paths (../assets/...) would resolve against the deeper URL and every script would fail to load.
+            const url = new URL(event.request.url);
+            return (await caches.match(event.request, { ignoreSearch: true })) ||
+              (url.pathname.indexOf("/learn-arabic/") === 0 && url.pathname !== "/learn-arabic/" && (await caches.match("/learn-arabic/")) && Response.redirect("/learn-arabic/", 302)) || caches.match("/");
           }
           return Response.error();
         });

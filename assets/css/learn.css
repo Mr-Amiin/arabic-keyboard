@@ -146,3 +146,10 @@
 .st-w:focus-visible,.st-tile:focus-visible,.st-item:focus-visible{ outline:3px solid var(--emerald); outline-offset:2px; }
 @media (max-width:520px){ .st-match{ grid-template-columns:1fr; } .st-w-ar{ font-size:1.7rem; } .st-tile{ font-size:1.5rem; } }
 @media (forced-colors: active){ .st-w[aria-pressed="true"],.st-item[aria-pressed="true"],.st-tile.is-placed{ outline:2px solid; } }
+
+/* Individual lesson pages: reference table and the static lesson index (no effect on any existing view) */
+.lx .lx-tablewrap{ overflow-x:auto; max-width:100%; }
+.lx .lx-table{ border-collapse:collapse; width:100%; min-width:420px; }
+.lx .lx-table th,.lx .lx-table td{ border:1px solid var(--border); padding:6px 10px; text-align:center; }
+.lx .lx-table thead th{ background:var(--surface-2); }
+.lx .lx-lesson-index summary{ cursor:pointer; font-weight:600; }

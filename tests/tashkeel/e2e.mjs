@@ -3,10 +3,10 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
-import chromium from "@sparticuz/chromium";
+import { fileURLToPath } from "node:url"; import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 
-const ROOT = path.resolve(new URL("../..", import.meta.url).pathname);
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const PORT = 8124, ORIGIN = `http://localhost:${PORT}`;
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".mjs": "text/javascript", ".wasm": "application/wasm", ".json": "application/json", ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml", ".xml": "application/xml", ".txt": "text/plain", ".onnx": "application/octet-stream", ".webmanifest": "application/manifest+json" };
 let throttleBps = 0;   // bytes/second for /assets/vendor/ files when > 0 (slow-network test)
@@ -18,7 +18,7 @@ const server = http.createServer((req, res) => {
   if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, "index.html");
   if (!fs.existsSync(f)) { res.writeHead(404); return res.end("not found"); }
   const hdr = { "content-type": MIME[path.extname(f)] || "application/octet-stream", "cache-control": "max-age=600" };
-  if (throttleBps && f.includes("/assets/vendor/")) {
+  if (throttleBps && p.includes("/assets/vendor/")) {
     const buf = fs.readFileSync(f); hdr["content-length"] = buf.length; res.writeHead(200, hdr);
     const step = Math.max(1024, Math.floor(throttleBps / 20)); let o = 0;
     const t = setInterval(() => { if (o >= buf.length || res.destroyed) { clearInterval(t); return res.end(); } res.write(buf.subarray(o, o + step)); o += step; }, 50);
@@ -30,7 +30,7 @@ const server = http.createServer((req, res) => {
 
 const results = []; let shots = 0;
 const check = (name, ok, detail = "") => { results.push({ name, ok: !!ok }); console.log((ok ? "PASS " : "FAIL ") + name + (detail ? "  — " + detail : "")); };
-const browser = await puppeteer.launch({ args: [...chromium.args.filter((a) => !/single-process|no-zygote/.test(a)), "--no-sandbox"], executablePath: await chromium.executablePath(), headless: "shell" });
+const useSystemChrome = !!process.env.CHROME_PATH; const browser = await puppeteer.launch({ args: useSystemChrome ? [] : [...chromium.args.filter((a) => !/single-process|no-zygote/.test(a)), "--no-sandbox"], executablePath: useSystemChrome ? process.env.CHROME_PATH : await chromium.executablePath(), headless: useSystemChrome ? true : "shell" });
 const M = (x) => x.replace(/([\u064E\u064F\u0650])\u0651/g, "\u0651$1");   // normalise literal typing order
 const strip = (s) => s.replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]/g, "");
 

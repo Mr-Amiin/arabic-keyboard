@@ -1,8 +1,11 @@
 // Phase 3 in real Chromium: conversations, reading comprehension, mixed-topic review, journey, audio fallback, layout, dark mode, offline.
-import { harness, sleep } from "./lib.mjs";
+import { harness, sleep, pageUrl, LearnUrls } from "./lib.mjs";
 import { writeStore, readStore, todayNo, answerOne, planAnswer, dupIds } from "./v1-lib.mjs";
 const H = await harness("phase3"); const { base, ok } = H; let N = 0;
-const url = (h, q = "") => `${base}/learn-arabic/?n=${++N}${q}${h || ""}`;
+// Lesson routes (conversation/<unit>, reading/<passage>, vocab/<topic>, ...) open their real individual URL via LearnUrls;
+// #/journey, #/conversations, #/reading, #/vocab (list pages) are still dashboard hash routes.
+const url = (h, q = "") => pageUrl(base, ++N, h, q);
+const CONV_LINKS = LearnUrls.entries.filter(e => e.kind === "conversation").map(e => e.url), READ_LINKS = LearnUrls.entries.filter(e => e.kind === "reading").map(e => e.url);
 const open = async (p, hash) => { await p.goto(url(hash), { waitUntil: "load" }); await p.waitForSelector("#learnApp .lx-h, #learnApp .lx-grid"); await sleep(80); };
 const fresh = async p => { await p.goto(url(""), { waitUntil: "load" }); await p.waitForSelector(".lx-grid"); await p.evaluate(() => localStorage.clear()); };
 const seed = { v: 2, lessons: {}, stats: {}, sessions: [], days: [], srs: {} };
@@ -38,7 +41,7 @@ async function runCheck(p, wrongCount = 0) {
 /* 2. conversation unit: content shown, audio buttons, comprehension scored and recorded honestly ---------------------------------------- */
 {
   const p = await H.page({ w: 1100 }); await fresh(p); await open(p, "#/conversations");
-  ok(await p.$$eval('a.lx-card[href^="#/conversation/"]', a => a.length) === 8, "conversations list shows eight units");
+  ok(await p.$$eval('a.lx-card[href^="/learn-arabic/conversations/"]', a => a.map(x => x.getAttribute("href"))).then(h => h.length === 8 && JSON.stringify(h) === JSON.stringify(CONV_LINKS)), "conversations list shows eight units, each linking to its own URL");
   await open(p, "#/conversation/order");
   const d = await p.evaluate(() => ({ lines: document.querySelectorAll(".lx-dl").length, hears: document.querySelectorAll(".lx-dl .lx-hear").length, ar: [...document.querySelectorAll(".lx-dl .lx-ex-ar")].every(e => e.lang === "ar" && e.dir === "rtl"), tr: [...document.querySelectorAll(".lx-dl b")].every(b => b.textContent.trim()), reg: !!document.querySelector(".lx-note")?.textContent.match(/Modern Standard Arabic/), dia: !!document.querySelector(".lx-dialect h3")?.textContent.match(/not Modern Standard Arabic/), speak: /Speaking practice/.test(document.body.innerText) }));
   ok(d.lines >= 5 && d.hears === d.lines && d.ar && d.tr, "dialogue shows Arabic (lang=ar, rtl), transliteration, translation and one Hear button per line");
@@ -47,7 +50,7 @@ async function runCheck(p, wrongCount = 0) {
   await p.click('[data-action="ccheck"]'); const bad = await runCheck(p, 4);
   let rec = (await readStore(p)).units["conv-order"];
   ok(/0 \//.test(bad) && rec && rec.best === 0 && rec.tries === 1 && !(await p.evaluate(() => LearnProgress && false)), "a failed check records the real score (0%), counts a try and does not complete the unit: " + bad);
-  await open(p, "#/journey"); ok(await p.evaluate(() => !document.querySelector('a[href="#/conversation/order"]')?.closest("li")?.className.includes("is-done")), "journey does not mark a failed unit as done");
+  await open(p, "#/journey"); ok(await p.evaluate(sel => { const a = document.querySelector(sel); return !!a && !a.closest("li").className.includes("is-done"); }, `a[href="${LearnUrls.pathFor("conversation/order")}"]`), "journey does not mark a failed unit as done");
   await open(p, "#/conversation/order"); await p.click('[data-action="ccheck"]'); const good = await runCheck(p, 0);
   rec = (await readStore(p)).units["conv-order"];
   ok(/100%/.test(good) && rec.best === 100 && rec.tries === 2 && rec.at > 0, "a perfect check records 100% and completes the unit: " + good);
@@ -69,7 +72,7 @@ async function runCheck(p, wrongCount = 0) {
 /* 4. reading: level 4 opens without harakat, toggles work, score recorded ------------------------------------------------------------- */
 {
   const p = await H.page({ w: 1100 }); await fresh(p); await open(p, "#/reading");
-  ok(await p.$$eval('a.lx-card[href^="#/reading/"]', a => a.length) === 8, "reading list shows eight passages in four levels");
+  ok(await p.$$eval('a.lx-card[href^="/learn-arabic/reading/"]', a => a.map(x => x.getAttribute("href"))).then(h => h.length === 8 && JSON.stringify(h) === JSON.stringify(READ_LINKS)), "reading list shows eight passages in four levels, each linking to its own URL");
   await open(p, "#/reading/read-d1");
   const vis = sel => p.evaluate(s => { const e = document.querySelector(s); return !!e && getComputedStyle(e).display !== "none"; }, sel);
   ok(!(await vis(".rd-v")) && (await vis(".rd-p")), "level-4 dialogue starts WITHOUT harakat");
@@ -153,8 +156,10 @@ for (const theme of ["light", "dark"]) {
   const p = await H.page({ w: 1100 }); await fresh(p); let dup = [], dead = [];
   for (const v of VIEWS) { await open(p, v); dup.push(...await dupIds(p)); const hs = await p.$$eval('#learnApp a[href^="#/"]', a => a.map(x => x.getAttribute("href"))); for (const h of new Set(hs)) if (!(await p.evaluate(h2 => { const parts = h2.slice(2).split("/"); return true; }, h))) dead.push(h); }
   ok(dup.length === 0, "no duplicate element ids on any Phase 3 view " + JSON.stringify(dup));
-  const hrefs = new Set(); for (const v of ["#/journey", "#/conversations", "#/reading"]) { await open(p, v); (await p.$$eval('#learnApp a[href^="#/"]', a => a.map(x => x.getAttribute("href")))).forEach(h => hrefs.add(h)); }
+  const hrefs = new Set(), paths = new Set(); for (const v of ["#/journey", "#/conversations", "#/reading"]) { await open(p, v); const all = await p.$$eval('#learnApp a[href^="#/"], #learnApp a[href^="/learn-arabic/"]', a => a.map(x => x.getAttribute("href"))); all.forEach(h => (h.startsWith("#/") ? hrefs : paths).add(h)); }
   const broken = []; for (const h of hrefs) { await open(p, h); if (await p.evaluate(() => /Page not found/.test(document.getElementById("learnApp").innerText))) broken.push(h); }
-  ok(broken.length === 0, `all ${hrefs.size} links on the journey, conversations and reading pages open a real view ` + JSON.stringify(broken)); await p.close();
+  // lesson links are real URLs now: each must be a known lesson URL and must open that lesson (not a dashboard, not a 404, not "Page not found")
+  for (const h of paths) { if (!LearnUrls.byUrl[h] && h !== "/learn-arabic/") { broken.push("unknown " + h); continue; } const r = await p.goto(base + h + `?n=${++N}`, { waitUntil: "load" }); await p.waitForSelector("#learnApp .lx-h, #learnApp .lx-grid"); if (!r || r.status() !== 200 || await p.evaluate(() => /Page not found/.test(document.getElementById("learnApp").innerText))) broken.push(h); }
+  ok(broken.length === 0 && paths.size >= 16, `all ${hrefs.size} hash links and ${paths.size} lesson URLs on the journey, conversations and reading pages open a real view ` + JSON.stringify(broken)); await p.close();
 }
 await H.finish();

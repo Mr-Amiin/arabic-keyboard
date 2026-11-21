@@ -1,13 +1,17 @@
-// Service-worker suite: the REAL worker (v17) in headless Chromium, served from the repo root.
+// Service-worker suite: the REAL worker (whatever version sw.js declares) in headless Chromium, served from the repo root.
 import fs from "node:fs";
 import path from "node:path";
-import { harness, sleep, txt, REPO } from "./lib.mjs";
+import { harness, sleep, txt, REPO, LearnUrls } from "./lib.mjs";
 import { finishSession, score, readStore } from "./v1-lib.mjs";
 const H = await harness("service-worker"); const { base, ok } = H;
 const src = fs.readFileSync(path.join(REPO, "sw.js"), "utf8");
 const CACHE = src.match(/CACHE_NAME = "([^"]+)"/)[1], VENDOR = src.match(/VENDOR_CACHE = "([^"]+)"/)[1];
 const CORE = eval(src.match(/const CORE_ASSETS = (\[[\s\S]*?\]);/)[1]);
-ok(CACHE === "arabic-keyboard-shell-v20", "sw.js CACHE_NAME is v20 (above the live v19) (" + CACHE + ")");
+// The expected cache name is derived from the worker itself (above). The only fixed fact is the release history: the previously shipped shell
+// cache was v20, so a worker that changed cached assets must declare a strictly newer, well-formed one (so returning visitors get the update).
+const SHIPPED = 20, VER = Number((CACHE.match(/^arabic-keyboard-shell-v(\d+)$/) || [])[1]);
+ok(VER > SHIPPED, `sw.js CACHE_NAME (${CACHE}) is a well-formed shell cache name newer than the previously shipped v${SHIPPED}`);
+const PREV = "arabic-keyboard-shell-v" + (VER - 1);
 const p = await H.page({ sw: true }); let N = 0;
 const U = h => `${base}/learn-arabic/?n=${++N}${h || ""}`;
 const settle = async () => { await p.evaluate(() => navigator.serviceWorker.ready); await sleep(2500); };
@@ -24,20 +28,20 @@ ok(ks.includes(CACHE), "fresh install creates cache " + CACHE + " (caches: " + J
 const cached = await p.evaluate(async c => { const ch = await caches.open(c); return (await ch.keys()).map(r => new URL(r.url).pathname); }, CACHE);
 const missing = CORE.filter(u => !cached.includes(u));
 ok(missing.length === 0, `all ${CORE.length} precache entries were actually cached` + (missing.length ? " MISSING: " + missing.join(", ") : ""));
-ok(["/learn-arabic/", "/assets/css/learn.css", "/assets/js/learn/typing-dock.js", "/assets/js/learn/app.js", "/assets/js/keyboard-tool.js", "/assets/js/learn/vocab-data.js", "/assets/js/learn/srs.js", "/assets/js/learn/review.js"].every(u => cached.includes(u)), "Learn page, its CSS/JS (incl. typing-dock) and keyboard-tool.js are precached");
+ok(["/learn-arabic/", "/assets/css/learn.css", "/assets/js/learn/typing-dock.js", "/assets/js/learn/app.js", "/assets/js/keyboard-tool.js", "/assets/js/learn/vocab-data.js", "/assets/js/learn/srs.js", "/assets/js/learn/review.js", "/assets/js/learn/urls.js"].every(u => cached.includes(u)), "Learn page, its CSS/JS (incl. typing-dock) and keyboard-tool.js are precached");
 ok(ks.every(k => k === CACHE || k === VENDOR), "no unexpected caches after a fresh install");
 /* 2. activation removes obsolete caches, keeps the vendor cache, and old Learn assets cannot linger */
-await p.evaluate(async v => {
-  for (const name of ["arabic-keyboard-shell-v10", "arabic-keyboard-shell-v11", "arabic-keyboard-shell-v16"]) { const c = await caches.open(name); await c.put("/assets/js/learn/app.js", new Response("window.__STALE_" + name.slice(-3) + "=1")); await c.put("/old-only.txt", new Response("x")); }
+await p.evaluate(async (v, prev) => {
+  for (const name of ["arabic-keyboard-shell-v10", "arabic-keyboard-shell-v11", "arabic-keyboard-shell-v16", prev]) { const c = await caches.open(name); await c.put("/assets/js/learn/app.js", new Response("window.__STALE_" + name.slice(-3) + "=1")); await c.put("/old-only.txt", new Response("x")); }
   const vc = await caches.open(v); await vc.put("/assets/vendor/keepme.bin", new Response("vendor"));
   for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
-}, VENDOR);
+}, VENDOR, PREV);
 await p.goto(U(), { waitUntil: "domcontentloaded" }); await p.waitForSelector(".lx-grid"); await settle();
 ks = await keys();
-ok(!ks.includes("arabic-keyboard-shell-v10") && !ks.includes("arabic-keyboard-shell-v11") && !ks.includes("arabic-keyboard-shell-v16") && ks.includes(CACHE), "activation deleted the obsolete v10, v11 and the currently-live v16 caches (now: " + JSON.stringify(ks) + ")");
+ok(!ks.includes("arabic-keyboard-shell-v10") && !ks.includes("arabic-keyboard-shell-v11") && !ks.includes("arabic-keyboard-shell-v16") && !ks.includes(PREV) && ks.includes(CACHE), `activation deleted the obsolete v10, v11, v16 and the previous release (${PREV}) caches (now: ` + JSON.stringify(ks) + ")");
 ok(ks.includes(VENDOR) && await p.evaluate(async v => !!(await (await caches.open(v)).match("/assets/vendor/keepme.bin")), VENDOR), "the separate vendor cache (19 MB Tashkeel model) was preserved");
 await p.goto(U(), { waitUntil: "domcontentloaded" }); await p.waitForSelector(".lx-grid");
-ok(await p.evaluate(() => !("__STALE_v10" in window) && !("__STALE_v11" in window) && !("__STALE_v16" in window) && typeof LearnTypingDock === "object" && typeof LearnEngine.gradeTyped === "function"), "page runs the new Learn code, not stale cached v10/v11/v16 files");
+ok(await p.evaluate(prev => !("__STALE_v10" in window) && !("__STALE_v11" in window) && !("__STALE_v16" in window) && !(("__STALE_" + prev.slice(-3)) in window) && typeof LearnTypingDock === "object" && typeof LearnEngine.gradeTyped === "function", PREV), `page runs the new Learn code, not stale cached v10/v11/v16/${PREV.slice(-3)} files`);
 /* 3. dashboard + keyboard under the worker */
 await p.goto(U(), { waitUntil: "domcontentloaded" }); await p.waitForSelector(".lx-grid");
 ok((await p.$$(".lx-tile")).length === 28 && (await p.evaluate(() => !!navigator.serviceWorker.controller)), "dashboard renders (28 tiles) while controlled by the worker");
@@ -53,6 +57,9 @@ ok(online === 200, "ONLINE: an asset URL with a query still goes to the network"
       (Page-level setOfflineMode does not affect the worker's own fetches, so it cannot prove anything here.) */
 const OFF = base + "/learn-arabic/";                       // the worker matches cache entries by exact URL: no query string
 await p.goto(OFF, { waitUntil: "domcontentloaded" }); await p.waitForSelector(".lx-grid"); await settle();   // make sure this exact URL is cached while online
+// real individual lesson URLs, visited ONLINE so the worker caches them (a lesson page is cached on first visit, not precached)
+const LESSON_URLS = Object.fromEntries(["letter/ba", "vocab/numbers", "conversation/greet", "reading/read-t1", "letter/ta"].map(r => [r, LearnUrls.pathFor(r)]));
+for (const r of ["letter/ba", "vocab/numbers", "conversation/greet", "reading/read-t1"]) { await p.goto(base + LESSON_URLS[r], { waitUntil: "domcontentloaded" }); await p.waitForSelector("#learnApp .lx-h"); await sleep(700); }
 await H.stop();
 await p.goto(OFF, { waitUntil: "domcontentloaded", timeout: 20000 }).catch(() => {}); await p.waitForSelector(".lx-grid", { timeout: 15000 }).catch(() => {});
 ok((await p.$$(".lx-tile")).length === 28, "OFFLINE (server stopped): Learn dashboard renders from the cache");
@@ -79,6 +86,15 @@ ok((await p.$$(".lx-form")).length === 4, "OFFLINE: a lesson renders after a ful
 await p.evaluate(() => { location.hash = "#/read"; }); await p.reload({ waitUntil: "domcontentloaded" }).catch(() => {}); await p.waitForSelector('[data-action="stage"][data-id="words"]', { timeout: 10000 }).catch(() => {});
 await p.click('[data-action="stage"][data-id="words"]'); await p.waitForSelector("#lxEditor", { visible: true }); await ready();
 ok(await p.evaluate(() => LearnTypingDock.state().keyboard === "ready" && document.querySelectorAll("#lxKb .key").length === 74), "OFFLINE: typing exercise + on-screen keyboard load from the precache");
+/* 4b2. individual lesson URLs offline (server stopped) */
+{ const lessonOffline = async u => { await p.goto(base + u, { waitUntil: "domcontentloaded", timeout: 15000 }).catch(() => {}); await sleep(900); return p.evaluate(() => ({ path: location.pathname, h1: (document.querySelector("h1") || {}).textContent, hero: !!document.querySelector(".lx-hero-ar"), forms: document.querySelectorAll(".lx-form").length, ex: document.querySelectorAll(".lx-ex").length, dl: document.querySelectorAll(".lx-dl").length, rd: document.querySelectorAll(".lx-rd-l").length, tiles: document.querySelectorAll(".lx-tile").length, check: !!document.querySelector('[data-action="check"]') })); };
+  let o = await lessonOffline(LESSON_URLS["letter/ba"]); ok(o.path === LESSON_URLS["letter/ba"] && o.forms === 4 && o.check && /Arabic letter Ba/.test(o.h1), "OFFLINE: a visited individual lesson URL (letters/ba) opens directly with its interactive lesson, at its own URL " + JSON.stringify(o));
+  o = await lessonOffline(LESSON_URLS["letter/ba"] + "?lang=en"); ok(o.path === LESSON_URLS["letter/ba"] && o.forms === 4, "OFFLINE: the same lesson URL with a ?lang query also resolves to the cached lesson (not the home page)");
+  o = await lessonOffline(LESSON_URLS["vocab/numbers"]); ok(o.path === LESSON_URLS["vocab/numbers"] && o.ex >= 11, "OFFLINE: a visited vocabulary lesson URL opens with its word list " + JSON.stringify({ ex: o.ex }));
+  o = await lessonOffline(LESSON_URLS["conversation/greet"]); ok(o.path === LESSON_URLS["conversation/greet"] && o.dl >= 5, "OFFLINE: a visited conversation lesson URL opens with its dialogue " + JSON.stringify({ dl: o.dl }));
+  o = await lessonOffline(LESSON_URLS["reading/read-t1"]); ok(o.path === LESSON_URLS["reading/read-t1"] && o.rd >= 4, "OFFLINE: a visited reading lesson URL opens with its text " + JSON.stringify({ rd: o.rd }));
+  o = await lessonOffline(LESSON_URLS["letter/ta"]); ok(o.path === "/learn-arabic/" && o.tiles === 28, "OFFLINE: an un-visited lesson URL (letters/ta) redirects to the working precached dashboard, not the home page " + JSON.stringify({ path: o.path, tiles: o.tiles }));
+  await p.goto(OFF, { waitUntil: "domcontentloaded" }).catch(() => {}); await p.waitForSelector(".lx-grid", { timeout: 10000 }).catch(() => {}); }
 /* 4c. V1 offline: vocabulary, practice, review and English-mode URLs work from the cache with the server stopped */
 r = await nav("/learn-arabic/?lang=en#/vocab/numbers"); await p.waitForSelector(".lx-ex", { timeout: 8000 }).catch(() => {});
 const vo = await p.evaluate(() => ({ h1: document.querySelector("h1").textContent, n: document.querySelectorAll(".lx-ex").length, first: (document.querySelector(".lx-ex-ar") || {}).textContent }));

@@ -1,12 +1,12 @@
 // Real-browser regression test: on-screen Arabic keyboard + ON/OFF switch on /tashkeel/ (real Chromium, local HTTP server,
 // the REAL Ichkil model through ONNX Runtime Web). Run:  cd tests/tashkeel && npm install && npm run toggle
 import http from "node:http"; import fs from "node:fs"; import path from "node:path";
-import chromium from "@sparticuz/chromium"; import puppeteer, { KnownDevices } from "puppeteer-core";
-const ROOT = path.resolve(new URL("../..", import.meta.url).pathname), PORT = 8162, O = `http://localhost:${PORT}`;
+import { fileURLToPath } from "node:url"; import chromium from "@sparticuz/chromium"; import puppeteer, { KnownDevices } from "puppeteer-core";
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../.."), PORT = 8162, O = `http://localhost:${PORT}`;
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".wasm": "application/wasm" };
 const srv = http.createServer((q, r) => { let f = path.join(ROOT, decodeURIComponent(new URL(q.url, O).pathname)); if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, "index.html"); if (!fs.existsSync(f)) { r.writeHead(404); return r.end(); } r.writeHead(200, { "content-type": MIME[path.extname(f)] || "application/octet-stream" }); fs.createReadStream(f).pipe(r); }).listen(PORT);
 const bad = []; let total = 0; const ck = (n, ok, d = "") => { total++; if (!ok) bad.push(n); console.log((ok ? "PASS " : "FAIL ") + n + (!ok && d ? "  — " + d : "")); };
-const browser = await puppeteer.launch({ args: [...chromium.args.filter(a => !/single-process|no-zygote/.test(a)), "--no-sandbox"], executablePath: await chromium.executablePath(), headless: "shell" });
+const useSystemChrome = !!process.env.CHROME_PATH; const browser = await puppeteer.launch({ args: useSystemChrome ? [] : [...chromium.args.filter(a => !/single-process|no-zygote/.test(a)), "--no-sandbox"], executablePath: useSystemChrome ? process.env.CHROME_PATH : await chromium.executablePath(), headless: useSystemChrome ? true : "shell" });
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
 async function open(url, { w = 1280, h = 900, scheme = "light", mobile = false, device = null } = {}) {

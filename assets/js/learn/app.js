@@ -22,7 +22,17 @@
   const blankSentence = function (b) { return '<span class="lx-ar lx-show-ar" lang="ar" dir="rtl" role="img" aria-label="Arabic sentence with one missing word">' + esc(b.before ? b.before + " " : "") + '<span class="lx-blank lx-blank-word" aria-hidden="true"></span>' + esc((b.after ? " " + b.after : "") + (b.punct || "")) + "</span>"; };
   const blankWord = function (b) { return '<span class="lx-ar lx-show-ar" lang="ar" dir="rtl" role="img" aria-label="Arabic word with one missing letter">' + esc(b.before + (b.before ? ZWJ : "")) + '<span class="lx-blank" aria-hidden="true"></span>' + esc((b.joinAfter && b.after ? ZWJ : "") + b.after) + "</span>"; };
   const hear = function (text, key, label) { return '<button type="button" class="lx-hear" data-action="speak" data-text="' + esc(text) + '" data-key="' + esc(key || "") + '" aria-label="' + esc(label || "Hear pronunciation") + '">🔊 Hear</button>'; };
-  const href = function (h) { return "#/" + h; };
+  // Individual lesson pages (phase: lesson URLs). LESSON is set (data-route) only on a generated lesson page; U maps a lesson route
+  // such as "letter/alif" to its crawlable URL. Any other route (practice, review, journey, ...) stays a hash route on the dashboard.
+  const U = window.LearnUrls || null, LESSON = root.getAttribute("data-route") || "", DASH = "/learn-arabic/";
+  const href = function (h) {
+    const page = U && U.pathFor(h); if (page) return page;
+    if (!LESSON) return "#/" + h;
+    return h === "" ? DASH : DASH + "#/" + h;
+  };
+  // journey.js is DOM-free and hands back its own "#/<route>" targets; resolve them exactly like href() so a lesson opened from the
+  // learning path or the "Continue" button lands on its individual URL, while non-lesson routes stay hash routes.
+  const jump = function (h) { return href(String(h).replace(/^#\/?/, "")); };
   const nextLesson = function () { return ORDER.find(function (id) { return !store.isDone(id); }) || null; };
   const lessonHref = function (id) { return id.indexOf("letter-") === 0 ? href("letter/" + id.slice(7)) : href("harakat/" + id); };
   const lessonTitle = function (id) { if (id.indexOf("letter-") === 0) { const l = byId[id.slice(7)]; return "Letter " + l.nameEn + " " + l.letter; } return D.HARAKAT_LESSONS.find(function (h) { return h.id === id; }).title; };
@@ -42,7 +52,7 @@
       (s.persistent ? "" : '<p class="lx-note" role="note">Progress cannot be saved in this browser (storage is blocked or unavailable). You can still learn, but it will be lost when you leave.</p>') +
       '<div class="lx-stats"><div class="lx-stat"><b>' + s.completed + " / " + s.total + '</b><span>lessons completed</span></div><div class="lx-stat"><b>' + s.level.n + ". " + esc(s.level.name) + '</b><span>current level</span></div><div class="lx-stat"><b>' + s.streak + (s.streak === 1 ? " day" : " days") + '</b><span>practice streak</span></div><div class="lx-stat"><b>' + (s.accuracy === null ? "—" : s.accuracy + "%") + '</b><span>' + (s.accuracy === null ? "no answers yet" : s.correct + " correct, " + s.wrong + " incorrect") + "</span></div>" + '<div class="lx-stat"><b>' + rv.due + '</b><span>reviews due</span></div></div>' +
       '<div class="lx-bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + s.total + '" aria-valuenow="' + s.completed + '" aria-label="Lessons completed"><i style="width:' + pct + '%"></i></div>' +
-      '<div class="lx-row"><div class="lx-panel" id="lxNextStep"><h3>' + (jn.next ? "Continue learning" : "Course complete") + "</h3><p>" + (jn.next ? "Next up: <b>" + esc(stageTitle(jn.next.stage)) + "</b> · " + esc(jn.next.title) + "." : "You have completed every step of the learning path. Keep your skills sharp with review and practice.") + '</p>' + (jn.next ? '<a class="lx-btn" href="' + jn.next.href + '">' + (s.completed || jn.done ? "Continue" : "Start the alphabet") + " →</a>" : '<a class="lx-btn" href="' + href("review") + '">Review →</a>') + '<p class="lx-small">' + jn.done + " of " + jn.total + " path steps complete.</p></div>" +
+      '<div class="lx-row"><div class="lx-panel" id="lxNextStep"><h3>' + (jn.next ? "Continue learning" : "Course complete") + "</h3><p>" + (jn.next ? "Next up: <b>" + esc(stageTitle(jn.next.stage)) + "</b> · " + esc(jn.next.title) + "." : "You have completed every step of the learning path. Keep your skills sharp with review and practice.") + '</p>' + (jn.next ? '<a class="lx-btn" href="' + jump(jn.next.href) + '">' + (s.completed || jn.done ? "Continue" : "Start the alphabet") + " →</a>" : '<a class="lx-btn" href="' + href("review") + '">Review →</a>') + '<p class="lx-small">' + jn.done + " of " + jn.total + " path steps complete.</p></div>" +
       '<div class="lx-panel"><h3>Daily practice</h3><p>' + (s.practicedToday ? "✓ You practiced today. Another round keeps letters fresh." : "You have not practiced today yet. One 10-question round counts.") + '</p><a class="lx-btn lx-btn-alt" href="' + href("practice") + '">Start practice →</a></div>' +
       '<div class="lx-panel" id="lxDailyReview"><h3>Daily review</h3>' + (!rv.learning ? "<p>Nothing is scheduled yet. Answer an alphabet check or practise a vocabulary topic and your reviews will appear here.</p>" + '<a class="lx-btn lx-btn-alt" href="' + href("vocab") + '">Start vocabulary →</a>' : rv.due ? "<p><b>" + rv.due + "</b> item" + (rv.due === 1 ? " is" : "s are") + " due now.</p>" + '<a class="lx-btn" href="' + href("review") + '">Start review →</a>' : "<p>✓ All caught up. Next review: " + whenText(rv.nextInDays) + ".</p>" + '<a class="lx-btn lx-btn-alt" href="' + href("review") + '">Review page →</a>') + (rv.learning ? '<p class="lx-small">' + rv.reviewedToday + " reviewed today · " + rv.learning + " in your schedule · " + rv.mastered + " mastered</p>" : "") + "</div>" +
       '<div class="lx-panel"><h3>Needs review</h3>' + (weak.length ? "<p>Letters you often miss:</p><p>" + weak.map(function (l) { return '<a class="lx-chip" href="' + href("letter/" + l.id) + '">' + ar(l.letter) + " " + esc(l.nameEn) + "</a>"; }).join(" ") + '</p><button type="button" class="lx-btn lx-btn-alt" data-action="practice-weak">Practice these →</button>' : "<p>Nothing to review yet. Letters you miss repeatedly will appear here after a few answers.</p>") + "</div></div>" +
@@ -54,6 +64,8 @@
       (EXT && EXT.dashboard ? EXT.dashboard(UI) : "") +
       '<h3 class="lx-h3">Related tools</h3><div class="lx-tools"><a href="../arabic-keyboard/">Arabic keyboard</a><a href="../tashkeel/">Tashkeel (add harakat)</a><a href="../typing-test/">Typing test</a><a href="../transliteration/">Transliteration</a><a href="../arabic-alphabet/">Alphabet reference</a></div>' +
       '<p class="lx-reset"><button type="button" class="lx-link" data-action="reset">Reset all progress…</button></p>');
+    // Primary ad slot: after the course overview + progress summary, before the module directory. No-op while ads are off.
+    if (window.SiteAds) window.SiteAds.place("learn-dashboard", root.querySelector("ol.lx-path"), "afterend");
   }
 
   /* ---------- letter lesson ---------- */
@@ -248,10 +260,10 @@
     const stages = jn.stages.map(function (s, i) {
       return '<section class="lx-stage is-' + s.status + '" aria-labelledby="lxSt' + i + '"><h3 id="lxSt' + i + '">' + (i + 1) + ". " + esc(s.title) + ' <span class="lx-st-badge lx-st-' + s.status + '">' + STATUS_TEXT[s.status] + "</span></h3><p class=\"lx-small\">" + esc(s.blurb) + " " + s.done + " of " + s.total + " step" + (s.total === 1 ? "" : "s") + " complete.</p><ul class=\"lx-steps\">" + s.steps.map(function (t) {
         const prog = t.total > 1 || t.count ? " · " + t.count + " of " + t.total + " " + t.unitName : "", best = t.best ? " · best score " + t.best + "%" : "";
-        return '<li class="lx-step is-' + t.status + '"><a href="' + t.href + '">' + esc(t.title) + '</a><span class="lx-small"> ' + STATUS_TEXT[t.status] + esc(prog + best) + "</span></li>";
+        return '<li class="lx-step is-' + t.status + '"><a href="' + jump(t.href) + '">' + esc(t.title) + '</a><span class="lx-small"> ' + STATUS_TEXT[t.status] + esc(prog + best) + "</span></li>";
       }).join("") + "</ul></section>";
     }).join("");
-    set('<nav class="lx-back"><a href="' + href("") + '">← Dashboard</a></nav><h2 class="lx-h" tabindex="-1" data-focus>Learning path</h2><p>The path runs Alphabet → Harakat → Reading → Starter vocabulary → Everyday vocabulary → Sentences → Conversations → Reading comprehension. A step is marked complete only when you have really passed it: a quiz score, or most of its words answered correctly. Nothing is locked, so you may open any step at any time, but the current step is the best place to continue.</p><div class="lx-panel"><h3>' + (jn.next ? "Your next step" : "Journey complete") + "</h3><p>" + (jn.next ? "<b>" + esc(stageTitle(jn.next.stage)) + "</b>: " + esc(jn.next.title) + "." : "Every step is complete. Keep reviewing to remember it.") + "</p>" + (jn.next ? '<a class="lx-btn" href="' + jn.next.href + '">Go to this step →</a>' : '<a class="lx-btn" href="' + href("review") + '">Daily review →</a>') + '<p class="lx-small">' + jn.done + " of " + jn.total + " steps complete (" + jn.percent + '%).</p><div class="lx-bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + jn.total + '" aria-valuenow="' + jn.done + '" aria-label="Journey steps completed"><i style="width:' + jn.percent + '%"></i></div></div>' + stages);
+    set('<nav class="lx-back"><a href="' + href("") + '">← Dashboard</a></nav><h2 class="lx-h" tabindex="-1" data-focus>Learning path</h2><p>The path runs Alphabet → Harakat → Reading → Starter vocabulary → Everyday vocabulary → Sentences → Conversations → Reading comprehension. A step is marked complete only when you have really passed it: a quiz score, or most of its words answered correctly. Nothing is locked, so you may open any step at any time, but the current step is the best place to continue.</p><div class="lx-panel"><h3>' + (jn.next ? "Your next step" : "Journey complete") + "</h3><p>" + (jn.next ? "<b>" + esc(stageTitle(jn.next.stage)) + "</b>: " + esc(jn.next.title) + "." : "Every step is complete. Keep reviewing to remember it.") + "</p>" + (jn.next ? '<a class="lx-btn" href="' + jump(jn.next.href) + '">Go to this step →</a>' : '<a class="lx-btn" href="' + href("review") + '">Daily review →</a>') + '<p class="lx-small">' + jn.done + " of " + jn.total + " steps complete (" + jn.percent + '%).</p><div class="lx-bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + jn.total + '" aria-valuenow="' + jn.done + '" aria-label="Journey steps completed"><i style="width:' + jn.percent + '%"></i></div></div>' + stages);
   }
 
   const unitBadge = function (rec) { return rec && rec.complete ? '<span class="lx-tick-i">✓ Passed · best ' + rec.best + "%</span>" : rec && rec.tries ? '<span class="lx-small">Best so far ' + rec.best + "%, not yet passed</span>" : '<span class="lx-small">Not started</span>'; };
@@ -317,7 +329,7 @@
   }
 
   function route() {
-    session = null; store.load(); const p = (location.hash || "").replace(/^#\/?/, "").split("/");
+    session = null; store.load(); const p = (LESSON || location.hash || "").replace(/^#\/?/, "").split("/");
     if (p[0] === "letter" && p[1]) letter(p[1]); else if (p[0] === "harakat" && p[1]) harakat(p[1]); else if (p[0] === "practice") practice(); else if (p[0] === "read") read(); else if (p[0] === "vocab") (p[1] ? topicPage(p[1]) : vocabHome()); else if (p[0] === "patterns") (p[1] ? patternPage(p[1]) : patternsHome()); else if (p[0] === "review") reviewPage(); else if (p[0] === "journey") journeyPage(); else if (p[0] === "conversations") conversationsHome(); else if (p[0] === "conversation" && p[1]) conversationPage(p[1]); else if (p[0] === "reading") (p[1] ? readingPage(p[1]) : readingHome()); else if (EXT && EXT.routes && Object.prototype.hasOwnProperty.call(EXT.routes, p[0])) EXT.routes[p[0]](UI, p); else home();
   }
   function onAction(e) {
@@ -380,6 +392,6 @@
     else if (d.type === "start") { renderSpeech(); if (speechMsg) speechMsg.textContent = ""; }
   });
   renderSpeech();
-  window.addEventListener("hashchange", route);
+  if (!LESSON) window.addEventListener("hashchange", route);
   route();
 })();
