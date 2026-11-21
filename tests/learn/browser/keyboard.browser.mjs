@@ -1,6 +1,6 @@
 // Keyboard-integration regression suite for the Learn typing dock (real Chromium, real keyboard-tool.js).
 import os from "node:os";
-import { harness, sleep, txt } from "./lib.mjs";
+import { harness, sleep, txt, LearnUrls } from "./lib.mjs";
 const H = await harness("keyboard"); const { base, ok } = H;
 let N = 0; const url = h => `${base}/learn-arabic/?n=${++N}${h || ""}`;
 const hex = s => [...s].map(c => c.codePointAt(0).toString(16).padStart(4, "0")).join(" ");
@@ -28,7 +28,7 @@ const check = async p => { await p.click("#lxTCheck"); await p.waitForSelector("
 /* 1. lazy loading ------------------------------------------------------------------------------------------------ */
 let p = await newTracked();
 await p.goto(url()); await p.waitForSelector(".lx-grid");
-await p.click('a[href="#/letter/ba"]'); await p.waitForSelector(".lx-hero-ar");
+await Promise.all([p.waitForNavigation({ waitUntil: "load" }), p.click(`a[href="${LearnUrls.pathFor("letter/ba")}"]`)]); await p.waitForSelector(".lx-hero-ar");
 await p.goto(url("#/practice")); await p.waitForSelector('[data-action="practice"]'); await p.click('[data-action="practice"][data-type="name"]'); await p.waitForSelector(".lx-opt");
 await p.goto(url("#/read")); await p.waitForSelector('[data-action="stage"]');
 ok(p.kbReqs === 0 && (await p.evaluate(() => typeof ArabicKeyboardTool)) === "undefined", "keyboard script is NOT requested/loaded on dashboard, lessons, choice quizzes or the reading menu");

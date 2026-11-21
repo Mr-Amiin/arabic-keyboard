@@ -209,9 +209,9 @@ test("16. i18n dictionary: no duplicate keys; every data-i18n-html key used by t
   for (const k of used) assert.ok(src.includes(`"${k}":`), `missing English HTML entry for ${k}`);
 });
 
-test("17. service worker: shell cache bumped to v20 so returning visitors receive the changed HTML; the separate vendor cache name is unchanged", () => {
+test("17. service worker: shell cache bumped (at least v21) so returning visitors receive the changed HTML; the separate vendor cache name is unchanged", () => {
   const sw = read("sw.js");
-  assert.match(sw, /const CACHE_NAME = "arabic-keyboard-shell-v20";/);
+  { const m = /const CACHE_NAME = "arabic-keyboard-shell-v(\d+)";/.exec(sw); assert.ok(m && Number(m[1]) >= 21, "shell cache must be well-formed and at least v21"); }
   assert.match(sw, /const VENDOR_CACHE = "arabic-keyboard-vendor-v1";/);
   assert.ok(sw.includes('"/typing-test/"'));
   assert.equal(/CORE_ASSETS[\s\S]{0,4000}arabic-typing-test/.test(sw), false, "the redirect page is not precached");

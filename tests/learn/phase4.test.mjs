@@ -52,9 +52,9 @@ test("Milestone 1: modules load, ship EMPTY catalogues, and share the 70% pass m
 test("Milestone 2 wiring: the four Phase 4 scripts are in the page in dependency order, precached, and the cache name moved on from v18", () => {
   const html = read("learn-arabic/index.html"), sw = read("sw.js");
   const order = [...html.matchAll(/<script src="\.\.\/assets\/js\/learn\/(\w[\w-]*)\.js"/g)].map(m => m[1]);
-  assert.deepEqual(order, ["data", "vocab-packs", "vocab-data", "conversations", "reading", "srs", "engine", "exercises", "sentences", "stories", "review", "journey", "progress", "audio", "typing-dock", "stories-ui", "app"]);
+  assert.deepEqual(order, ["data", "vocab-packs", "vocab-data", "conversations", "reading", "urls", "srs", "engine", "exercises", "sentences", "stories", "review", "journey", "progress", "audio", "typing-dock", "stories-ui", "app"]);
   for (const f of ["exercises", "sentences", "stories", "stories-ui"]) assert.ok(sw.includes('"/assets/js/learn/' + f + '.js"'), f + " precached");
-  assert.equal(sw.match(/const CACHE_NAME = "([^"]+)"/)[1], "arabic-keyboard-shell-v20");
+  { const name = sw.match(/const CACHE_NAME = "([^"]+)"/)[1]; const v = Number((name.match(/^arabic-keyboard-shell-v(\d+)$/) || [])[1]); assert.ok(v >= 21, `shell cache ${name} must be well-formed and at least v21 (the release that introduced the individual lesson URL assets)`); }
   assert.equal(sw.match(/const VENDOR_CACHE = "([^"]+)"/)[1], "arabic-keyboard-vendor-v1", "the 19 MB vendor cache name must not change");
 });
 test("honesty: new files never name the review package, never claim teacher review, and the draft notice says it is awaiting it", () => {

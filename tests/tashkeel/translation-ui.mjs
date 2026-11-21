@@ -5,7 +5,7 @@
 // "⟦target⟧"), because Cloudflare Workers AI needs a Cloudflare account. This does NOT prove translation quality or the live model:
 // run tests/translation/live-translation.mjs against the deployed Worker for that.
 import http from "node:http"; import fs from "node:fs"; import path from "node:path"; import { fileURLToPath } from "node:url";
-import chromium from "@sparticuz/chromium"; import puppeteer from "puppeteer-core";
+import { launchBrowser } from "./launch-browser.mjs";
 import { handle, LANGUAGE_CODES } from "../../workers/translate-proxy/src/core.js";   // the REAL Worker logic
 
 const ROOT = path.resolve(fileURLToPath(new URL("../..", import.meta.url)));
@@ -46,7 +46,8 @@ const siteSrv = http.createServer((q, r) => {
 
 const bad = []; let total = 0; const ck = (n, ok, d = "") => { total++; if (!ok) bad.push(n); console.log((ok ? "PASS " : "FAIL ") + n + (!ok && d ? "  — " + d : "")); };
 // NOTE: @sparticuz/chromium ships --disable-web-security; it is removed here so REAL browser CORS rules apply to page -> Worker calls.
-const browser = await puppeteer.launch({ args: [...chromium.args.filter(a => !/single-process|no-zygote|disable-web-security/.test(a)), "--no-sandbox"], executablePath: await chromium.executablePath(), headless: "shell" });
+// (An installed Chrome on Windows/macOS never receives that flag at all.)
+const browser = await launchBrowser({ args: ["--no-sandbox"], filterBundledArgs: /single-process|no-zygote|disable-web-security/ });
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const resetServers = () => { ai = { mode: "ok", delay: 0 }; aiLog.length = 0; workerEnv = { AI: stubAI, ALLOWED_ORIGINS: SITE }; apiDown = false; apiDelayMs = 0; cfg = { api: API, timeout: 0 }; };
 
@@ -71,7 +72,7 @@ const reqs = () => aiLog.length;
 resetServers(); let pg = await open();
 const seo = await pg.evaluate(() => ({ title: document.title, desc: document.querySelector('meta[name=description]').content, canon: document.querySelector('link[rel=canonical]').href, h1: document.querySelector("h1").textContent, ld: JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent)["@type"], lang: document.documentElement.lang, dir: document.documentElement.dir }));
 ck("1a. page loads with Arabic default interface, own title/description/canonical/H1/FAQ JSON-LD", seo.lang === "ar" && seo.dir === "rtl" && /المترجم/.test(seo.title) && /ترجم/.test(seo.desc) && seo.canon === "https://www.arabic-keyboard.live/translation/" && seo.h1 === "الترجمة" && seo.ld === "FAQPage", JSON.stringify(seo));
-ck("1b. sitemap lists /translation/ and existing URLs are untouched", (() => { const s = fs.readFileSync(path.join(ROOT, "sitemap.xml"), "utf8"); return s.includes("/translation/</loc>") && s.includes("/transliteration/</loc>") && s.includes("/tashkeel/</loc>") && (s.match(/<url>/g) || []).length === 16 && !s.includes("arabic-typing-test"); })());
+ck("1b. sitemap lists /translation/ and existing URLs are untouched", (() => { const s = fs.readFileSync(path.join(ROOT, "sitemap.xml"), "utf8"); return s.includes("/translation/</loc>") && s.includes("/transliteration/</loc>") && s.includes("/tashkeel/</loc>") && ["", "about/", "arabic-alphabet/", "arabic-keyboard/", "calligraphy-editor/", "contact/", "editor/", "faq/", "learn-arabic/", "privacy/", "tashkeel/", "terms/", "tools/", "translation/", "transliteration/", "typing-test/"].every(u => s.includes("<loc>https://www.arabic-keyboard.live/" + u + "</loc>")) && !s.includes("arabic-typing-test"); })());
 const init = await pg.evaluate(() => ({ src: document.getElementById("trSource").value, tgt: document.getElementById("trTarget").value, srcDir: document.getElementById("trIn").dir, outDir: document.getElementById("trOut").dir, srcOpts: [...document.querySelectorAll("#trSource option")].map(o => o.value), tgtOpts: [...document.querySelectorAll("#trTarget option")].map(o => o.value), groups: [...document.querySelectorAll("#trSource optgroup")].map(g => g.label), popular: [...document.querySelectorAll("#trTarget optgroup:first-of-type option")].map(o => o.value) }));
 ck("1c. initial source = Arabic, target = English, directions follow the languages", init.src === "ar" && init.tgt === "en" && init.srcDir === "rtl" && init.outDir === "ltr", JSON.stringify(init));
 ck("1d. selectors list EXACTLY the model's advertised languages (100 M2M100 codes) for both source and target — none invented, none dropped", JSON.stringify([...init.tgtOpts].sort()) === JSON.stringify([...LANGUAGE_CODES].sort()) && JSON.stringify([...init.srcOpts].sort()) === JSON.stringify([...LANGUAGE_CODES].sort()) && init.tgtOpts.length === 100, init.tgtOpts.length + " options");

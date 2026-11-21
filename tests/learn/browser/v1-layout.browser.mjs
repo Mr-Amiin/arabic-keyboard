@@ -1,8 +1,9 @@
 // V1 views: responsive layout, light/dark contrast, links and controls, English-mode URLs.
-import { harness, sleep, txt } from "./lib.mjs";
+import { harness, sleep, txt, pageUrl, lessonPath, LearnUrls } from "./lib.mjs";
 import { KEY, writeStore, todayNo, finishSession, planAnswer, dupIds } from "./v1-lib.mjs";
 const H = await harness("v1-layout"); const { base, ok } = H; let N = 0;
-const url = (h, q = "") => `${base}/learn-arabic/?n=${++N}${q}${h || ""}`;
+// Lesson routes open their real individual URL (LearnUrls); views that are still hash routes (#/vocab, #/patterns, #/review, #/practice, #/read) stay on the dashboard.
+const url = (h, q = "") => pageUrl(base, ++N, h, q);
 const KNOWN = new Set(["speak", "check", "practice", "practice-weak", "stage", "answer", "typecheck", "next", "retry", "reset", "vpractice", "ppractice", "review-start", "mixed", "cvocab", "csent", "ccheck", "rcheck", "spoke", "rd-toggle"]);
 const seed = T => ({ v: 2, lessons: {}, stats: {}, sessions: [], days: [], srs: { "letter:ba": { b: 2, d: T - 1, n: 1, w: 0, l: T - 3 }, "num-1": { b: 1, d: T - 1, n: 1, w: 1, l: T - 2 }, "col-red": { b: 4, d: T - 1, n: 3, w: 0, l: T - 8 }, "pat-where-1": { b: 4, d: T, n: 3, w: 0, l: T - 7 }, "fam-son": { b: 2, d: T + 3, n: 1, w: 0, l: T - 1 } } });
 const VIEWS = ["", "#/vocab", "#/vocab/numbers", "#/vocab/colours", "#/vocab/family", "#/vocab/greetings", "#/patterns", "#/patterns/this-m", "#/patterns/this-f", "#/patterns/i-am", "#/patterns/where-is", "#/review", "#/practice", "#/read"];
@@ -40,13 +41,16 @@ for (const theme of ["light", "dark"]) {
 /* 3. every link and control resolves ----------------------------------------------------------------------------------------------------- */
 {
   const p = await H.page({ w: 1100 }); await p.goto(url(""), { waitUntil: "load" }); await p.waitForSelector(".lx-grid"); await writeStore(p, seed(await todayNo(p)));
-  const seen = new Set(), hashes = new Set(), rel = new Set(), unknownActions = [], dead = [];
+  const seen = new Set(), hashes = new Set(), lessonLinks = new Set(), rel = new Set(), unknownActions = [], dead = [];
   for (const v of VIEWS) { await open(p, v);
-    const info = await p.evaluate(() => ({ hrefs: [...document.querySelectorAll("#learnApp a[href], .lx-intro a[href], .lx-main a[href]")].map(a => a.getAttribute("href")), actions: [...document.querySelectorAll("#learnApp [data-action], #lxTypePanel [data-action]")].map(b => b.dataset.action), emptyBtns: [...document.querySelectorAll("#learnApp button, #learnApp a")].filter(e => !e.textContent.trim() && !e.getAttribute("aria-label")).length }));
-    info.hrefs.forEach(h => { if (h.startsWith("#/")) hashes.add(h); else if (!/^https?:/.test(h)) rel.add(h); }); info.actions.forEach(a => { seen.add(a); if (!KNOWN.has(a)) unknownActions.push(a); }); if (info.emptyBtns) dead.push(v + ": " + info.emptyBtns + " unnamed controls"); }
+    // abs = the href resolved against THE PAGE IT WAS FOUND ON (pages now live at different depths, so it cannot be resolved later)
+    const info = await p.evaluate(() => ({ hrefs: [...document.querySelectorAll("#learnApp a[href], .lx-intro a[href], .lx-main a[href]")].map(a => ({ raw: a.getAttribute("href"), abs: a.pathname + a.search })), actions: [...document.querySelectorAll("#learnApp [data-action], #lxTypePanel [data-action]")].map(b => b.dataset.action), emptyBtns: [...document.querySelectorAll("#learnApp button, #learnApp a")].filter(e => !e.textContent.trim() && !e.getAttribute("aria-label")).length }));
+    info.hrefs.forEach(({ raw: h, abs }) => { if (h.startsWith("#/")) hashes.add(h); else if (LearnUrls.byUrl[abs]) lessonLinks.add(abs); else if (!/^https?:/.test(h)) rel.add(abs); }); info.actions.forEach(a => { seen.add(a); if (!KNOWN.has(a)) unknownActions.push(a); }); if (info.emptyBtns) dead.push(v + ": " + info.emptyBtns + " unnamed controls"); }
   ok(unknownActions.length === 0 && dead.length === 0, "every button on every new view has a handler that exists and an accessible name " + JSON.stringify({ actions: [...seen], unknownActions, dead }));
   const brokenHash = []; for (const h of hashes) { await open(p, h); if (/Page not found/.test(await txt(p, "#learnApp"))) brokenHash.push(h); }
-  ok(hashes.size >= 20 && brokenHash.length === 0, `all ${hashes.size} in-app links open a real view` + (brokenHash.length ? " BROKEN: " + brokenHash.join(",") : ""));
+  // lesson links are real URLs now: each must open ITS lesson (status 200, a lesson view rendered, not "Page not found" and not the dashboard)
+  for (const h of lessonLinks) { const r = await p.goto(`${base}${h}?n=${++N}`, { waitUntil: "load" }); await p.waitForSelector("#learnApp .lx-h"); if (!r || r.status() !== 200 || /Page not found|Your learning dashboard/.test(await txt(p, "#learnApp .lx-h"))) brokenHash.push(h); }
+  ok(hashes.size + lessonLinks.size >= 20 && lessonLinks.size >= 16 && brokenHash.length === 0, `all ${hashes.size + lessonLinks.size} in-app links (${hashes.size} hash routes + ${lessonLinks.size} lesson URLs) open a real view` + (brokenHash.length ? " BROKEN: " + brokenHash.join(",") : ""));
   const statuses = await p.evaluate(async list => { const out = {}; for (const h of list) { try { out[h] = (await fetch(new URL(h, location.href))).status; } catch (e) { out[h] = "ERR"; } } return out; }, [...rel]);
   const bad = Object.entries(statuses).filter(([, s]) => s !== 200); ok(rel.size >= 4 && bad.length === 0, `all ${rel.size} links to other pages return 200 (${[...rel].join(" ")})` + (bad.length ? " BAD: " + JSON.stringify(bad) : ""));
   ok((await dupIds(p)).length === 0 && p.errs.length === 0, "no duplicate IDs; no console errors across all views " + JSON.stringify(p.errs)); await p.close();
@@ -54,10 +58,12 @@ for (const theme of ["light", "dark"]) {
 /* 4. English-mode URLs work online ---------------------------------------------------------------------------------------------------------- */
 {
   const p = await H.page({ w: 1100 }); const bad = [];
-  for (const [hash, check] of [["#/vocab", () => document.querySelectorAll('a.lx-card[href^="#/vocab/"]').length === 16], ["#/vocab/numbers", () => document.querySelectorAll(".lx-ex").length === 11], ["#/vocab/greetings", () => document.querySelectorAll(".lx-dialect .lx-ex").length === 3], ["#/patterns/where-is", () => document.querySelectorAll(".lx-ex").length === 3], ["#/review", () => /Daily review/.test(document.querySelector(".lx-h").textContent)], ["#/letter/qaf", () => document.querySelector(".lx-hero-ar").textContent === "ق"]]) {
+  for (const [hash, check] of [["#/vocab", () => document.querySelectorAll('a.lx-card[href^="/learn-arabic/vocabulary/"]').length === 16], ["#/vocab/numbers", () => document.querySelectorAll(".lx-ex").length === 11], ["#/vocab/greetings", () => document.querySelectorAll(".lx-dialect .lx-ex").length === 3], ["#/patterns/where-is", () => document.querySelectorAll(".lx-ex").length === 3], ["#/review", () => /Daily review/.test(document.querySelector(".lx-h").textContent)], ["#/letter/qaf", () => document.querySelector(".lx-hero-ar").textContent === "ق"]]) {
     await p.goto(url(hash, "&lang=en").replace("&lang=en#", "&lang=en#"), { waitUntil: "load" }); await p.waitForSelector("#learnApp .lx-h"); await sleep(500);
     const r = await p.evaluate(c => ({ h1: document.querySelector("h1").textContent, okView: (new Function("return (" + c + ")()"))(), arabic: [...document.querySelectorAll(".lx-ex-ar")].slice(0, 2).map(e => e.textContent) }), check.toString());
-    if (r.h1 !== "Learn Arabic" || !r.okView) bad.push(hash + " " + JSON.stringify(r)); }
+    // a dashboard view has the course H1; a real lesson page has its own lesson H1 (still English, still not mangled)
+    const h1ok = lessonPath(hash) ? /^Arabic (vocabulary|letter)\b/.test(r.h1) : r.h1 === "Learn Arabic";
+    if (!h1ok || !r.okView) bad.push(hash + " " + JSON.stringify(r)); }
   ok(bad.length === 0, "English-mode URLs (?lang=en) open vocabulary, patterns, review and letter views with the page in English and the Arabic content untouched" + (bad.length ? " BAD: " + bad.join(" | ") : ""));
   await p.goto(url("#/vocab/numbers", "&lang=en"), { waitUntil: "load" }); await p.waitForSelector(".lx-ex"); await sleep(500);
   const ex = await p.evaluate(() => ({ first: document.querySelector(".lx-ex-ar").textContent, en: document.querySelector(".lx-ex b + *") && document.querySelector(".lx-ex").innerText }));

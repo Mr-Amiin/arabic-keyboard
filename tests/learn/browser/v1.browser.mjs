@@ -1,8 +1,10 @@
 // V1 learner journeys in real Chromium: vocabulary, spelling/recall (keyboard dock), patterns, spaced-repetition review, migration, reset.
-import { harness, sleep, txt } from "./lib.mjs";
+import { harness, sleep, txt, pageUrl, LearnUrls } from "./lib.mjs";
 import { KEY, DAY, withClock, readStore, writeStore, todayNo, finishSession, answerOne, planAnswer, score, dupIds } from "./v1-lib.mjs";
 const H = await harness("v1"); const { base, ok } = H; let N = 0;
-const url = h => `${base}/learn-arabic/?n=${++N}${h || ""}`;
+// Lesson routes open their real individual URL (LearnUrls); routes that are still hash routes (#/vocab, #/patterns, #/practice ...) stay on the dashboard.
+const url = h => pageUrl(base, ++N, h);
+const VOCAB_LINK = "/learn-arabic/vocabulary/";
 const fresh = async (hash, opts = {}) => { const p = await H.page(opts); p.kbReqs = 0; p.on("request", r => { if (/keyboard-tool\.js/.test(r.url())) p.kbReqs++; }); return p; };
 const go = async (p, hash) => { await p.goto(url(hash), { waitUntil: "load" }); await p.waitForSelector("#learnApp .lx-h, #learnApp .lx-grid"); };
 const reset = p => p.evaluate(k => localStorage.removeItem(k), KEY);
@@ -10,26 +12,32 @@ const catalogOf = p => p.evaluate(() => LearnReview.ALL_IDS.length);
 
 /* 1. fresh dashboard ---------------------------------------------------------------------------------------------- */
 let p = await fresh(); await go(p, ""); await reset(p); await go(p, "");
-const dash = await p.evaluate(() => ({ stats: document.querySelector(".lx-stats").innerText.replace(/\s+/g, " "), review: document.getElementById("lxDailyReview").innerText.replace(/\s+/g, " "), topics: [...document.querySelectorAll('a[href^="#/vocab/"]')].map(a => a.getAttribute("href")), patterns: !!document.querySelector('a[href="#/patterns"]'), tiles: document.querySelectorAll(".lx-tile").length }));
+const dash = await p.evaluate(() => ({ stats: document.querySelector(".lx-stats").innerText.replace(/\s+/g, " "), review: document.getElementById("lxDailyReview").innerText.replace(/\s+/g, " "), topics: [...document.querySelectorAll('a[href^="/learn-arabic/vocabulary/"]')].map(a => a.getAttribute("href")), patterns: !!document.querySelector('a[href="#/patterns"]'), tiles: document.querySelectorAll(".lx-tile").length }));
 ok(dash.tiles === 28 && dash.stats.includes("0 / 30") && /0\s*reviews due/.test(dash.stats), "fresh dashboard: 28 letter tiles, 0 / 30 lessons, 0 reviews due: " + dash.stats.slice(0, 80));
 ok(/Nothing is scheduled yet/.test(dash.review), "fresh dashboard: Daily review explains that nothing is scheduled (empty state)");
-ok(JSON.stringify(dash.topics.slice(0, 4)) === JSON.stringify(["#/vocab/numbers", "#/vocab/colours", "#/vocab/family", "#/vocab/greetings"]) && dash.topics.length === 16 && dash.patterns, "dashboard links to the four V1 vocabulary topics first, then the 12 Phase 3 topics, and the sentence patterns");
+ok(JSON.stringify(dash.topics.slice(0, 4)) === JSON.stringify(["numbers", "colours", "family", "greetings"].map(id => LearnUrls.pathFor("vocab/" + id))) && dash.topics.length === 16 && dash.patterns, "dashboard links to the four V1 vocabulary topics first, then the 12 Phase 3 topics, and the sentence patterns");
 ok(/Beta/.test(await txt(p, ".lx-intro")) && /not yet been reviewed by a qualified Arabic teacher/.test(await txt(p, ".lx-intro")), "page states plainly that the Arabic content is not yet teacher-reviewed (beta notice)");
 /* 2. alphabet still complete ----------------------------------------------------------------------------------------- */
 const letters = await p.evaluate(() => LearnData.LETTERS.map(l => [l.id, l.letter]));
 let alphabetOk = 0; for (const [id, ch] of letters) { await p.evaluate(h => { location.hash = h; }, "#/letter/" + id); await p.waitForFunction(c => (document.querySelector(".lx-hero-ar") || {}).textContent === c, {}, ch); alphabetOk++; }
-ok(alphabetOk === 28, "all 28 alphabet lessons still open and show the right letter");
+ok(alphabetOk === 28, "all 28 alphabet lessons still open and show the right letter (legacy hash routes on the dashboard)");
+let alphabetUrlOk = 0; for (const [id, ch] of letters) { await p.goto(url("#/letter/" + id), { waitUntil: "load" }); await p.waitForFunction(c => (document.querySelector(".lx-hero-ar") || {}).textContent === c, {}, ch); if (new URL(p.url()).pathname === LearnUrls.pathFor("letter/" + id)) alphabetUrlOk++; }
+ok(alphabetUrlOk === 28, "all 28 alphabet lessons open directly at their own URL and show the right letter");
+await go(p, "#/");
 /* 3. vocabulary topic pages ------------------------------------------------------------------------------------------ */
-await go(p, "#/vocab"); ok((await p.$$('#learnApp a.lx-card[href^="#/vocab/"]')).length === 16, "vocabulary home lists the 16 topics (4 starter + 12 everyday)");
+await go(p, "#/vocab"); ok((await p.$$('#learnApp a.lx-card[href^="/learn-arabic/vocabulary/"]')).length === 16 && LearnUrls.entries.filter(e => e.kind === "vocab").length === 16, "vocabulary home lists the 16 topics (4 starter + 12 everyday), each linking to its own URL");
 const topicChecks = await p.evaluate(() => LearnVocab.TOPICS.map(t => ({ id: t.id, n: LearnVocab.ITEMS.filter(i => i.topic === t.id).length })));
 for (const t of topicChecks) {
-  await p.evaluate(h => { location.hash = h; }, "#/vocab/" + t.id); await p.waitForSelector(".lx-exs");
+  await p.goto(url("#/vocab/" + t.id), { waitUntil: "load" }); await p.waitForSelector(".lx-exs");
+  if (new URL(p.url()).pathname !== LearnUrls.pathFor("vocab/" + t.id)) ok(false, `topic ${t.id} opened at the wrong URL ${p.url()}`);
   const info = await p.evaluate(id => { const items = LearnVocab.ITEMS.filter(i => i.topic === id), rows = [...document.querySelectorAll("#learnApp > .lx-exs:first-of-type .lx-ex, #learnApp ul.lx-exs:not(.lx-dialect ul) .lx-ex")]; const shown = new Set([...document.querySelectorAll(".lx-ex-ar")].map(e => e.textContent)); return { n: items.length, allShown: items.every(i => shown.has(i.ar + (i.punct || ""))), hear: document.querySelectorAll(".lx-ex .lx-hear").length, practice: document.querySelectorAll('[data-action="vpractice"]').length }; }, t.id);
   ok(info.allShown && info.practice === 5 && info.hear >= info.n, `topic ${t.id}: all ${info.n} items shown exactly as in the data, each with a Hear button, 5 practice modes`);
 }
-await p.evaluate(() => { location.hash = "#/vocab/greetings"; }); await p.waitForSelector(".lx-dialect");
+await p.goto(url("#/vocab/greetings"), { waitUntil: "load" }); await p.waitForSelector(".lx-dialect");
 const dia = await p.evaluate(() => ({ text: document.querySelector(".lx-dialect").innerText, n: document.querySelectorAll(".lx-dialect .lx-ex").length }));
 ok(dia.n === 3 && /not Modern Standard Arabic/i.test(dia.text) && /not quizzed/.test(dia.text) && /Egyptian/.test(dia.text) && /Levantine/.test(dia.text) && /Gulf/.test(dia.text), "greetings page: 3 regional variants clearly labelled 'not Modern Standard Arabic' and 'not quizzed'");
+await p.goto(`${base}/learn-arabic/?n=${++N}#/vocab/numbers`); await p.waitForSelector(".lx-exs");
+ok(new URL(p.url()).hash === "#/vocab/numbers" && (await p.$$('[data-action="vpractice"]')).length === 5, "legacy hash bookmark #/vocab/numbers still renders the topic in place with its 5 practice modes");
 /* 4. correct answers -> scheduled (box 2, +2 days); all items recorded; results correct -------------------------------- */
 await go(p, "#/vocab/numbers"); await reset(p); await go(p, "#/vocab/numbers"); const T0 = await todayNo(p);
 await p.click('[data-action="vpractice"][data-type="mixed"]'); const kinds = await finishSession(p);

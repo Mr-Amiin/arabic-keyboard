@@ -1,8 +1,9 @@
 // Audio: the REAL LearnAudio/UI code against a controllable speechSynthesis stub (headless Chromium has no Arabic voices, so audio itself is NOT heard here).
-import { harness, sleep, txt } from "./lib.mjs";
+import { harness, sleep, txt, pageUrl } from "./lib.mjs";
 import { planAnswer } from "./v1-lib.mjs";
 const H = await harness("audio"); const { base, ok } = H; let N = 0;
-const url = h => `${base}/learn-arabic/?n=${++N}${h || ""}`;
+// lesson routes open their real individual URL (LearnUrls); #/patterns/... remains a dashboard hash route
+const url = h => pageUrl(base, ++N, h);
 const V = (name, lang, local = true) => ({ name, lang, local });
 const page = async (cfg) => {
   const p = await H.page();
@@ -77,11 +78,11 @@ await p.evaluate(() => { window.Audio = class { constructor(src) { this.src = sr
 ok((await utts(p)).length === 1, "if a recording fails to play, speech is used as the fallback"); await p.close();
 /* 9. Hear buttons everywhere they appear ------------------------------------------------------------------------------------------- */
 p = await page({ voices: [V("Majed", "ar-SA")] });
-await p.evaluate(() => { location.hash = "#/letter/ba"; }); await p.waitForSelector(".lx-hero-ar"); await p.evaluate(() => document.querySelector(".lx-hero .lx-hear").click()); await sleep(100);
+await p.goto(url("#/letter/ba"), { waitUntil: "load" }); await p.waitForSelector(".lx-hero-ar"); await p.evaluate(() => document.querySelector(".lx-hero .lx-hear").click()); await sleep(100);
 ok((await utts(p)).slice(-1)[0].text.startsWith("ب"), "letter lesson: Hear speaks the letter");
-await p.evaluate(() => { location.hash = "#/vocab/greetings"; }); await p.waitForSelector(".lx-dialect"); await p.evaluate(() => document.querySelector(".lx-dialect .lx-hear").click()); await sleep(100);
+await p.goto(url("#/vocab/greetings"), { waitUntil: "load" }); await p.waitForSelector(".lx-dialect"); await p.evaluate(() => document.querySelector(".lx-dialect .lx-hear").click()); await sleep(100);
 ok((await utts(p)).slice(-1)[0].text === "إِزَّيَّك", "regional variants can also be heard (clearly labelled as dialect on the page)");
-await p.evaluate(() => { location.hash = "#/patterns/this-m"; }); await p.waitForSelector(".lx-exs"); await p.evaluate(() => document.querySelector(".lx-ex .lx-hear").click()); await sleep(100);
+await p.goto(url("#/patterns/this-m"), { waitUntil: "load" }); await p.waitForSelector(".lx-exs"); await p.evaluate(() => document.querySelector(".lx-ex .lx-hear").click()); await sleep(100);
 ok((await utts(p)).slice(-1)[0].text === "هَٰذَا كِتَابٌ", "pattern lesson: Hear speaks the whole example sentence");
 await p.goto(url("#/vocab/numbers"), { waitUntil: "load" }); await p.waitForSelector('[data-action="vpractice"][data-type="v-recall"]'); await p.click('[data-action="vpractice"][data-type="v-recall"]'); await p.waitForSelector("#lxEditor", { visible: true });
 const plan = await planAnswer(p, false); await p.type("#lxEditor", plan.text); await p.click("#lxTCheck"); await p.waitForSelector("#lxTNextBtn"); await p.evaluate(() => document.querySelector("#lxTFb .lx-hear").click()); await sleep(100);

@@ -6,6 +6,8 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
+import { classifyConsole } from "./console-classify.mjs";
 import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
@@ -13,6 +15,19 @@ export const REPO = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../../.."
 );
+
+// Individual lesson URLs. The suites never hard-code a lesson path: they ask the same resolver the site uses
+// (assets/js/learn/urls.js), so a renamed or added lesson cannot silently drift from the tests.
+export const LearnUrls = createRequire(import.meta.url)(path.join(REPO, "assets/js/learn/urls.js"));
+// "#/vocab/numbers" -> "/learn-arabic/vocabulary/numbers/"; null for routes that are intentionally still hash routes
+// on the dashboard (practice, review, journey, read, patterns, story, workshop, the list pages ...).
+export const lessonPath = hash => LearnUrls.pathFor(String(hash || "").replace(/^#\/?/, ""));
+// The URL a test should open for a route: the real lesson page when one exists, otherwise the dashboard + hash route.
+// n is the cache-buster; q is any extra query (e.g. "&lang=en"). Passing { hashOnly: true } forces the legacy hash form.
+export function pageUrl(base, n, hash, q = "", opts = {}) {
+  const lp = opts.hashOnly ? null : lessonPath(hash);
+  return lp ? `${base}${lp}?n=${n}${q}` : `${base}/learn-arabic/?n=${n}${q}${hash || ""}`;
+}
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -158,6 +173,7 @@ export async function harness(name) {
   }
 
   const out = [];
+  const reportOnlyNotices = [];
   let failed = 0;
 
   const ok = (cond, msg) => {
@@ -199,13 +215,13 @@ export async function harness(name) {
       p.errs.push("pageerror: " + e.message)
     );
 
+    // Console classification (see console-classify.mjs): real errors fail the suites. The only thing set aside is a REPORT-ONLY CSP message
+    // naming only Google ad hosts (the AdSense loader that stays in the page <head> until approval): non-blocking by definition, so it is
+    // recorded and printed by finish(), never counted as an application error and never silently dropped.
     p.on("console", m => {
-      if (
-        m.type() === "error" &&
-        !/Failed to load resource|ERR_/.test(m.text())
-      ) {
-        p.errs.push("console: " + m.text());
-      }
+      const kind = classifyConsole(m.type(), m.text());
+      if (kind === "error") p.errs.push("console: " + m.text());
+      else if (kind === "report-only-ad-host") reportOnlyNotices.push(m.text());
     });
 
     if (!sw) {
@@ -249,6 +265,11 @@ export async function harness(name) {
 
   async function finish() {
     console.log(out.join("\n"));
+    if (reportOnlyNotices.length) {
+      const uniq = [...new Set(reportOnlyNotices)];
+      console.log(`\nNOTE: ${reportOnlyNotices.length} non-blocking report-only CSP notice(s) from Google ad hosts (third-party AdSense loader; not application errors):`);
+      uniq.slice(0, 3).forEach(t => console.log("  " + t.slice(0, 220)));
+    }
 
     console.log(
       `\n[${name}] PASS ${out.filter(line => line.startsWith("PASS")).length}  FAIL ${failed}`
