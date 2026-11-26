@@ -1,15 +1,25 @@
 {
-  "accepted_url_count": 0,
+  "accepted_url_count": 63,
   "last_scanned_pages_run": {
     "created_at": "2026-11-26T03:47:05Z",
     "id": 45751101649,
     "run_number": 49,
     "sha": "ecabc9fc3dad7280c79cff1cfb079a2508456abb"
   },
-  "last_submission": null,
-  "last_submission_attempt": null,
+  "last_submission": {
+    "accepted_at": "2026-11-26T03:47:47.568071+00:00",
+    "http_status": 202,
+    "pages_run_id": 45751101649,
+    "pages_run_number": 49,
+    "url_count": 63
+  },
+  "last_submission_attempt": {
+    "attempted_at": "2026-11-26T03:47:47.568048+00:00",
+    "http_status": 202,
+    "url_count": 63
+  },
   "next_batch_number": 2,
-  "pending_url_count": 63,
+  "pending_url_count": 0,
   "schema_version": 1,
-  "updated_at": "2026-11-26T03:47:45.002608+00:00"
+  "updated_at": "2026-11-26T03:47:47.568181+00:00"
 }
