@@ -168,20 +168,27 @@ def wait_for_expected_pages_run(repo: str, expected_sha: str) -> dict:
                 f"run #{chosen.get('run_number')} ({expected_sha})."
             )
             return chosen
-        completed = [run for run in matches if run.get("status") == "completed"]
-        if completed:
-            latest = completed[0]
-            conclusion = latest.get("conclusion") or "unknown"
-            last_state = f"Pages run #{latest.get('run_number')} concluded {conclusion}"
-            raise RuntimeError(
-                f"The matching GitHub Pages workflow completed without success ({last_state}); "
-                "not queueing URLs."
-            )
-        elif matches:
-            latest = matches[0]
+        # A failed Pages attempt can be followed by a retry for the same commit.
+        # Do not fail while any matching run is still queued or in progress;
+        # wait for that retry to complete and re-evaluate the full run history.
+        active = [run for run in matches if run.get("status") != "completed"]
+        if active:
+            latest = active[0]
             last_state = (
                 f"Pages run #{latest.get('run_number')} status={latest.get('status', 'unknown')}"
             )
+        else:
+            completed = [run for run in matches if run.get("status") == "completed"]
+            if completed:
+                latest = completed[0]
+                conclusion = latest.get("conclusion") or "unknown"
+                last_state = f"Pages run #{latest.get('run_number')} concluded {conclusion}"
+                raise RuntimeError(
+                    f"The matching GitHub Pages workflow completed without success ({last_state}); "
+                    "not queueing URLs."
+                )
+            if not matches:
+                last_state = "no matching Pages workflow run found"
         time.sleep(PAGES_WORKFLOW_POLL_SECONDS)
     raise RuntimeError(
         "Timed out waiting for the matching GitHub Pages workflow run. Last observation: "

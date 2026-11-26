@@ -83,7 +83,7 @@ The workflow's push trigger is restricted to `main`. A `GITHUB_TOKEN` push to `i
 - `.github/workflows/indexnow-submit.yml` — queue workflow
 - `scripts/indexnow-submit.py` — persistent queue logic
 - `tests/indexnow/test_queue_helpers.py` — offline unit/integration tests
-- `README.md` — this review document
+- `INDEXNOW-QUEUE-README.md` — this review document
 
 ## Local tests
 

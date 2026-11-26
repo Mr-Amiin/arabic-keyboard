@@ -229,6 +229,48 @@ class QueueHelperTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "completed without success"):
                 MODULE.wait_for_expected_pages_run("Mr-Amiin/arabic-keyboard", "failed-sha")
 
+    def test_wait_for_expected_pages_run_waits_for_retry_after_failed_attempt(self):
+        failed_attempt_then_retry_running = [
+            {
+                "id": 1000, "run_number": 50,
+                "name": "pages build and deployment", "head_branch": "main",
+                "head_sha": "retry-sha", "status": "in_progress", "conclusion": None,
+                "created_at": "2026-11-26T04:00:00Z",
+            },
+            {
+                "id": 999, "run_number": 49,
+                "name": "pages build and deployment", "head_branch": "main",
+                "head_sha": "retry-sha", "status": "completed", "conclusion": "failure",
+                "created_at": "2026-11-26T03:00:00Z",
+            },
+        ]
+        retry_succeeded = [
+            {
+                "id": 1000, "run_number": 50,
+                "name": "pages build and deployment", "head_branch": "main",
+                "head_sha": "retry-sha", "status": "completed", "conclusion": "success",
+                "created_at": "2026-11-26T04:00:00Z",
+            },
+            {
+                "id": 999, "run_number": 49,
+                "name": "pages build and deployment", "head_branch": "main",
+                "head_sha": "retry-sha", "status": "completed", "conclusion": "failure",
+                "created_at": "2026-11-26T03:00:00Z",
+            },
+        ]
+        with (
+            patch.object(
+                MODULE,
+                "list_pages_workflow_runs",
+                side_effect=[failed_attempt_then_retry_running, retry_succeeded],
+            ),
+            patch.object(MODULE.time, "sleep") as mocked_sleep,
+        ):
+            selected = MODULE.wait_for_expected_pages_run("Mr-Amiin/arabic-keyboard", "retry-sha")
+
+        self.assertEqual(selected["run_number"], 50)
+        mocked_sleep.assert_called_once_with(MODULE.PAGES_WORKFLOW_POLL_SECONDS)
+
     def test_http_200_and_202_both_acknowledge_submission(self):
         self.assertTrue(MODULE.is_submission_confirmed(200))
         self.assertTrue(MODULE.is_submission_confirmed(202))
