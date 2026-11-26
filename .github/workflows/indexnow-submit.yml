@@ -1,0 +1,56 @@
+name: Submit queued pages to IndexNow
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    # Drain one 1,000-URL batch every 15 minutes while a backlog exists.
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+# Serialize queue state updates and submissions. The queue branch is durable;
+# scheduled runs resume work if push events are delayed or dropped.
+concurrency:
+  group: arabic-keyboard-indexnow-production
+  queue: max
+
+jobs:
+  submit-queued-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out main with full history
+        uses: actions/checkout@v7
+        with:
+          # Always check out the current main tip so later successful Pages
+          # runs are available even when this push event was queued behind them.
+          ref: refs/heads/main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Discover deployed changes, maintain queue, and submit one batch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF: ${{ github.ref }}
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          INDEXNOW_QUEUE_BRANCH: indexnow-queue
+          INDEXNOW_BATCH_SIZE: '1000'
+        run: python scripts/indexnow-submit.py
+
+      - name: Save queue and submission report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: indexnow-queue-report-${{ github.run_id }}
+          path: indexnow-report/
+          if-no-files-found: ignore
+          retention-days: 30
