@@ -1,9 +1,12 @@
 // Language-switcher (Arabic default / English optional) browser test.
 // Run:  cd tests/tashkeel && npm install && npm run i18n
-import http from "node:http"; import fs from "node:fs"; import path from "node:path";
-import chromium from "@sparticuz/chromium"; import puppeteer from "puppeteer-core";
+import http from "node:http"; import fs from "node:fs"; import path from "node:path"; import os from "node:os"; import { fileURLToPath } from "node:url";
+import { launchBrowser } from "./launch-browser.mjs";
 
-const ROOT = path.resolve(new URL("../..", import.meta.url).pathname), PORT = 8131, O = `http://localhost:${PORT}`;
+// fileURLToPath (not URL.pathname) so the repo root is a valid path on Windows too (pathname gives "/C:/Users/..." there).
+const ROOT = path.resolve(fileURLToPath(new URL("../..", import.meta.url))), PORT = 8131, O = `http://localhost:${PORT}`;
+// Screenshots go to the OS temp directory (/tmp on Linux, %TEMP% on Windows); it is created if missing.
+const SNAP_DIR = os.tmpdir(); fs.mkdirSync(SNAP_DIR, { recursive: true });
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".wasm": "application/wasm", ".woff2": "font/woff2" };
 const srv = http.createServer((q, r) => {
   let p = decodeURIComponent(new URL(q.url, O).pathname), f = path.join(ROOT, p);
@@ -14,7 +17,7 @@ const srv = http.createServer((q, r) => {
 
 const results = []; const bad = [];
 const ck = (n, ok, d = "") => { results.push(ok); if (!ok) bad.push(n); console.log((ok ? "PASS " : "FAIL ") + n + (!ok && d ? "  — " + d : "")); };
-const browser = await puppeteer.launch({ args: [...chromium.args.filter(a => !/single-process|no-zygote/.test(a)), "--no-sandbox", "--lang=en-US"], executablePath: await chromium.executablePath(), headless: "shell" });
+const browser = await launchBrowser({ args: ["--no-sandbox", "--lang=en-US"], filterBundledArgs: /single-process|no-zygote/ });
 const PAGES = ["/", "/arabic-keyboard/", "/transliteration/", "/tashkeel/", "/translation/", "/editor/", "/typing-test/", "/arabic-alphabet/", "/learn-arabic/", "/tools/", "/faq/", "/about/", "/contact/", "/privacy/", "/terms/"];
 
 async function fresh(w = 1280, h = 900) {            // brand-new visitor: empty storage
@@ -141,7 +144,7 @@ for (const [w, h] of [[1280, 900], [390, 800]]) {
 /* visual snapshots (for manual review) */
 for (const [name, u, w, h] of [["home-en-desktop", "/arabic-keyboard/", 1280, 1100], ["home-en-mobile", "/arabic-keyboard/", 390, 1400], ["tashkeel-en", "/tashkeel/", 1280, 1000]]) {
   const sp = await fresh(w, h); await go(sp, u + "?lang=en"); await sp.waitForFunction(() => document.documentElement.lang === "en" && !document.documentElement.classList.contains("i18n-pending"));
-  await sp.screenshot({ path: `/tmp/snap-${name}.png` }); await sp.ctx.close();
+  await sp.screenshot({ path: path.join(SNAP_DIR, `snap-${name}.png`) }); await sp.ctx.close();
 }
 
 /* 8b — header never wraps / overflows at in-between desktop widths, either language */
@@ -172,7 +175,7 @@ for (const [name, sel, marker] of [["export", "#btn-export", "Export format"], [
 }
 await pg.click('header.site .lang-opt[data-lang="ar"]'); await pg.waitForFunction(() => document.documentElement.lang === "ar");
 ck("9d. switching back restores the original Arabic editor labels", (await pg.evaluate(() => document.querySelector("#btn-export").innerText.trim().replace(/\s+/g, " "))) === arEd);
-await pg.click('header.site .lang-opt[data-lang="en"]'); await pg.waitForFunction(() => document.documentElement.lang === "en"); await pg.screenshot({ path: "/tmp/snap-editor-en.png" });
+await pg.click('header.site .lang-opt[data-lang="en"]'); await pg.waitForFunction(() => document.documentElement.lang === "en"); await pg.screenshot({ path: path.join(SNAP_DIR, "snap-editor-en.png") });
 ck("9e. no JS errors in the editor", pg.errs.length === 0, pg.errs.join("|")); await pg.ctx.close();
 
 const ok = results.filter(Boolean).length;
