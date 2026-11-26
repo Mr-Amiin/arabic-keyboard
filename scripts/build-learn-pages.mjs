@@ -3,7 +3,8 @@
    be crawled without running JavaScript).
 
    SOURCE OF TRUTH
-     - The course data modules in assets/js/learn/ (letters, harakat, vocabulary, conversations, reading). Nothing is invented here.
+     - The course data modules in assets/js/learn/ (letters, harakat, vocabulary, conversations, reading, and grammar.js, which is
+       empty until real lessons are authored, so it generates no page yet). Nothing is invented here.
      - assets/js/learn/urls.js decides which pages exist and where (the browser app uses the very same module for its links).
      - learn-arabic/index.html (the live dashboard page) supplies the <head> tags (AdSense verification meta + loader, Google
        Analytics, icons, fonts, CSS), the header, mobile menu, footer and script list, so those can never drift from the site.
@@ -26,7 +27,7 @@ import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const LEARN = (f) => require(path.join(ROOT, "assets/js/learn", f));
-const D = LEARN("data.js"), V = LEARN("vocab-data.js"), C = LEARN("conversations.js"), RD = LEARN("reading.js"), U = LEARN("urls.js");
+const D = LEARN("data.js"), V = LEARN("vocab-data.js"), C = LEARN("conversations.js"), RD = LEARN("reading.js"), G = LEARN("grammar.js"), U = LEARN("urls.js");
 const SITE = "https://www.arabic-keyboard.live";
 const args = new Set(process.argv.slice(2));
 const CHECK = args.has("--check"), SITEMAP = args.has("--sitemap");
@@ -212,6 +213,33 @@ kinds.reading = (e) => {
   };
 };
 
+/* Grammar lessons: rendered only from validated catalogue records (grammar.js). The catalogue is empty in P5-1, so this never runs yet.
+   The page is static, crawlable copy; it makes no claim about teacher review because the schema carries no such field. */
+kinds.grammar = (e) => {
+  const g = G.byId[e.key], { prev, next } = neighbours(e), n = idx(e).indexOf(e) + 1, total = idx(e).length;
+  const titleOf = (x) => G.byId[x.key].title;
+  const explanation = g.explanation.map((b) => `<h3 class="lx-h3">${esc(b.heading)}</h3><p>${esc(b.text)}</p>`).join("");
+  const exs = g.examples.map((x) => `<li class="lx-ex">${ar(x.ar, "lx-ex-ar")}<div><b>${esc(x.translit)}</b> — ${esc(x.en)}</div></li>`).join("");
+  const mistakes = g.mistakes.length ? `<h3 class="lx-h3">Common mistakes</h3><ul>${g.mistakes.map((m) => `<li>${m.ar ? ar(m.ar, "lx-ex-ar") + " " : ""}${esc(m.text)}</li>`).join("")}</ul>` : "";
+  const checks = `<h3 class="lx-h3">Mini-check</h3><ol>${g.check.map((k) => `<li><p>${esc(k.prompt)}</p><ul>${k.choices.map((c) => `<li>${esc(c)}</li>`).join("")}</ul><details><summary>Show the answer</summary><p><b>${esc(k.choices[k.answerIndex])}</b> — ${esc(k.explain)}</p></details></li>`).join("")}</ol>`;
+  const staticHtml = `${back}<article><h2 class="lx-h">Grammar lesson ${n} of ${total}: ${esc(g.title)}</h2>${explanation}` +
+    `<h3 class="lx-h3">Examples</h3><ul class="lx-exs">${exs}</ul>${mistakes}${checks}` +
+    pager(prev, next, titleOf) + `</article>`;
+  const related = [
+    ...(g.prerequisites || []).map((id) => ({ href: url("grammar/" + id), text: `${G.byId[id].title} (learn this first)` })),
+    ...[prev, next].filter(Boolean).map((x) => ({ href: x.url, text: `${titleOf(x)} (${x === prev ? "previous" : "next"} grammar lesson)` })),
+    { href: "/arabic-keyboard/", text: "Arabic keyboard" }
+  ];
+  return {
+    title: `Arabic Grammar: ${g.title} | Learn Arabic`,
+    h1: `Arabic grammar: ${g.title}`,
+    eyebrow: `Grammar · Lesson ${n} of ${total}`,
+    intro: g.summary,
+    description: clip(`${g.summary} Explanation, examples with transliteration, common mistakes and a mini-check.`, 160),
+    crumb: g.title, staticHtml, extra: "", related
+  };
+};
+
 /* ---------- page assembly ---------- */
 function buildPage(e) {
   return buildPageRaw(e).replace(/[ \t]+$/gm, "");   // no trailing whitespace in generated files (keeps `git diff --check` clean once they are staged)
@@ -266,20 +294,21 @@ ${REST}`;
 }
 
 /* ---------- dashboard: static, crawlable index of every lesson page (between markers, regenerated each run) ---------- */
-const GROUPS = [["letters", "Alphabet letters"], ["harakat", "Harakat (short vowel marks)"], ["vocabulary", "Vocabulary by topic"], ["conversations", "Conversations"], ["reading", "Reading comprehension"]];
+const GROUPS = [["letters", "Alphabet letters"], ["harakat", "Harakat (short vowel marks)"], ["vocabulary", "Vocabulary by topic"], ["conversations", "Conversations"], ["reading", "Reading comprehension"], ...(U.entries.some((x) => x.category === "grammar") ? [["grammar", "Grammar lessons"]] : [])];
 const labelOf = (e) => ({
   letter: () => { const l = byLetter[e.key]; return `${l.letter} ${l.nameEn}`; },
   harakat: () => D.HARAKAT_LESSONS.find((x) => x.id === e.key).title,
   vocab: () => V.TOPICS.find((x) => x.id === e.key).title,
   conversation: () => C.UNITS.find((x) => x.short === e.key).title,
-  reading: () => RD.PASSAGES.find((x) => x.id === e.key).title
+  reading: () => RD.PASSAGES.find((x) => x.id === e.key).title,
+  grammar: () => G.byId[e.key].title
 }[e.kind]());
 const INDEX_START = "<!-- lesson-index:start (generated by scripts/build-learn-pages.mjs; do not edit by hand) -->", INDEX_END = "<!-- lesson-index:end -->";
 const indexRegion = () => `${INDEX_START}
   <section class="lx-intro lx-lesson-index" aria-labelledby="lxAllLessons">
     <h2 id="lxAllLessons">Browse all lessons</h2>
     <details>
-      <summary>All ${lessonList.length} lesson pages: letters, harakat, vocabulary, conversations and reading</summary>
+      <summary>All ${lessonList.length} lesson pages: ${GROUPS.length > 5 ? "letters, harakat, vocabulary, conversations, reading and grammar" : "letters, harakat, vocabulary, conversations and reading"}</summary>
 ${GROUPS.map(([cat, name]) => { const es = lessonList.filter((x) => x.category === cat); return `      <h3 class="lx-h3">${name} (${es.length})</h3>\n      <div class="lx-tools">${es.map((x) => link(x.path, esc(labelOf(x)), "lx-chip")).join("")}</div>`; }).join("\n")}
     </details>
   </section>
@@ -308,13 +337,17 @@ function updateSitemap(src) {
 
 /* ---------- run ---------- */
 const stale = [];
+/* Freshness is judged on content, not on line endings: a page whose only difference is CRLF vs LF (Windows checkouts with core.autocrlf=true
+   store LF in Git but CRLF on disk) is up to date, so it is neither reported stale nor rewritten, and its existing bytes are kept.
+   When a page genuinely changes, an existing CRLF file is rewritten with CRLF (no mixed endings) and any other file, including a
+   brand-new page, with LF, so the result depends only on the content and the file's current state. */
 const write = (rel, content) => {
   const abs = path.join(ROOT, rel);
   const cur = fs.existsSync(abs) ? fs.readFileSync(abs, "utf8") : null;
-  if (cur === content) return;
+  if (cur !== null && lf(cur) === lf(content)) return;
   if (CHECK) { stale.push(rel); return; }
   fs.mkdirSync(path.dirname(abs), { recursive: true });
-  fs.writeFileSync(abs, content);
+  fs.writeFileSync(abs, cur !== null && cur.includes("\r\n") ? lf(content).replace(/\n/g, "\r\n") : lf(content));
 };
 const seenTitles = new Set(), seenDesc = new Set();
 for (const e of lessonList) {
