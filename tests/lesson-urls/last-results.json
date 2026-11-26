@@ -1,0 +1,1986 @@
+{
+ "failed": 0,
+ "total": 396,
+ "results": [
+  {
+   "name": "[desktop] Homepage: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Homepage: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2857,\"scrollW\":1280,\"innerW\":1280,\"mainH\":2364.52,\"footTop\":2473.52,\"cls\":0.06906631944444444}"
+  },
+  {
+   "name": "[desktop] Homepage: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Homepage: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Homepage: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 2857/2364.52/2473.52 base 2857/2364.52/2473.52"
+  },
+  {
+   "name": "[desktop] Homepage: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Homepage: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.06906631944444444 vs 0.06906631944444444"
+  },
+  {
+   "name": "[desktop] Arabic keyboard: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Arabic keyboard: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2777,\"scrollW\":1280,\"innerW\":1280,\"mainH\":2247.06,\"footTop\":2393.06,\"cls\":0}"
+  },
+  {
+   "name": "[desktop] Arabic keyboard: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Arabic keyboard: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Arabic keyboard: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 2777/2247.06/2393.06 base 2777/2247.06/2393.06"
+  },
+  {
+   "name": "[desktop] Arabic keyboard: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Arabic keyboard: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0.05650956488715277"
+  },
+  {
+   "name": "[desktop] Editor: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Editor: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2051,\"scrollW\":1280,\"innerW\":1280,\"mainH\":1521.52,\"footTop\":1667.52,\"cls\":0.06921736111111111}"
+  },
+  {
+   "name": "[desktop] Editor: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Editor: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Editor: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 2051/1521.52/1667.52 base 2051/1521.52/1667.52"
+  },
+  {
+   "name": "[desktop] Editor: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Editor: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.06921736111111111 vs 0.06921736111111111"
+  },
+  {
+   "name": "[desktop] Transliteration: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Transliteration: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":3156,\"scrollW\":1280,\"innerW\":1280,\"mainH\":2626.41,\"footTop\":2772.41,\"cls\":0}"
+  },
+  {
+   "name": "[desktop] Transliteration: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Transliteration: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Transliteration: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 3156/2626.41/2772.41 base 3156/2626.41/2772.41"
+  },
+  {
+   "name": "[desktop] Transliteration: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Transliteration: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0.023969759114583333"
+  },
+  {
+   "name": "[desktop] Typing test: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Typing test: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2088,\"scrollW\":1280,\"innerW\":1280,\"mainH\":1558.53,\"footTop\":1704.53,\"cls\":0.14430366753472224}"
+  },
+  {
+   "name": "[desktop] Typing test: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Typing test: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Typing test: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 2088/1558.53/1704.53 base 2088/1558.53/1704.53"
+  },
+  {
+   "name": "[desktop] Typing test: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Typing test: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.14430366753472224 vs 0.14430366753472224"
+  },
+  {
+   "name": "[desktop] Tashkeel: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Tashkeel: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":3297,\"scrollW\":1280,\"innerW\":1280,\"mainH\":2767.84,\"footTop\":2913.84,\"cls\":0.05055200737847223}"
+  },
+  {
+   "name": "[desktop] Tashkeel: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Tashkeel: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Tashkeel: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 3297/2767.84/2913.84 base 3297/2767.84/2913.84"
+  },
+  {
+   "name": "[desktop] Tashkeel: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Tashkeel: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.05055200737847223 vs 0.05055200737847223"
+  },
+  {
+   "name": "[desktop] Calligraphy editor: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Calligraphy editor: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1284,\"scrollW\":1280,\"innerW\":1280,\"mainH\":699,\"footTop\":900,\"cls\":0.0010652436150444878}"
+  },
+  {
+   "name": "[desktop] Calligraphy editor: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Calligraphy editor: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Calligraphy editor: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1284/699/900 base 1284/699/900"
+  },
+  {
+   "name": "[desktop] Calligraphy editor: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Calligraphy editor: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.0010652436150444878 vs 0.0010652436150444878"
+  },
+  {
+   "name": "[desktop] Arabic alphabet: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Arabic alphabet: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2069,\"scrollW\":1280,\"innerW\":1280,\"mainH\":1539.72,\"footTop\":1685.72,\"cls\":0.11752669813368057}"
+  },
+  {
+   "name": "[desktop] Arabic alphabet: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Arabic alphabet: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Arabic alphabet: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 2069/1539.72/1685.72 base 2069/1539.72/1685.72"
+  },
+  {
+   "name": "[desktop] Arabic alphabet: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Arabic alphabet: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.11752669813368057 vs 0.11752669813368057"
+  },
+  {
+   "name": "[desktop] Translation: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Translation: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2963,\"scrollW\":1280,\"innerW\":1280,\"mainH\":2433.22,\"footTop\":2579.22,\"cls\":0.00967685701582167}"
+  },
+  {
+   "name": "[desktop] Translation: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Translation: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Translation: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 2963/2433.22/2579.22 base 2963/2433.22/2579.22"
+  },
+  {
+   "name": "[desktop] Translation: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Translation: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.00967685701582167 vs 0.00967685701582167"
+  },
+  {
+   "name": "[desktop] Tools hub: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Tools hub: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1098,\"scrollW\":1280,\"innerW\":1280,\"mainH\":568.38,\"footTop\":714.38,\"cls\":0.0010680074903700086}"
+  },
+  {
+   "name": "[desktop] Tools hub: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Tools hub: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Tools hub: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1098/568.38/714.38 base 1098/568.38/714.38"
+  },
+  {
+   "name": "[desktop] Tools hub: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Tools hub: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.0010680074903700086 vs 0.0010680074903700086"
+  },
+  {
+   "name": "[desktop] About: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] About: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1196,\"scrollW\":1280,\"innerW\":1280,\"mainH\":666.33,\"footTop\":812.33,\"cls\":0.0010680074903700086}"
+  },
+  {
+   "name": "[desktop] About: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] About: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] About: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1196/666.33/812.33 base 1196/666.33/812.33"
+  },
+  {
+   "name": "[desktop] About: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] About: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.0010680074903700086 vs 0.0010680074903700086"
+  },
+  {
+   "name": "[desktop] FAQ: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] FAQ: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1007,\"scrollW\":1280,\"innerW\":1280,\"mainH\":477.69,\"footTop\":623.69,\"cls\":0.0010680074903700086}"
+  },
+  {
+   "name": "[desktop] FAQ: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] FAQ: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] FAQ: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1007/477.69/623.69 base 1007/477.69/623.69"
+  },
+  {
+   "name": "[desktop] FAQ: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] FAQ: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.0010680074903700086 vs 0.0010680074903700086"
+  },
+  {
+   "name": "[desktop] Contact: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Contact: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1134,\"scrollW\":1280,\"innerW\":1280,\"mainH\":604.69,\"footTop\":750.69,\"cls\":0.0010680074903700086}"
+  },
+  {
+   "name": "[desktop] Contact: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Contact: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Contact: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1134/604.69/750.69 base 1134/604.69/750.69"
+  },
+  {
+   "name": "[desktop] Contact: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Contact: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.0010680074903700086 vs 0.0010680074903700086"
+  },
+  {
+   "name": "[desktop] Privacy: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Privacy: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1266,\"scrollW\":1280,\"innerW\":1280,\"mainH\":736.75,\"footTop\":882.75,\"cls\":0}"
+  },
+  {
+   "name": "[desktop] Privacy: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Privacy: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Privacy: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1266/736.75/882.75 base 1266/736.75/882.75"
+  },
+  {
+   "name": "[desktop] Privacy: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Privacy: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[desktop] Terms: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Terms: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":900,\"scrollW\":1280,\"innerW\":1280,\"mainH\":362.84,\"footTop\":508.84,\"cls\":0}"
+  },
+  {
+   "name": "[desktop] Terms: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[desktop] Terms: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Terms: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 900/362.84/508.84 base 900/362.84/508.84"
+  },
+  {
+   "name": "[desktop] Terms: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "1280 vs 1280"
+  },
+  {
+   "name": "[desktop] Terms: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0.0010680074903700086"
+  },
+  {
+   "name": "[desktop] Learn dashboard: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Learn dashboard: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":5333,\"scrollW\":1280,\"innerW\":1280,\"mainH\":4803.34,\"footTop\":4949.34,\"cls\":0.5250920138888889}"
+  },
+  {
+   "name": "[desktop] Learn dashboard: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added=/assets/js/learn/urls.js removed="
+  },
+  {
+   "name": "[desktop] Learn dashboard: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[desktop] Learn dashboard: extra requests are only urls.js",
+   "pass": true,
+   "detail": "/assets/js/learn/urls.js"
+  },
+  {
+   "name": "[desktop] Learn dashboard: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0.5250920138888889 vs 0.5250920138888889"
+  },
+  {
+   "name": "[desktop] Letter lesson (Alif): 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Letter lesson (Alif): no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2554,\"scrollW\":1280,\"innerW\":1280,\"mainH\":2024.3,\"footTop\":2170.3,\"cls\":0.030760836643642847}"
+  },
+  {
+   "name": "[desktop] Letter lesson (Alif): nothing between intro and lesson (next sibling is the lesson container)",
+   "pass": true,
+   "detail": "{\"nextClass\":\"lx lx-main\",\"gap\":0}"
+  },
+  {
+   "name": "[desktop] Letter lesson (Alif): ad requests only the pre-existing <head> tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Letter lesson (Alif): no horizontal overflow",
+   "pass": true,
+   "detail": "1280>1280"
+  },
+  {
+   "name": "[desktop] Harakat lesson: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Harakat lesson: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":4859,\"scrollW\":1280,\"innerW\":1280,\"mainH\":4329.17,\"footTop\":4475.17,\"cls\":0.030760836643642847}"
+  },
+  {
+   "name": "[desktop] Harakat lesson: nothing between intro and lesson (next sibling is the lesson container)",
+   "pass": true,
+   "detail": "{\"nextClass\":\"lx lx-main\",\"gap\":0}"
+  },
+  {
+   "name": "[desktop] Harakat lesson: ad requests only the pre-existing <head> tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Harakat lesson: no horizontal overflow",
+   "pass": true,
+   "detail": "1280>1280"
+  },
+  {
+   "name": "[desktop] Vocabulary lesson (numbers): 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Vocabulary lesson (numbers): no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2678,\"scrollW\":1280,\"innerW\":1280,\"mainH\":2148.19,\"footTop\":2294.19,\"cls\":0.030681231286790636}"
+  },
+  {
+   "name": "[desktop] Vocabulary lesson (numbers): nothing between intro and lesson (next sibling is the lesson container)",
+   "pass": true,
+   "detail": "{\"nextClass\":\"lx lx-main\",\"gap\":0}"
+  },
+  {
+   "name": "[desktop] Vocabulary lesson (numbers): ad requests only the pre-existing <head> tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Vocabulary lesson (numbers): no horizontal overflow",
+   "pass": true,
+   "detail": "1280>1280"
+  },
+  {
+   "name": "[desktop] Conversation lesson: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Conversation lesson: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":4637,\"scrollW\":1280,\"innerW\":1280,\"mainH\":4106.89,\"footTop\":4252.89,\"cls\":0.030760836643642847}"
+  },
+  {
+   "name": "[desktop] Conversation lesson: nothing between intro and lesson (next sibling is the lesson container)",
+   "pass": true,
+   "detail": "{\"nextClass\":\"lx lx-main\",\"gap\":0}"
+  },
+  {
+   "name": "[desktop] Conversation lesson: ad requests only the pre-existing <head> tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Conversation lesson: no horizontal overflow",
+   "pass": true,
+   "detail": "1280>1280"
+  },
+  {
+   "name": "[desktop] Reading lesson: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Reading lesson: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2482,\"scrollW\":1280,\"innerW\":1280,\"mainH\":1951.94,\"footTop\":2097.94,\"cls\":0.030760836643642847}"
+  },
+  {
+   "name": "[desktop] Reading lesson: nothing between intro and lesson (next sibling is the lesson container)",
+   "pass": true,
+   "detail": "{\"nextClass\":\"lx lx-main\",\"gap\":0}"
+  },
+  {
+   "name": "[desktop] Reading lesson: ad requests only the pre-existing <head> tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Reading lesson: no horizontal overflow",
+   "pass": true,
+   "detail": "1280>1280"
+  },
+  {
+   "name": "[mobile] Homepage: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Homepage: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":5457,\"scrollW\":390,\"innerW\":390,\"mainH\":4354.09,\"footTop\":4463.09,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Homepage: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Homepage: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Homepage: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 5457/4354.09/4463.09 base 5457/4354.09/4463.09"
+  },
+  {
+   "name": "[mobile] Homepage: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Homepage: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Arabic keyboard: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Arabic keyboard: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":4420,\"scrollW\":390,\"innerW\":390,\"mainH\":3299.48,\"footTop\":3425.48,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Arabic keyboard: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Arabic keyboard: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Arabic keyboard: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 4420/3299.48/3425.48 base 4420/3299.48/3425.48"
+  },
+  {
+   "name": "[mobile] Arabic keyboard: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Arabic keyboard: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Editor: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Editor: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":3266,\"scrollW\":390,\"innerW\":390,\"mainH\":2145.52,\"footTop\":2271.52,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Editor: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Editor: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Editor: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 3266/2145.52/2271.52 base 3266/2145.52/2271.52"
+  },
+  {
+   "name": "[mobile] Editor: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Editor: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Transliteration: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Transliteration: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":4365,\"scrollW\":390,\"innerW\":390,\"mainH\":3245.08,\"footTop\":3371.08,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Transliteration: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Transliteration: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Transliteration: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 4365/3245.08/3371.08 base 4365/3245.08/3371.08"
+  },
+  {
+   "name": "[mobile] Transliteration: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Transliteration: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Typing test: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Typing test: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":3255,\"scrollW\":390,\"innerW\":390,\"mainH\":2134.94,\"footTop\":2260.94,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Typing test: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Typing test: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Typing test: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 3255/2134.94/2260.94 base 3255/2134.94/2260.94"
+  },
+  {
+   "name": "[mobile] Typing test: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Typing test: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Tashkeel: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Tashkeel: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":4675,\"scrollW\":390,\"innerW\":390,\"mainH\":3554.66,\"footTop\":3680.66,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Tashkeel: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Tashkeel: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Tashkeel: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 4675/3554.66/3680.66 base 4675/3554.66/3680.66"
+  },
+  {
+   "name": "[mobile] Tashkeel: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Tashkeel: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Calligraphy editor: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Calligraphy editor: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1838,\"scrollW\":390,\"innerW\":390,\"mainH\":637,\"footTop\":844,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Calligraphy editor: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Calligraphy editor: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Calligraphy editor: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1838/637/844 base 1838/637/844"
+  },
+  {
+   "name": "[mobile] Calligraphy editor: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Calligraphy editor: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Arabic alphabet: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Arabic alphabet: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":3799,\"scrollW\":390,\"innerW\":390,\"mainH\":2678.72,\"footTop\":2804.72,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Arabic alphabet: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Arabic alphabet: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Arabic alphabet: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 3799/2678.72/2804.72 base 3799/2678.72/2804.72"
+  },
+  {
+   "name": "[mobile] Arabic alphabet: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Arabic alphabet: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Translation: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Translation: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":4555,\"scrollW\":390,\"innerW\":390,\"mainH\":3434.72,\"footTop\":3560.72,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Translation: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Translation: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Translation: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 4555/3434.72/3560.72 base 4555/3434.72/3560.72"
+  },
+  {
+   "name": "[mobile] Translation: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Translation: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Tools hub: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Tools hub: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2749,\"scrollW\":390,\"innerW\":390,\"mainH\":1628.38,\"footTop\":1754.38,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Tools hub: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Tools hub: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Tools hub: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 2749/1628.38/1754.38 base 2749/1628.38/1754.38"
+  },
+  {
+   "name": "[mobile] Tools hub: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Tools hub: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] About: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] About: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1916,\"scrollW\":390,\"innerW\":390,\"mainH\":795.3,\"footTop\":921.3,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] About: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] About: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] About: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1916/795.3/921.3 base 1916/795.3/921.3"
+  },
+  {
+   "name": "[mobile] About: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] About: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] FAQ: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] FAQ: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1587,\"scrollW\":390,\"innerW\":390,\"mainH\":466.19,\"footTop\":592.19,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] FAQ: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] FAQ: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] FAQ: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1587/466.19/592.19 base 1587/466.19/592.19"
+  },
+  {
+   "name": "[mobile] FAQ: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] FAQ: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Contact: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Contact: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1746,\"scrollW\":390,\"innerW\":390,\"mainH\":625.19,\"footTop\":751.19,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Contact: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Contact: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Contact: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1746/625.19/751.19 base 1746/625.19/751.19"
+  },
+  {
+   "name": "[mobile] Contact: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Contact: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Privacy: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Privacy: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2057,\"scrollW\":390,\"innerW\":390,\"mainH\":936.78,\"footTop\":1062.78,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Privacy: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Privacy: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Privacy: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 2057/936.78/1062.78 base 2057/936.78/1062.78"
+  },
+  {
+   "name": "[mobile] Privacy: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Privacy: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Terms: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Terms: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":1593,\"scrollW\":390,\"innerW\":390,\"mainH\":472.22,\"footTop\":598.22,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Terms: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added= removed="
+  },
+  {
+   "name": "[mobile] Terms: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Terms: page geometry identical to baseline (height/main/footer)",
+   "pass": true,
+   "detail": "new 1593/472.22/598.22 base 1593/472.22/598.22"
+  },
+  {
+   "name": "[mobile] Terms: no horizontal overflow introduced",
+   "pass": true,
+   "detail": "390 vs 390"
+  },
+  {
+   "name": "[mobile] Terms: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Learn dashboard: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Learn dashboard: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":10544,\"scrollW\":390,\"innerW\":390,\"mainH\":9423.16,\"footTop\":9549.16,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Learn dashboard: zero extra network requests vs baseline",
+   "pass": true,
+   "detail": "added=/assets/js/learn/urls.js removed="
+  },
+  {
+   "name": "[mobile] Learn dashboard: ad-domain requests identical to baseline (pre-existing <head> tag only)",
+   "pass": true,
+   "detail": "1 vs 1"
+  },
+  {
+   "name": "[mobile] Learn dashboard: extra requests are only urls.js",
+   "pass": true,
+   "detail": "/assets/js/learn/urls.js"
+  },
+  {
+   "name": "[mobile] Learn dashboard: layout shift not worse than baseline (worst of 3 baseline loads)",
+   "pass": true,
+   "detail": "0 vs 0"
+  },
+  {
+   "name": "[mobile] Letter lesson (Alif): 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Letter lesson (Alif): no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":3950,\"scrollW\":390,\"innerW\":390,\"mainH\":2829.92,\"footTop\":2955.92,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Letter lesson (Alif): nothing between intro and lesson (next sibling is the lesson container)",
+   "pass": true,
+   "detail": "{\"nextClass\":\"lx lx-main\",\"gap\":0}"
+  },
+  {
+   "name": "[mobile] Letter lesson (Alif): ad requests only the pre-existing <head> tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Letter lesson (Alif): no horizontal overflow",
+   "pass": true,
+   "detail": "390>390"
+  },
+  {
+   "name": "[mobile] Harakat lesson: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Harakat lesson: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":6271,\"scrollW\":390,\"innerW\":390,\"mainH\":5150.33,\"footTop\":5276.33,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Harakat lesson: nothing between intro and lesson (next sibling is the lesson container)",
+   "pass": true,
+   "detail": "{\"nextClass\":\"lx lx-main\",\"gap\":0}"
+  },
+  {
+   "name": "[mobile] Harakat lesson: ad requests only the pre-existing <head> tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Harakat lesson: no horizontal overflow",
+   "pass": true,
+   "detail": "390>390"
+  },
+  {
+   "name": "[mobile] Vocabulary lesson (numbers): 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Vocabulary lesson (numbers): no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":5399,\"scrollW\":390,\"innerW\":390,\"mainH\":4278.59,\"footTop\":4404.59,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Vocabulary lesson (numbers): nothing between intro and lesson (next sibling is the lesson container)",
+   "pass": true,
+   "detail": "{\"nextClass\":\"lx lx-main\",\"gap\":0}"
+  },
+  {
+   "name": "[mobile] Vocabulary lesson (numbers): ad requests only the pre-existing <head> tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Vocabulary lesson (numbers): no horizontal overflow",
+   "pass": true,
+   "detail": "390>390"
+  },
+  {
+   "name": "[mobile] Conversation lesson: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Conversation lesson: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":8229,\"scrollW\":390,\"innerW\":390,\"mainH\":7108.72,\"footTop\":7234.72,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Conversation lesson: nothing between intro and lesson (next sibling is the lesson container)",
+   "pass": true,
+   "detail": "{\"nextClass\":\"lx lx-main\",\"gap\":0}"
+  },
+  {
+   "name": "[mobile] Conversation lesson: ad requests only the pre-existing <head> tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Conversation lesson: no horizontal overflow",
+   "pass": true,
+   "detail": "390>390"
+  },
+  {
+   "name": "[mobile] Reading lesson: 200, no page errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Reading lesson: no ad DOM / style / text",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":3811,\"scrollW\":390,\"innerW\":390,\"mainH\":2690.98,\"footTop\":2816.98,\"cls\":0}"
+  },
+  {
+   "name": "[mobile] Reading lesson: nothing between intro and lesson (next sibling is the lesson container)",
+   "pass": true,
+   "detail": "{\"nextClass\":\"lx lx-main\",\"gap\":0}"
+  },
+  {
+   "name": "[mobile] Reading lesson: ad requests only the pre-existing <head> tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Reading lesson: no horizontal overflow",
+   "pass": true,
+   "detail": "390>390"
+  },
+  {
+   "name": "[desktop] direct URL opens (200)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] static copy replaced by interactive view; heading present",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] H1 meaningful",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Arabic glyph is lang=ar dir=rtl and rendered",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] focus not stolen on load",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] refresh keeps the same lesson, no 404",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] skip-link hash (#main) does not replace the lesson with the dashboard",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] next-lesson link navigates to a real URL",
+   "pass": true,
+   "detail": "/learn-arabic/letters/ta/"
+  },
+  {
+   "name": "[desktop] previous-lesson link works",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] answer checking gives feedback and a result screen",
+   "pass": true,
+   "detail": "Results3 / 3100% correctLesson complete! ✓ Your progress was saved.No mistakes. Excellent!Try againNext lesson →Back to lesson"
+  },
+  {
+   "name": "[desktop] progress saved to existing store key (ak-learn-progress-v1)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] progress persists: lesson shows complete after reload",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] dashboard tile links to the crawlable lesson URL",
+   "pass": true,
+   "detail": "/learn-arabic/letters/alif/"
+  },
+  {
+   "name": "[desktop] dashboard shows the saved completion",
+   "pass": true,
+   "detail": "1 / 30lessons completed1. Getting startedcurrent level1 daypractice streak100%3 "
+  },
+  {
+   "name": "[desktop] dashboard -> lesson navigation",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] lesson -> dashboard navigation",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] legacy bookmark /learn-arabic/#/letter/ba still renders in place",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] other hash routes (practice) still work on the dashboard",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] vocab lesson: non-lesson routes link to /learn-arabic/#/…, lessons to real URLs",
+   "pass": true,
+   "detail": "/learn-arabic/#/vocab"
+  },
+  {
+   "name": "[desktop] vocabulary exercise starts on the lesson page",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] no page errors during lesson flows",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] direct URL opens (200)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] static copy replaced by interactive view; heading present",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] H1 meaningful",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Arabic glyph is lang=ar dir=rtl and rendered",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] focus not stolen on load",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] refresh keeps the same lesson, no 404",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] skip-link hash (#main) does not replace the lesson with the dashboard",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] next-lesson link navigates to a real URL",
+   "pass": true,
+   "detail": "/learn-arabic/letters/ta/"
+  },
+  {
+   "name": "[mobile] previous-lesson link works",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] answer checking gives feedback and a result screen",
+   "pass": true,
+   "detail": "Results3 / 3100% correctLesson complete! ✓ Your progress was saved.No mistakes. Excellent!Try againNext lesson →Back to lesson"
+  },
+  {
+   "name": "[mobile] progress saved to existing store key (ak-learn-progress-v1)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] progress persists: lesson shows complete after reload",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] dashboard tile links to the crawlable lesson URL",
+   "pass": true,
+   "detail": "/learn-arabic/letters/alif/"
+  },
+  {
+   "name": "[mobile] dashboard shows the saved completion",
+   "pass": true,
+   "detail": "1 / 30lessons completed1. Getting startedcurrent level1 daypractice streak100%3 "
+  },
+  {
+   "name": "[mobile] dashboard -> lesson navigation",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] lesson -> dashboard navigation",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] legacy bookmark /learn-arabic/#/letter/ba still renders in place",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] other hash routes (practice) still work on the dashboard",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] vocab lesson: non-lesson routes link to /learn-arabic/#/…, lessons to real URLs",
+   "pass": true,
+   "detail": "/learn-arabic/#/vocab"
+  },
+  {
+   "name": "[mobile] vocabulary exercise starts on the lesson page",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] no page errors during lesson flows",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "all 62 URLs: 200, one H1, own lesson rendered (not dashboard/404), self-canonical, no robots meta",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "all 62 URLs: no JavaScript errors",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "unknown lesson URL is a real 404",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Homepage: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] Homepage: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Arabic keyboard: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] Arabic keyboard: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Editor: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] Editor: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Transliteration: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] Transliteration: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Tashkeel: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] Tashkeel: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Typing test: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] Typing test: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Alphabet: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] Alphabet: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] About: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] About: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] FAQ: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] FAQ: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Privacy: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] Privacy: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Terms: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[desktop] Terms: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[desktop] Calligraphy editor: intentionally NO slot (not in approved table)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Translation: intentionally NO slot (not in approved table)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Tools hub: intentionally NO slot (not in approved table)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] Contact: intentionally NO slot (not in approved table)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[desktop] lesson ba: one slot after title+intro, before lesson/exercises, never inside lesson",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":900,\"h\":133,\"top\":265}"
+  },
+  {
+   "name": "[desktop] lesson sukun-shadda-tanween: one slot after title+intro, before lesson/exercises, never inside lesson",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":900,\"h\":133,\"top\":265}"
+  },
+  {
+   "name": "[desktop] lesson colours: one slot after title+intro, before lesson/exercises, never inside lesson",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":900,\"h\":133,\"top\":265}"
+  },
+  {
+   "name": "[desktop] lesson ordering-food-and-drinks: one slot after title+intro, before lesson/exercises, never inside lesson",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":900,\"h\":133,\"top\":265}"
+  },
+  {
+   "name": "[desktop] lesson yusufs-trip: one slot after title+intro, before lesson/exercises, never inside lesson",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":900,\"h\":133,\"top\":265}"
+  },
+  {
+   "name": "[desktop] dashboard: one slot after learning-path overview, before module directory",
+   "pass": true,
+   "detail": "{\"count\":1,\"prev\":\"lx-path\",\"next\":\"Alphabet course · 28\",\"inButtons\":false}"
+  },
+  {
+   "name": "[mobile] Homepage: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] Homepage: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Arabic keyboard: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] Arabic keyboard: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Editor: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] Editor: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Transliteration: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] Transliteration: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Tashkeel: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] Tashkeel: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Typing test: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] Typing test: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Alphabet: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] Alphabet: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] About: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] About: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] FAQ: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] FAQ: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Privacy: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] Privacy: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Terms: exactly one slot, immediately after workspace, no overlap, not fixed/sticky",
+   "pass": true,
+   "detail": "{\"count\":1,\"adjacent\":true,\"overlap\":false,\"pos\":\"static\",\"filled\":true,\"overflowX\":false,\"label\":\"Advertisement\",\"nearButtons\":false,\"h\":133}"
+  },
+  {
+   "name": "[mobile] Terms: fixture issues no ad-domain request beyond the head tag",
+   "pass": true,
+   "detail": "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2057098005458261"
+  },
+  {
+   "name": "[mobile] Calligraphy editor: intentionally NO slot (not in approved table)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Translation: intentionally NO slot (not in approved table)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Tools hub: intentionally NO slot (not in approved table)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] Contact: intentionally NO slot (not in approved table)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "[mobile] lesson ba: one slot after title+intro, before lesson/exercises, never inside lesson",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":844,\"h\":133,\"top\":261}"
+  },
+  {
+   "name": "[mobile] lesson slot does not dominate viewport (133px of 844px)",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":844,\"h\":133,\"top\":261}"
+  },
+  {
+   "name": "[mobile] lesson sukun-shadda-tanween: one slot after title+intro, before lesson/exercises, never inside lesson",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":844,\"h\":133,\"top\":281}"
+  },
+  {
+   "name": "[mobile] lesson slot does not dominate viewport (133px of 844px)",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":844,\"h\":133,\"top\":281}"
+  },
+  {
+   "name": "[mobile] lesson colours: one slot after title+intro, before lesson/exercises, never inside lesson",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":844,\"h\":133,\"top\":253}"
+  },
+  {
+   "name": "[mobile] lesson slot does not dominate viewport (133px of 844px)",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":844,\"h\":133,\"top\":253}"
+  },
+  {
+   "name": "[mobile] lesson ordering-food-and-drinks: one slot after title+intro, before lesson/exercises, never inside lesson",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":844,\"h\":133,\"top\":281}"
+  },
+  {
+   "name": "[mobile] lesson slot does not dominate viewport (133px of 844px)",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":844,\"h\":133,\"top\":281}"
+  },
+  {
+   "name": "[mobile] lesson yusufs-trip: one slot after title+intro, before lesson/exercises, never inside lesson",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":844,\"h\":133,\"top\":281}"
+  },
+  {
+   "name": "[mobile] lesson slot does not dominate viewport (133px of 844px)",
+   "pass": true,
+   "detail": "{\"count\":1,\"prevIsHero\":true,\"nextIsLesson\":true,\"afterIntro\":true,\"beforeLesson\":true,\"insideLesson\":false,\"vh\":844,\"h\":133,\"top\":281}"
+  },
+  {
+   "name": "[mobile] dashboard: one slot after learning-path overview, before module directory",
+   "pass": true,
+   "detail": "{\"count\":1,\"prev\":\"lx-path\",\"next\":\"Alphabet course · 28\",\"inButtons\":false}"
+  },
+  {
+   "name": "fixture refused on the production hostname (www.arabic-keyboard.live + ?ads-fixture=1)",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2562,\"scrollW\":1280,\"innerW\":1280,\"mainH\":2032.7,\"footTop\":2178.7,\"cls\":0}"
+  },
+  {
+   "name": "fixture is visibly labelled as a dev fixture",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "LIVE path: real <ins class=adsbygoogle> with existing publisher ID, responsive attrs, one slot, after hero",
+   "pass": true,
+   "detail": "{\"mode\":\"live\",\"state\":{\"mode\":\"live\",\"placed\":[\"/learn-arabic/letters/ba/\"],\"pushes\":1},\"count\":1,\"filled\":true,\"client\":\"ca-pub-2057098005458261\",\"slot\":\"1234567890\",\"format\":\"horizontal\",\"fwr\":\"true\",\"loaders\":1,\"stubPush\":1,\"hero\":true}"
+  },
+  {
+   "name": "LIVE path: exactly one ad request (push) and no duplicate loader script",
+   "pass": true,
+   "detail": "{\"mode\":\"live\",\"state\":{\"mode\":\"live\",\"placed\":[\"/learn-arabic/letters/ba/\"],\"pushes\":1},\"count\":1,\"filled\":true,\"client\":\"ca-pub-2057098005458261\",\"slot\":\"1234567890\",\"format\":\"horizontal\",\"fwr\":\"true\",\"loaders\":1,\"stubPush\":1,\"hero\":true}"
+  },
+  {
+   "name": "LIVE path: frame (border/label/spacing) appears only once filled",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "LIVE path: no automatic refresh (still 1 request after 3s)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "LIVE path: next lesson = normal page navigation = its own single slot",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "LIVE path, unfilled: slot removed entirely (no empty box left behind)",
+   "pass": true,
+   "detail": "{\"un\":{\"adNodes\":1,\"adText\":0,\"mode\":\"live\",\"placed\":1,\"scrollH\":2562,\"scrollW\":1280,\"innerW\":1280,\"mainH\":2032.7,\"footTop\":2178.7,\"cls\":0.030760836643642847},\"nx\":\"lx lx-main\"}"
+  },
+  {
+   "name": "ADS_ENABLED=true but no ad-unit ID: renders nothing (never invents an ID)",
+   "pass": true,
+   "detail": "{\"adNodes\":0,\"adText\":0,\"mode\":\"off\",\"placed\":0,\"scrollH\":2562,\"scrollW\":1280,\"innerW\":1280,\"mainH\":2032.7,\"footTop\":2178.7,\"cls\":0.030760836643642847}"
+  },
+  {
+   "name": "LIVE dashboard: re-rendering the dashboard (hash navigation) issues NO second ad request",
+   "pass": true,
+   "detail": "{\"pushes\":1,\"slots\":0}"
+  }
+ ]
+}

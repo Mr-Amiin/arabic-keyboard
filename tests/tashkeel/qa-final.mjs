@@ -1,17 +1,23 @@
 // Final release QA: English localization + Tashkeel integration, in a REAL browser (headless Chromium).
 // Real Tashkeel runs use the shipped model (no mocks). Failure injection only aborts/delays network requests.
 // Run:  cd tests/tashkeel && npm install && node qa-final.mjs   (needs git history; unpacks OLD_REF for the SW-upgrade test)
-import http from "node:http"; import fs from "node:fs"; import path from "node:path"; import { execSync } from "node:child_process";
-import chromium from "@sparticuz/chromium"; import puppeteer from "puppeteer-core";
+import http from "node:http"; import fs from "node:fs"; import path from "node:path"; import os from "node:os"; import { fileURLToPath } from "node:url"; import { spawnSync } from "node:child_process";
+import { launchBrowser } from "./launch-browser.mjs";
 
-const NEW = path.resolve(new URL("../..", import.meta.url).pathname);
-const OLD = "/tmp/qa-old-site";
+// fileURLToPath (not URL.pathname) so the repo root is a valid path on Windows too (pathname gives "/C:/Users/..." there).
+const NEW = path.resolve(fileURLToPath(new URL("../..", import.meta.url)));
+const OLD = path.join(os.tmpdir(), "qa-old-site");   // /tmp/qa-old-site on Linux, %TEMP%\qa-old-site on Windows
 // The "previously deployed" site for the service-worker upgrade test (section 3). Pinned to the last commit BEFORE the i18n release
 // (cache shell-v5, no language switcher) so the test's premise stays true as HEAD moves on; the NEW side is always this working tree.
 const OLD_REF = "10d2864";
 const NEW_SHELL = /shell-v(\d+)/.exec(fs.readFileSync(path.join(NEW, "sw.js"), "utf8"))[1];   // shell cache version actually shipped in sw.js
 fs.rmSync(OLD, { recursive: true, force: true }); fs.mkdirSync(OLD, { recursive: true });
-execSync(`git -C ${NEW} archive ${OLD_REF} | tar -x -C ${OLD}`);   // the previously deployed version (see OLD_REF)
+// Unpack the previously deployed version (see OLD_REF). No shell and no pipe: arguments are passed as arrays, so paths with spaces or
+// parentheses need no quoting on Windows (cmd.exe) or POSIX shells, and the binary archive never goes through a text pipe.
+const archive = spawnSync("git", ["-C", NEW, "archive", OLD_REF], { maxBuffer: 1 << 30 });
+if (archive.status !== 0) throw new Error(`git archive ${OLD_REF} failed (this test needs the full git history): ${archive.error || String(archive.stderr)}`);
+const untar = spawnSync("tar", ["-x", "-f", "-", "-C", OLD], { input: archive.stdout, maxBuffer: 1 << 30 });
+if (untar.status !== 0) throw new Error(`tar extraction into ${OLD} failed: ${untar.error || String(untar.stderr)}`);
 let curRoot = NEW, cc = "max-age=600";   // cc: Cache-Control sent by the test server (GitHub Pages sends max-age=600)
 const PORT = 8141, O = `http://localhost:${PORT}`;
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".wasm": "application/wasm", ".woff2": "font/woff2", ".onnx": "application/octet-stream" };
@@ -25,7 +31,7 @@ const srv = http.createServer((q, r) => {
 const results = [], bad = [];
 const ck = (n, ok, d = "") => { results.push(!!ok); if (!ok) bad.push(n); console.log((ok ? "PASS " : "FAIL ") + n + (d && !ok ? "  — " + d : (d && ok ? "  [" + d + "]" : ""))); };
 const info = (s) => console.log("INFO " + s);
-const browser = await puppeteer.launch({ args: [...chromium.args.filter(a => !/single-process|no-zygote/.test(a)), "--no-sandbox"], executablePath: await chromium.executablePath(), headless: "shell" });
+const browser = await launchBrowser({ args: ["--no-sandbox"], filterBundledArgs: /single-process|no-zygote/ });
 const M = x => x.replace(/([\u064E\u064F\u0650])\u0651/g, "\u0651$1");
 const strip = s => s.replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]/g, "");
 const MARKS = /[\u064B-\u0652]/g;
