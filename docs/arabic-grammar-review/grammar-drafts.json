@@ -1,0 +1,1968 @@
+{
+  "package": "arabic-grammar-review",
+  "status": "UNREVIEWED",
+  "notice": "DRAFT CONTENT. These eight grammar lessons have NOT been reviewed or approved by a qualified Arabic teacher and are NOT in the live course catalogue (assets/js/learn/grammar.js keeps RAW = []). They exist only so that a teacher can review them. Do not publish or describe them as verified.",
+  "schema": "assets/js/learn/grammar.js",
+  "lessons": [
+    {
+      "id": "gram-article",
+      "slug": "definite-article-sun-moon-letters",
+      "title": "Definite article: sun and moon letters",
+      "summary": "Learn how ال (“the”) works in Modern Standard Arabic: how it attaches to a noun, why some lams are silent (sun letters) and how to pronounce it correctly.",
+      "explanation": [
+        {
+          "heading": "What ال does",
+          "text": "Arabic has no word for “a” or “an”. A noun is indefinite by default and usually ends in tanween (ـٌ, ـً or ـٍ): كِتَابٌ means “a book”.\nTo say “the book”, attach ال to the front of the noun and replace the tanween with a single short vowel: الْكِتَابُ. The article is always written joined to the noun, never as a separate word, and it never changes for masculine, feminine or plural nouns."
+        },
+        {
+          "heading": "Moon letters: the lam is pronounced",
+          "text": "If the noun begins with one of the 14 moon letters (الْحُرُوفُ الْقَمَرِيَّةُ), the lam of ال is pronounced clearly and carries a sukun: الْقَمَرُ is “al-qamaru”.\nThe moon letters are: ا ب ج ح خ ع غ ف ق ك م ه و ي. The first one, alif, stands for words that begin with a hamza, such as الْأَبُ (“the father”)."
+        },
+        {
+          "heading": "Sun letters: the lam is silent",
+          "text": "If the noun begins with one of the 14 sun letters (الْحُرُوفُ الشَّمْسِيَّةُ), the lam of ال is not pronounced. Instead the first letter of the noun is doubled, and Arabic shows this with a shadda: الشَّمْسُ is “ash-shamsu”, not “al-shamsu”.\nThe sun letters are: ت ث د ذ ر ز س ش ص ض ط ظ ل ن. All of them are made with the front of the tongue, which is why the lam blends into them. The lam is still written; only the pronunciation changes."
+        },
+        {
+          "heading": "The alif of ال after another word",
+          "text": "When another word comes just before ال, the alif of ال is not pronounced. أَيْنَ الْمِفْتَاحُ؟ is said “ayna l-miftāḥu?” and فِي الْبَيْتِ is said “fī l-bayti”. At the very start of a sentence you do say the alif: “al-kitābu”.\nIn this course the transliteration shows this silent alif with a hyphen after the l: l-miftāḥu."
+        },
+        {
+          "heading": "Definite and indefinite endings",
+          "text": "A noun with ال never takes tanween. The tanween becomes a plain short vowel: بَيْتٌ (a house) becomes الْبَيْتُ (the house). Never write الْبَيْتٌ."
+        },
+        {
+          "heading": "Guided practice: make “the pen” and “the car”",
+          "text": "Step 1 — Start with the indefinite words: قَلَمٌ (a pen) and سَيَّارَةٌ (a car).\nStep 2 — Remove the tanween and use a plain damma: قَلَمُ and سَيَّارَةُ.\nStep 3 — Look at the first letter. ق is a moon letter, so the lam is pronounced and has a sukun: الْقَلَمُ (al-qalamu).\nStep 4 — س is a sun letter, so the lam is silent and the س gets a shadda: السَّيَّارَةُ (as-sayyāratu).\nRemember: the lam carries a sukun only before moon letters."
+        },
+        {
+          "heading": "Lesson review",
+          "text": "• ال means “the” and is always joined to the noun.\n• Before a moon letter the lam is pronounced (al-). Before a sun letter it is silent and the next letter is doubled (ash-, an-, ad-, as-…).\n• There are 14 of each kind. Learn the sun letters first: every other letter is a moon letter.\n• After another word, the alif of ال is not pronounced (l-).\n• A noun with ال has no tanween."
+        }
+      ],
+      "examples": [
+        {
+          "ar": "الْقَمَرُ",
+          "translit": "al-qamaru",
+          "en": "the moon — ق is a moon letter, so the lam is pronounced.",
+          "vocabRefs": [
+            "wth-moon"
+          ]
+        },
+        {
+          "ar": "الشَّمْسُ",
+          "translit": "ash-shamsu",
+          "en": "the sun — ش is a sun letter: the lam is silent and ش is doubled.",
+          "vocabRefs": [
+            "wth-sun"
+          ]
+        },
+        {
+          "ar": "الْكِتَابُ",
+          "translit": "al-kitābu",
+          "en": "the book — moon letter ك.",
+          "vocabRefs": [
+            "sch-book"
+          ]
+        },
+        {
+          "ar": "الْبَيْتُ",
+          "translit": "al-baytu",
+          "en": "the house — moon letter ب.",
+          "vocabRefs": [
+            "home-house"
+          ]
+        },
+        {
+          "ar": "الطَّالِبُ",
+          "translit": "aṭ-ṭālibu",
+          "en": "the student (male) — sun letter ط.",
+          "vocabRefs": [
+            "sch-student-m"
+          ]
+        },
+        {
+          "ar": "الدَّرْسُ",
+          "translit": "ad-darsu",
+          "en": "the lesson — sun letter د.",
+          "vocabRefs": [
+            "sch-lesson"
+          ]
+        },
+        {
+          "ar": "السَّيَّارَةُ",
+          "translit": "as-sayyāratu",
+          "en": "the car — sun letter س.",
+          "vocabRefs": [
+            "trp-car"
+          ]
+        },
+        {
+          "ar": "النَّجْمُ",
+          "translit": "an-najmu",
+          "en": "the star — sun letter ن."
+        },
+        {
+          "ar": "اللَّيْلُ",
+          "translit": "al-laylu",
+          "en": "the night — ل is a sun letter too, so the lam is doubled and said “allaylu”.",
+          "vocabRefs": [
+            "time-night"
+          ]
+        },
+        {
+          "ar": "الْمَدْرَسَةُ",
+          "translit": "al-madrasatu",
+          "en": "the school — moon letter م.",
+          "vocabRefs": [
+            "plc-school"
+          ]
+        },
+        {
+          "ar": "أَيْنَ الْقَلَمُ؟",
+          "translit": "ayna l-qalamu?",
+          "en": "Where is the pen? — the alif of ال is silent after ayna.",
+          "vocabRefs": [
+            "sch-pen"
+          ]
+        },
+        {
+          "ar": "فِي الْبَيْتِ",
+          "translit": "fī l-bayti",
+          "en": "in the house — said “fil-bayti”. (The kasra on the last word is explained in lesson 8.)",
+          "vocabRefs": [
+            "home-house"
+          ]
+        }
+      ],
+      "mistakes": [
+        {
+          "text": "Writing ال as a separate word (ال كِتَاب). It is always joined to the noun: الْكِتَابُ.",
+          "ar": "الْكِتَابُ"
+        },
+        {
+          "text": "Saying “al-shamsu”. Before a sun letter the lam is silent: say ash-shamsu.",
+          "ar": "الشَّمْسُ"
+        },
+        {
+          "text": "Keeping the tanween after ال (الْبَيْتٌ). Use a plain damma: الْبَيْتُ.",
+          "ar": "الْبَيْتُ"
+        },
+        {
+          "text": "Putting a sukun on the lam before a sun letter. Before a sun letter the lam has no mark and the next letter has a shadda: السَّيَّارَةُ.",
+          "ar": "السَّيَّارَةُ"
+        }
+      ],
+      "check": [
+        {
+          "prompt": "Warm-up: What does ال mean in Arabic?",
+          "choices": [
+            "the",
+            "and",
+            "a / an",
+            "of"
+          ],
+          "answerIndex": 0,
+          "explain": "ال is the definite article, “the”. Arabic has no separate word for “a” or “an”: an indefinite noun is shown by tanween."
+        },
+        {
+          "prompt": "Warm-up: Which of these letters is a SUN letter?",
+          "choices": [
+            "ب",
+            "ك",
+            "م",
+            "ش"
+          ],
+          "answerIndex": 3,
+          "explain": "ش is one of the 14 sun letters. ب, ك and م are moon letters."
+        },
+        {
+          "prompt": "Practice: How is الشَّمْسُ pronounced?",
+          "choices": [
+            "al-shamsu",
+            "al-samsu",
+            "ash-shamsu",
+            "as-shamsu"
+          ],
+          "answerIndex": 2,
+          "explain": "ش is a sun letter, so the lam is silent and ش is doubled: ash-shamsu."
+        },
+        {
+          "prompt": "Practice: In which word is the lam of ال silent?",
+          "choices": [
+            "الْقَمَرُ",
+            "الدَّرْسُ",
+            "الْكِتَابُ",
+            "الْبَيْتُ"
+          ],
+          "answerIndex": 1,
+          "explain": "الدَّرْسُ begins with د, a sun letter, so it is said “ad-darsu”. ق, ب and ك are moon letters, so their lams are pronounced."
+        },
+        {
+          "prompt": "Practice: Make بَيْتٌ (“a house”) definite.",
+          "choices": [
+            "الْبَيْتٌ",
+            "الْبَيْتُ",
+            "ال بَيْتُ",
+            "بَيْتُ الْ"
+          ],
+          "answerIndex": 1,
+          "explain": "Join ال to the noun and replace the tanween with a plain damma: الْبَيْتُ. The first letter ب is a moon letter, so the lam has a sukun."
+        },
+        {
+          "prompt": "Challenge: Which spelling of “the car” (سَيَّارَةٌ) is correct?",
+          "choices": [
+            "السَّيَّارَةُ",
+            "الْسَّيَّارَةُ",
+            "السَّيَّارَةٌ",
+            "ال سَيَّارَةُ"
+          ],
+          "answerIndex": 0,
+          "explain": "س is a sun letter, so the lam has no sukun and the س carries a shadda; the tanween becomes a damma: السَّيَّارَةُ."
+        },
+        {
+          "prompt": "Challenge: How do you say أَيْنَ الْمِفْتَاحُ؟ in connected speech?",
+          "choices": [
+            "ayna al-miftāḥu (with the alif of ال)",
+            "ayna lamiftāḥu",
+            "ayna a-miftāḥu",
+            "ayna l-miftāḥu (the alif of ال is silent)"
+          ],
+          "answerIndex": 3,
+          "explain": "After another word, the alif of ال is not pronounced, so the two words run together: ayna l-miftāḥu."
+        }
+      ]
+    },
+    {
+      "id": "gram-nominal",
+      "slug": "nominal-sentences-pronouns",
+      "title": "Pronouns and nominal sentences",
+      "summary": "Meet the pronouns أَنَا, أَنْتَ, أَنْتِ, هُوَ, هِيَ and نَحْنُ, and build simple sentences such as “I am a student” with no word for “am”, “is” or “are”.",
+      "prerequisites": [
+        "gram-article"
+      ],
+      "explanation": [
+        {
+          "heading": "The six pronouns",
+          "text": "أَنَا (anā) — I\nأَنْتَ (anta) — you, said to a man\nأَنْتِ (anti) — you, said to a woman\nهُوَ (huwa) — he\nهِيَ (hiya) — she\nنَحْنُ (naḥnu) — we\nArabic also has dual and plural forms (for example “they” and “you all”); they are not covered in this lesson. Notice that “you” has two forms and only the last vowel changes: a fatha for a man (anta), a kasra for a woman (anti)."
+        },
+        {
+          "heading": "No word for “am”, “is” or “are”",
+          "text": "In ordinary present-tense sentences Arabic does not use a word for “am/is/are”. You simply put the two parts side by side: the subject (الْمُبْتَدَأُ) and what is said about it (الْخَبَرُ).\nأَنَا مُهَنْدِسٌ literally means “I engineer”, and it is translated “I am an engineer”. (It is the same “I am a …” pattern that you met in the sentence patterns.) Sentences like this are called nominal sentences (الْجُمْلَةُ الِاسْمِيَّةُ) because they begin with a noun or a pronoun, not with a verb."
+        },
+        {
+          "heading": "Agreement and endings",
+          "text": "The second word must match the person it describes: a man says أَنَا مُهَنْدِسٌ and a woman says أَنَا مُهَنْدِسَةٌ. The extra ـة is explained in lesson 3.\nWith an indefinite word such as طَالِبٌ, the ending is tanween damma (ـٌ). The subject of the sentence ends in a plain damma when it has ال: الْبَيْتُ كَبِيرٌ (“The house is big”)."
+        },
+        {
+          "heading": "Nouns as subjects",
+          "text": "A nominal sentence can also start with a noun that has ال. The second part then says something about it: الْبَيْتُ كَبِيرٌ — “the house (is) big”. You do not need a pronoun in the middle."
+        },
+        {
+          "heading": "A first look at “we”",
+          "text": "نَحْنُ is used for a group that includes the speaker, so the word after it is a plural: نَحْنُ طُلَّابٌ (“We are students”) for men or a mixed group, and نَحْنُ طَالِبَاتٌ for a group of women. Plurals do not follow one simple rule, so learn each plural together with its noun."
+        },
+        {
+          "heading": "Nominal and verbal sentences",
+          "text": "A sentence that begins with a noun or a pronoun is a nominal sentence (الْجُمْلَةُ الِاسْمِيَّةُ): الْبَيْتُ كَبِيرٌ (“The house is big”).\nA sentence that begins with a verb is a verbal sentence (الْجُمْلَةُ الْفِعْلِيَّةُ): يَكْتُبُ الطَّالِبُ الدَّرْسَ (“The student writes the lesson”). Verbs are the subject of lesson 7.\nTraditional grammar also counts a sentence as nominal when it begins with a noun or pronoun and a verb follows, as in أَنَا أَكْتُبُ (“I write”). This course uses pronoun + verb sentences to make the person easy to see, and it introduces verb-first sentences in lesson 7."
+        },
+        {
+          "heading": "Guided practice: say “She is a teacher”",
+          "text": "Step 1 — “she” is هِيَ.\nStep 2 — “teacher” for a woman is مُعَلِّمَةٌ.\nStep 3 — Put them side by side with no extra word: هِيَ مُعَلِّمَةٌ (hiya muʿallimatun).\nNow try “You (to a man) are a doctor”: أَنْتَ طَبِيبٌ (anta ṭabībun)."
+        },
+        {
+          "heading": "Lesson review",
+          "text": "• This lesson uses six pronouns: anā, anta, anti, huwa, hiya, naḥnu.\n• There is no word for “am/is/are” in an ordinary present-tense nominal sentence.\n• A nominal sentence is a subject plus what is said about it.\n• The second word agrees in gender with the speaker or the subject."
+        }
+      ],
+      "examples": [
+        {
+          "ar": "أَنَا مُهَنْدِسٌ",
+          "translit": "anā muhandisun",
+          "en": "I am an engineer (said by a man).",
+          "vocabRefs": [
+            "ppl-i"
+          ]
+        },
+        {
+          "ar": "أَنَا مُهَنْدِسَةٌ",
+          "translit": "anā muhandisatun",
+          "en": "I am an engineer (said by a woman).",
+          "vocabRefs": [
+            "ppl-i"
+          ]
+        },
+        {
+          "ar": "أَنْتَ مُعَلِّمٌ",
+          "translit": "anta muʿallimun",
+          "en": "You are a teacher (to a man).",
+          "vocabRefs": [
+            "ppl-you-m",
+            "sch-teacher-m"
+          ]
+        },
+        {
+          "ar": "أَنْتِ مُعَلِّمَةٌ",
+          "translit": "anti muʿallimatun",
+          "en": "You are a teacher (to a woman).",
+          "vocabRefs": [
+            "ppl-you-f",
+            "sch-teacher-f"
+          ]
+        },
+        {
+          "ar": "هُوَ طَبِيبٌ",
+          "translit": "huwa ṭabībun",
+          "en": "He is a doctor.",
+          "vocabRefs": [
+            "ppl-he",
+            "sch-doctor"
+          ]
+        },
+        {
+          "ar": "هِيَ طَبِيبَةٌ",
+          "translit": "hiya ṭabībatun",
+          "en": "She is a doctor.",
+          "vocabRefs": [
+            "ppl-she"
+          ]
+        },
+        {
+          "ar": "هِيَ مُعَلِّمَةٌ",
+          "translit": "hiya muʿallimatun",
+          "en": "She is a teacher.",
+          "vocabRefs": [
+            "ppl-she",
+            "sch-teacher-f"
+          ]
+        },
+        {
+          "ar": "نَحْنُ طُلَّابٌ",
+          "translit": "naḥnu ṭullābun",
+          "en": "We are students (men or a mixed group).",
+          "vocabRefs": [
+            "ppl-we"
+          ]
+        },
+        {
+          "ar": "نَحْنُ طَالِبَاتٌ",
+          "translit": "naḥnu ṭālibātun",
+          "en": "We are students (all women).",
+          "vocabRefs": [
+            "ppl-we"
+          ]
+        },
+        {
+          "ar": "الْبَيْتُ كَبِيرٌ",
+          "translit": "al-baytu kabīrun",
+          "en": "The house is big.",
+          "vocabRefs": [
+            "home-house",
+            "core-big"
+          ]
+        }
+      ],
+      "mistakes": [
+        {
+          "text": "Adding a word for “is” or “am”. In an everyday present-tense sentence there is none: الْبَيْتُ كَبِيرٌ.",
+          "ar": "الْبَيْتُ كَبِيرٌ"
+        },
+        {
+          "text": "Using أَنْتَ when you speak to a woman. Use أَنْتِ.",
+          "ar": "أَنْتِ"
+        },
+        {
+          "text": "Forgetting gender agreement: هِيَ طَالِبٌ is wrong. A woman or girl is طَالِبَةٌ.",
+          "ar": "هِيَ طَالِبَةٌ"
+        }
+      ],
+      "check": [
+        {
+          "prompt": "Warm-up: Which pronoun means “she”?",
+          "choices": [
+            "هُوَ",
+            "أَنَا",
+            "نَحْنُ",
+            "هِيَ"
+          ],
+          "answerIndex": 3,
+          "explain": "هِيَ (hiya) is “she”. هُوَ is “he”, نَحْنُ is “we” and أَنَا is “I”."
+        },
+        {
+          "prompt": "Warm-up: In أَنَا مُهَنْدِسٌ, which Arabic word means “am”?",
+          "choices": [
+            "أَنَا",
+            "مُهَنْدِسٌ",
+            "There is no word for “am”",
+            "الْ"
+          ],
+          "answerIndex": 2,
+          "explain": "Arabic leaves out “am/is/are” in ordinary present-tense nominal sentences. The sentence is just “I student”."
+        },
+        {
+          "prompt": "Practice: Which pronoun do you use when you speak to a woman?",
+          "choices": [
+            "أَنْتَ",
+            "أَنْتِ",
+            "هِيَ",
+            "أَنَا"
+          ],
+          "answerIndex": 1,
+          "explain": "أَنْتِ (anti, with a kasra) is “you” to a woman. أَنْتَ is for a man."
+        },
+        {
+          "prompt": "Practice: Which sentence means “She is a doctor”?",
+          "choices": [
+            "هِيَ طَبِيبَةٌ",
+            "هُوَ طَبِيبَةٌ",
+            "هِيَ طَبِيبٌ",
+            "أَنَا هِيَ طَبِيبَةٌ"
+          ],
+          "answerIndex": 0,
+          "explain": "The pronoun هِيَ is feminine and so is the word طَبِيبَةٌ; no extra word for “is” is needed."
+        },
+        {
+          "prompt": "Practice: What does نَحْنُ طُلَّابٌ mean?",
+          "choices": [
+            "We are students",
+            "I am a student",
+            "They are students",
+            "You are students"
+          ],
+          "answerIndex": 0,
+          "explain": "نَحْنُ is “we” and طُلَّابٌ is the plural of طَالِبٌ, “students”."
+        },
+        {
+          "prompt": "Challenge: Which sentence means “The house is big”?",
+          "choices": [
+            "بَيْتٌ الْكَبِيرُ",
+            "كَبِيرٌ هُوَ بَيْتُ",
+            "الْبَيْتُ هُوَ",
+            "الْبَيْتُ كَبِيرٌ"
+          ],
+          "answerIndex": 3,
+          "explain": "A nominal sentence puts the subject first (الْبَيْتُ) and then what is said about it (كَبِيرٌ), with no word for “is”."
+        },
+        {
+          "prompt": "Review (lesson 1): Which of these words begins with a SUN letter?",
+          "choices": [
+            "الْبَيْتُ",
+            "الْكِتَابُ",
+            "الطَّبِيبُ",
+            "الْمُعَلِّمُ"
+          ],
+          "answerIndex": 2,
+          "explain": "ط is a sun letter, so الطَّبِيبُ is said “aṭ-ṭabību”. ب, ك and م are moon letters."
+        }
+      ]
+    },
+    {
+      "id": "gram-gender",
+      "slug": "masculine-feminine-gender",
+      "title": "Masculine and feminine forms",
+      "summary": "Every Arabic noun is masculine or feminine. Learn how ة (taa marbuta) usually marks the feminine, how it is pronounced, and the common exceptions to the pattern.",
+      "prerequisites": [
+        "gram-nominal"
+      ],
+      "explanation": [
+        {
+          "heading": "Two genders only",
+          "text": "Every Arabic noun is either masculine or feminine; there is no neuter. Gender matters because the words that point to or describe a noun must match it: هَٰذَا for masculine and هَٰذِهِ for feminine, and the adjectives in lesson 4.\nFor people, the noun follows the person: طَالِبٌ is a male student and طَالِبَةٌ is a female student."
+        },
+        {
+          "heading": "The usual pattern: add ة",
+          "text": "To make the feminine of many words, especially words for people, add ـة (taa marbuta) to the masculine word:\nطَالِبٌ → طَالِبَةٌ (student)\nمُعَلِّمٌ → مُعَلِّمَةٌ (teacher)\nطَبِيبٌ → طَبِيبَةٌ (doctor)\nصَدِيقٌ → صَدِيقَةٌ (friend)\nThe vowel before ة is always a fatha."
+        },
+        {
+          "heading": "How ة is pronounced",
+          "text": "ة (taa marbuta, “tied taa”) appears only at the end of a word and looks like ه with two dots. Its sound depends on what follows:\n• At the end of a sentence, or when you read without case endings, it sounds like a short “a” (or a soft “h”): مَدْرَسَة is “madrasa”.\n• When an ending or another word follows, it becomes a “t”: مَدْرَسَةٌ is “madrasatun”, and مَدْرَسَةُ الْبِنْتِ is “madrasatu l-binti”.\nDo not confuse it with the ordinary letter ت, which is always pronounced “t”."
+        },
+        {
+          "heading": "Feminine words that end in ة",
+          "text": "Many nouns end in ة simply because they are feminine words, not because they were made from a masculine word: مَدْرَسَة (school), سَيَّارَة (car), حَقِيبَة (bag), طَاوِلَة (table), مَدِينَة (city), غُرْفَة (room), قَهْوَة (coffee). A word that ends in ة is usually feminine, so you can say هَٰذِهِ نَافِذَةٌ."
+        },
+        {
+          "heading": "Exceptions",
+          "text": "Some feminine nouns do not end in ة. You have to learn them with the word: أُمّ (mother), أُخْت (sister), شَمْس (sun), يَد (hand), عَيْن (eye). In Arabic the sun is feminine and the moon is masculine: الشَّمْسُ جَمِيلَةٌ, الْقَمَرُ جَمِيلٌ.\nA few words that end in ة refer to men and are masculine, such as the name أُسَامَةُ and the title خَلِيفَةٌ (caliph). The pattern is a guide, not a law."
+        },
+        {
+          "heading": "Guided practice: choose “this is a …”",
+          "text": "Step 1 — نَافِذَةٌ ends in ة, so it is feminine: هَٰذِهِ نَافِذَةٌ.\nStep 2 — مِفْتَاحٌ has no ة and is not one of the special feminine words, so it is masculine: هَٰذَا مِفْتَاحٌ.\nStep 3 — شَمْسٌ has no ة but is a feminine exception, so a word that describes it must be feminine: الشَّمْسُ جَمِيلَةٌ.\nTip: when you learn a new noun, learn its gender with it."
+        },
+        {
+          "heading": "Lesson review",
+          "text": "• Every noun is masculine or feminine.\n• ة (taa marbuta) usually marks the feminine, especially for people: طَالِبٌ → طَالِبَةٌ.\n• ة sounds like “a” at the end of a sentence and like “t” when something follows.\n• Some feminine words have no ة (أُمّ, شَمْس) and a few words with ة are masculine (أُسَامَةُ)."
+        }
+      ],
+      "examples": [
+        {
+          "ar": "كَاتِبٌ",
+          "translit": "kātibun",
+          "en": "a writer (male)."
+        },
+        {
+          "ar": "كَاتِبَةٌ",
+          "translit": "kātibatun",
+          "en": "a writer (female)."
+        },
+        {
+          "ar": "مُمَرِّضٌ",
+          "translit": "mumarriḍun",
+          "en": "a nurse (male)."
+        },
+        {
+          "ar": "مُمَرِّضَةٌ",
+          "translit": "mumarriḍatun",
+          "en": "a nurse (female)."
+        },
+        {
+          "ar": "صَدِيقٌ",
+          "translit": "ṣadīqun",
+          "en": "a friend (male)."
+        },
+        {
+          "ar": "صَدِيقَةٌ",
+          "translit": "ṣadīqatun",
+          "en": "a friend (female)."
+        },
+        {
+          "ar": "هَٰذَا مِفْتَاحٌ",
+          "translit": "hādhā miftāḥun",
+          "en": "This is a key (masculine)."
+        },
+        {
+          "ar": "هَٰذِهِ سَاعَةٌ",
+          "translit": "hādhihi sāʿatun",
+          "en": "This is a clock or watch (feminine)."
+        },
+        {
+          "ar": "هَٰذِهِ نَافِذَةٌ",
+          "translit": "hādhihi nāfidhatun",
+          "en": "This is a window (feminine)."
+        },
+        {
+          "ar": "يَدٌ",
+          "translit": "yadun",
+          "en": "a hand — feminine, although there is no ة."
+        },
+        {
+          "ar": "الشَّمْسُ جَمِيلَةٌ",
+          "translit": "ash-shamsu jamīlatun",
+          "en": "The sun is beautiful — the sun is feminine, so the adjective is feminine.",
+          "vocabRefs": [
+            "wth-sun",
+            "core-beautiful"
+          ]
+        },
+        {
+          "ar": "أُسَامَةُ طَالِبٌ",
+          "translit": "usāmatu ṭālibun",
+          "en": "Usama is a student — a man’s name that ends in ة.",
+          "vocabRefs": [
+            "sch-student-m"
+          ]
+        }
+      ],
+      "mistakes": [
+        {
+          "text": "Writing ة as the ordinary letter ت. ة appears only at the end of a word: مَدْرَسَة, not مَدْرَست.",
+          "ar": "مَدْرَسَة"
+        },
+        {
+          "text": "Saying “madrasat” at the end of a sentence. Say “madrasa”; the “t” appears only when something follows.",
+          "ar": "مَدْرَسَة"
+        },
+        {
+          "text": "Assuming every word that ends in ة is feminine. The name أُسَامَةُ belongs to a man.",
+          "ar": "أُسَامَةُ"
+        },
+        {
+          "text": "Assuming every word without ة is masculine. أُمّ and شَمْس are feminine.",
+          "ar": "شَمْس"
+        }
+      ],
+      "check": [
+        {
+          "prompt": "Warm-up: Which letter is the taa marbuta?",
+          "choices": [
+            "ت",
+            "ث",
+            "ة",
+            "ه"
+          ],
+          "answerIndex": 2,
+          "explain": "ة is the “tied taa”. It appears only at the end of a word. ت is the ordinary taa."
+        },
+        {
+          "prompt": "Warm-up: What is the feminine of طَالِبٌ (student)?",
+          "choices": [
+            "طَالِبٌ",
+            "طَالِبَةٌ",
+            "طَالِبَاتٌ",
+            "طَلَبَةٌ"
+          ],
+          "answerIndex": 1,
+          "explain": "To make the feminine of a word for a person, add ة (taa marbuta) to the masculine word: طَالِبٌ becomes طَالِبَةٌ."
+        },
+        {
+          "prompt": "Practice: Which word is feminine?",
+          "choices": [
+            "مَدْرَسَةٌ",
+            "كِتَابٌ",
+            "بَابٌ",
+            "قَلَمٌ"
+          ],
+          "answerIndex": 0,
+          "explain": "مَدْرَسَةٌ ends in ة and is a feminine word. قَلَمٌ, كِتَابٌ and بَابٌ are masculine."
+        },
+        {
+          "prompt": "Practice: Which sentence is correct for “This is a window” (نَافِذَةٌ)?",
+          "choices": [
+            "هَٰذَا نَافِذَةٌ",
+            "هَٰذَا نَافِذَةُ",
+            "هَٰذِهِ نَافِذٌ",
+            "هَٰذِهِ نَافِذَةٌ"
+          ],
+          "answerIndex": 3,
+          "explain": "نَافِذَةٌ ends in ة, so it is a feminine word and goes with هَٰذِهِ. The other choices use the masculine هَٰذَا or a form without ة that does not agree."
+        },
+        {
+          "prompt": "Practice: How does مَدْرَسَة sound at the very end of a sentence?",
+          "choices": [
+            "madrasat",
+            "madrasi",
+            "madrasan",
+            "madrasa"
+          ],
+          "answerIndex": 3,
+          "explain": "At the end of a sentence ة sounds like a short “a” (or a soft “h”). The “t” appears only when something follows."
+        },
+        {
+          "prompt": "Challenge: Which of these words is feminine although it has no ة?",
+          "choices": [
+            "كِتَابٌ",
+            "قَمَرٌ",
+            "شَمْسٌ",
+            "بَيْتٌ"
+          ],
+          "answerIndex": 2,
+          "explain": "شَمْسٌ (sun) is feminine. قَمَرٌ, كِتَابٌ and بَيْتٌ are masculine."
+        },
+        {
+          "prompt": "Review (lesson 2): A woman says “You are a doctor” to another woman. Which is correct?",
+          "choices": [
+            "أَنْتَ طَبِيبٌ",
+            "أَنْتِ طَبِيبَةٌ",
+            "أَنْتَ طَبِيبَةٌ",
+            "أَنْتِ طَبِيبٌ"
+          ],
+          "answerIndex": 1,
+          "explain": "Speaking to a woman needs أَنْتِ, and a woman is طَبِيبَةٌ. No word for “are” is used."
+        },
+        {
+          "prompt": "Review (lesson 1): How is “the student (female)” written correctly?",
+          "choices": [
+            "الطَّالِبَةُ",
+            "الطَّالِبَةٌ",
+            "الْطَّالِبَةُ",
+            "ال طَالِبَةُ"
+          ],
+          "answerIndex": 0,
+          "explain": "ط is a sun letter, so the lam has no sukun and ط has a shadda. A noun with ال takes a damma, not tanween: الطَّالِبَةُ."
+        }
+      ]
+    },
+    {
+      "id": "gram-adjectives",
+      "slug": "adjective-agreement",
+      "title": "Adjective agreement",
+      "summary": "Learn how adjectives follow the noun and agree with it in gender and definiteness, and how to tell “the big house” from “the house is big”.",
+      "prerequisites": [
+        "gram-article",
+        "gram-gender"
+      ],
+      "explanation": [
+        {
+          "heading": "Where the adjective goes",
+          "text": "In Arabic the adjective comes after the noun it describes: بَيْتٌ كَبِيرٌ is “a big house” (literally “a house big”).\nThe adjective must agree with the noun in gender, in definiteness and in its case ending. In this course you will mostly see the first two."
+        },
+        {
+          "heading": "Gender",
+          "text": "A feminine noun takes a feminine adjective, made by adding ة: مَدْرَسَةٌ كَبِيرَةٌ (a big school), سَيَّارَةٌ جَدِيدَةٌ (a new car).\nA masculine noun takes the masculine form: كِتَابٌ جَدِيدٌ (a new book), بَيْتٌ صَغِيرٌ (a small house)."
+        },
+        {
+          "heading": "Definiteness",
+          "text": "If the noun is indefinite, the adjective is indefinite: بَيْتٌ كَبِيرٌ. If the noun has ال, the adjective also gets ال: الْبَيْتُ الْكَبِيرُ (“the big house”).\nThe adjective copies both the ال and the ending of the noun: الْمَدْرَسَةُ الْكَبِيرَةُ."
+        },
+        {
+          "heading": "Phrase or sentence?",
+          "text": "Compare these three:\nبَيْتٌ كَبِيرٌ — a big house (a phrase)\nالْبَيْتُ الْكَبِيرُ — the big house (a phrase)\nالْبَيْتُ كَبِيرٌ — the house is big (a complete sentence)\nWhen both words have ال, you have a phrase. When only the noun has ال and the adjective has none, the adjective is what you say about the noun: a sentence, with no word for “is” (lesson 2)."
+        },
+        {
+          "heading": "Adjectives you already know",
+          "text": "كَبِيرٌ / كَبِيرَةٌ (big), صَغِيرٌ / صَغِيرَةٌ (small), جَدِيدٌ / جَدِيدَةٌ (new), جَمِيلٌ / جَمِيلَةٌ (beautiful), جَيِّدٌ / جَيِّدَةٌ (good). These come from the vocabulary topics. Plural agreement is a later topic."
+        },
+        {
+          "heading": "Guided practice: “the new student (female)” and “The car is beautiful”",
+          "text": "Step 1 — Noun: الطَّالِبَةُ (the student, feminine, with ال).\nStep 2 — The adjective جَدِيدٌ must be feminine, جَدِيدَةٌ, and because the noun has ال the adjective needs ال too: الْجَدِيدَةُ.\nStep 3 — Together: الطَّالِبَةُ الْجَدِيدَةُ (aṭ-ṭālibatu l-jadīdatu).\nStep 4 — For “The car is beautiful” keep ال on the noun only: السَّيَّارَةُ جَمِيلَةٌ (as-sayyāratu jamīlatun)."
+        },
+        {
+          "heading": "Lesson review",
+          "text": "• The adjective comes after the noun.\n• It agrees in gender: add ة for a feminine noun.\n• It agrees in definiteness: ال on both words makes a phrase (“the big house”).\n• ال on the noun only makes a sentence (“the house is big”)."
+        }
+      ],
+      "examples": [
+        {
+          "ar": "بَيْتٌ كَبِيرٌ",
+          "translit": "baytun kabīrun",
+          "en": "a big house.",
+          "vocabRefs": [
+            "home-house",
+            "core-big"
+          ]
+        },
+        {
+          "ar": "الْبَيْتُ الْكَبِيرُ",
+          "translit": "al-baytu l-kabīru",
+          "en": "the big house (a phrase).",
+          "vocabRefs": [
+            "home-house",
+            "core-big"
+          ]
+        },
+        {
+          "ar": "الْبَيْتُ كَبِيرٌ",
+          "translit": "al-baytu kabīrun",
+          "en": "The house is big (a sentence).",
+          "vocabRefs": [
+            "home-house",
+            "core-big"
+          ]
+        },
+        {
+          "ar": "مَدْرَسَةٌ كَبِيرَةٌ",
+          "translit": "madrasatun kabīratun",
+          "en": "a big school.",
+          "vocabRefs": [
+            "plc-school",
+            "core-big"
+          ]
+        },
+        {
+          "ar": "الْمَدْرَسَةُ الْكَبِيرَةُ",
+          "translit": "al-madrasatu l-kabīratu",
+          "en": "the big school.",
+          "vocabRefs": [
+            "plc-school",
+            "core-big"
+          ]
+        },
+        {
+          "ar": "كِتَابٌ جَدِيدٌ",
+          "translit": "kitābun jadīdun",
+          "en": "a new book.",
+          "vocabRefs": [
+            "sch-book",
+            "core-new"
+          ]
+        },
+        {
+          "ar": "الْكِتَابُ جَدِيدٌ",
+          "translit": "al-kitābu jadīdun",
+          "en": "The book is new.",
+          "vocabRefs": [
+            "sch-book",
+            "core-new"
+          ]
+        },
+        {
+          "ar": "سَيَّارَةٌ جَمِيلَةٌ",
+          "translit": "sayyāratun jamīlatun",
+          "en": "a beautiful car.",
+          "vocabRefs": [
+            "trp-car",
+            "core-beautiful"
+          ]
+        },
+        {
+          "ar": "الطَّاوِلَةُ صَغِيرَةٌ",
+          "translit": "aṭ-ṭāwilatu ṣaghīratun",
+          "en": "The table is small.",
+          "vocabRefs": [
+            "home-table",
+            "core-small"
+          ]
+        },
+        {
+          "ar": "الطَّالِبَةُ الْجَدِيدَةُ",
+          "translit": "aṭ-ṭālibatu l-jadīdatu",
+          "en": "the new student (female).",
+          "vocabRefs": [
+            "sch-student-f",
+            "core-new"
+          ]
+        },
+        {
+          "ar": "هِيَ طَالِبَةٌ جَيِّدَةٌ",
+          "translit": "hiya ṭālibatun jayyidatun",
+          "en": "She is a good student.",
+          "vocabRefs": [
+            "ppl-she",
+            "sch-student-f",
+            "core-good"
+          ]
+        }
+      ],
+      "mistakes": [
+        {
+          "text": "Putting the adjective before the noun. It comes after: بَيْتٌ كَبِيرٌ.",
+          "ar": "بَيْتٌ كَبِيرٌ"
+        },
+        {
+          "text": "Using a masculine adjective with a feminine noun (مَدْرَسَةٌ كَبِيرٌ). Write مَدْرَسَةٌ كَبِيرَةٌ.",
+          "ar": "مَدْرَسَةٌ كَبِيرَةٌ"
+        },
+        {
+          "text": "Leaving ال off the adjective when you mean “the big house”. الْبَيْتُ كَبِيرٌ is a sentence (“the house is big”); for the phrase write الْبَيْتُ الْكَبِيرُ.",
+          "ar": "الْبَيْتُ الْكَبِيرُ"
+        },
+        {
+          "text": "Putting ال on the adjective only (بَيْتٌ الْكَبِيرُ). Both words take ال, or neither does.",
+          "ar": "بَيْتٌ كَبِيرٌ"
+        }
+      ],
+      "check": [
+        {
+          "prompt": "Warm-up: Where does the adjective go in an Arabic phrase?",
+          "choices": [
+            "Before the noun",
+            "After the noun",
+            "At the end of the sentence, always",
+            "Between ال and the noun"
+          ],
+          "answerIndex": 1,
+          "explain": "The adjective follows the noun: بَيْتٌ كَبِيرٌ, “a big house”."
+        },
+        {
+          "prompt": "Warm-up: What is the feminine of كَبِيرٌ (big)?",
+          "choices": [
+            "كَبِيرَةٌ",
+            "كَبِيرٌ",
+            "كَبِيرَاتٌ",
+            "الْكَبِيرُ"
+          ],
+          "answerIndex": 0,
+          "explain": "Add ة to the masculine adjective to make the feminine form: كَبِيرٌ becomes كَبِيرَةٌ, which goes with feminine nouns such as مَدْرَسَةٌ."
+        },
+        {
+          "prompt": "Practice: Which phrase means “a new book”?",
+          "choices": [
+            "جَدِيدٌ كِتَابٌ",
+            "كِتَابٌ جَدِيدَةٌ",
+            "الْكِتَابُ جَدِيدٌ",
+            "كِتَابٌ جَدِيدٌ"
+          ],
+          "answerIndex": 3,
+          "explain": "Noun first, then a masculine adjective, both indefinite: كِتَابٌ جَدِيدٌ."
+        },
+        {
+          "prompt": "Practice: Which phrase means “the big school”?",
+          "choices": [
+            "الْمَدْرَسَةُ الْكَبِيرُ",
+            "مَدْرَسَةٌ الْكَبِيرَةُ",
+            "الْمَدْرَسَةُ الْكَبِيرَةُ",
+            "الْمَدْرَسَةُ كَبِيرَةٌ"
+          ],
+          "answerIndex": 2,
+          "explain": "Both words need ال, and the adjective must be feminine like مَدْرَسَة: الْمَدْرَسَةُ الْكَبِيرَةُ."
+        },
+        {
+          "prompt": "Practice: What does الْبَيْتُ كَبِيرٌ mean?",
+          "choices": [
+            "the big house",
+            "a big house",
+            "The house is big.",
+            "The house is small."
+          ],
+          "answerIndex": 2,
+          "explain": "ال is on the noun only, so the adjective is what you say about the house: a sentence, “The house is big.”"
+        },
+        {
+          "prompt": "Challenge: Which of these is a complete SENTENCE?",
+          "choices": [
+            "الطَّالِبُ الْجَدِيدُ",
+            "الطَّالِبُ جَدِيدٌ",
+            "طَالِبٌ جَدِيدٌ",
+            "الطَّالِبَةُ الْجَدِيدَةُ"
+          ],
+          "answerIndex": 1,
+          "explain": "Only الطَّالِبُ جَدِيدٌ has ال on the noun but not on the adjective: “The student is new.” The others are phrases."
+        },
+        {
+          "prompt": "Challenge: Fix the agreement mistake so that the phrase means “a new car”: سَيَّارَةٌ جَدِيدٌ.",
+          "choices": [
+            "سَيَّارَةٌ جَدِيدَةٌ",
+            "سَيَّارَةٌ الْجَدِيدُ",
+            "جَدِيدٌ سَيَّارَةٌ",
+            "السَّيَّارَةُ جَدِيدٌ"
+          ],
+          "answerIndex": 0,
+          "explain": "سَيَّارَةٌ is feminine, so the adjective must be feminine too: سَيَّارَةٌ جَدِيدَةٌ. السَّيَّارَةُ جَدِيدٌ is a correct sentence, but it means “The car is new”, not “a new car”."
+        },
+        {
+          "prompt": "Review (lesson 3): Which sentence is correct for “This is a new window”?",
+          "choices": [
+            "هَٰذَا نَافِذَةٌ جَدِيدَةٌ",
+            "هَٰذَا نَافِذَةٌ جَدِيدٌ",
+            "هَٰذِهِ نَافِذَةٌ جَدِيدٌ",
+            "هَٰذِهِ نَافِذَةٌ جَدِيدَةٌ"
+          ],
+          "answerIndex": 3,
+          "explain": "نَافِذَةٌ is feminine, so use هَٰذِهِ and a feminine adjective: هَٰذِهِ نَافِذَةٌ جَدِيدَةٌ."
+        },
+        {
+          "prompt": "Review (lesson 2): What does هِيَ طَالِبَةٌ جَيِّدَةٌ mean?",
+          "choices": [
+            "I am a good student.",
+            "He is a good student.",
+            "She is the good student.",
+            "She is a good student."
+          ],
+          "answerIndex": 3,
+          "explain": "هِيَ is “she”; طَالِبَةٌ جَيِّدَةٌ is “a good student” (feminine). There is no word for “is”."
+        }
+      ]
+    },
+    {
+      "id": "gram-possession",
+      "slug": "possessive-idafa",
+      "title": "Possessive constructions (الإضافة)",
+      "summary": "Learn the idafa (الْإِضَافَةُ), the “X of Y” construct: كِتَابُ الطَّالِبِ means “the student’s book”. Also meet the endings for “my”, “your”, “his”, “her” and “our”.",
+      "prerequisites": [
+        "gram-article"
+      ],
+      "explanation": [
+        {
+          "heading": "Two nouns side by side",
+          "text": "Arabic shows possession by putting two nouns next to each other. The owned thing comes first and the owner second: كِتَابُ الطَّالِبِ is “the book of the student”, that is, “the student’s book”.\nThis is called الْإِضَافَةُ (idāfa, “annexation”). The first noun is الْمُضَافُ and the second is الْمُضَافُ إِلَيْهِ."
+        },
+        {
+          "heading": "Three rules",
+          "text": "1. The first noun never has ال and never has tanween.\n2. The second noun usually has ال (or is a name) and ends in a kasra (ـِ), the “of” ending: الطَّالِبِ.\n3. The two nouns work as one unit, so nothing can come between them. The first noun’s own ending depends on its job in the sentence; as a subject it has a damma: كِتَابُ الطَّالِبِ جَدِيدٌ.\nIf the second noun has no ال, the whole phrase is indefinite: كِتَابُ طَالِبٍ is “a student’s book”."
+        },
+        {
+          "heading": "ة in the first noun",
+          "text": "If the first noun ends in ة, it is pronounced “t” because the second noun follows: مَدْرَسَةُ الْبِنْتِ is “madrasatu l-binti” (the girl’s school)."
+        },
+        {
+          "heading": "My, your, his, her, our",
+          "text": "To say “my book”, “your book” and so on, attach a short ending to the noun instead of adding a second noun:\nـِي = my: كِتَابِي (kitābī)\nـكَ = your, to a man: كِتَابُكَ (kitābuka)\nـكِ = your, to a woman: كِتَابُكِ (kitābuki)\nـهُ = his: كِتَابُهُ (kitābuhu)\nـهَا = her: كِتَابُهَا (kitābuhā)\nـنَا = our: كِتَابُنَا (kitābunā)\nThe noun takes neither ال nor tanween here, either."
+        },
+        {
+          "heading": "Guided practice: “the teacher’s house” and “Where is your book?”",
+          "text": "Step 1 — Put the owned thing first: بَيْتٌ. Remove the tanween and do not add ال: بَيْتُ.\nStep 2 — Put the owner second, with ال and a kasra: الْمُعَلِّمِ.\nStep 3 — Together: بَيْتُ الْمُعَلِّمِ (baytu l-muʿallimi).\nStep 4 — For “your book” (to a man) attach كَ to the noun: كِتَابٌ → كِتَابُكَ. Add the question word أَيْنَ at the front: أَيْنَ كِتَابُكَ؟ (ayna kitābuka?)."
+        },
+        {
+          "heading": "Lesson review",
+          "text": "• Owned thing first, owner second: كِتَابُ الطَّالِبِ.\n• The first noun has no ال and no tanween; the second ends in a kasra.\n• A first noun that ends in ة is pronounced “t” (مَدْرَسَةُ ...).\n• Short endings give “my, your, his, her, our”: ـِي ـكَ ـكِ ـهُ ـهَا ـنَا."
+        }
+      ],
+      "examples": [
+        {
+          "ar": "كِتَابُ الطَّالِبِ",
+          "translit": "kitābu ṭ-ṭālibi",
+          "en": "the student’s book (the book of the student).",
+          "vocabRefs": [
+            "sch-book",
+            "sch-student-m"
+          ]
+        },
+        {
+          "ar": "بَيْتُ الْمُعَلِّمِ",
+          "translit": "baytu l-muʿallimi",
+          "en": "the teacher’s house.",
+          "vocabRefs": [
+            "home-house",
+            "sch-teacher-m"
+          ]
+        },
+        {
+          "ar": "سَيَّارَةُ الطَّبِيبِ",
+          "translit": "sayyāratu ṭ-ṭabībi",
+          "en": "the doctor’s car.",
+          "vocabRefs": [
+            "trp-car",
+            "sch-doctor"
+          ]
+        },
+        {
+          "ar": "مَدْرَسَةُ الْبِنْتِ",
+          "translit": "madrasatu l-binti",
+          "en": "the girl’s school.",
+          "vocabRefs": [
+            "plc-school"
+          ]
+        },
+        {
+          "ar": "اِسْمُ الْوَلَدِ",
+          "translit": "ismu l-waladi",
+          "en": "the boy’s name.",
+          "vocabRefs": [
+            "ppl-name"
+          ]
+        },
+        {
+          "ar": "كِتَابُ طَالِبٍ",
+          "translit": "kitābu ṭālibin",
+          "en": "a student’s book (the second noun is indefinite).",
+          "vocabRefs": [
+            "sch-book",
+            "sch-student-m"
+          ]
+        },
+        {
+          "ar": "كِتَابُ الطَّالِبِ جَدِيدٌ",
+          "translit": "kitābu ṭ-ṭālibi jadīdun",
+          "en": "The student’s book is new.",
+          "vocabRefs": [
+            "sch-book",
+            "sch-student-m",
+            "core-new"
+          ]
+        },
+        {
+          "ar": "كِتَابِي",
+          "translit": "kitābī",
+          "en": "my book.",
+          "vocabRefs": [
+            "sch-book"
+          ]
+        },
+        {
+          "ar": "كِتَابُكَ",
+          "translit": "kitābuka",
+          "en": "your book (to a man).",
+          "vocabRefs": [
+            "sch-book"
+          ]
+        },
+        {
+          "ar": "كِتَابُكِ",
+          "translit": "kitābuki",
+          "en": "your book (to a woman).",
+          "vocabRefs": [
+            "sch-book"
+          ]
+        },
+        {
+          "ar": "كِتَابُهُ",
+          "translit": "kitābuhu",
+          "en": "his book.",
+          "vocabRefs": [
+            "sch-book"
+          ]
+        },
+        {
+          "ar": "كِتَابُهَا",
+          "translit": "kitābuhā",
+          "en": "her book.",
+          "vocabRefs": [
+            "sch-book"
+          ]
+        },
+        {
+          "ar": "كِتَابُنَا",
+          "translit": "kitābunā",
+          "en": "our book.",
+          "vocabRefs": [
+            "sch-book"
+          ]
+        },
+        {
+          "ar": "أَيْنَ كِتَابُكَ؟",
+          "translit": "ayna kitābuka?",
+          "en": "Where is your book? (to a man).",
+          "vocabRefs": [
+            "sch-book"
+          ]
+        }
+      ],
+      "mistakes": [
+        {
+          "text": "Adding ال to the first noun (الْكِتَابُ الطَّالِبِ). The first noun never has ال: كِتَابُ الطَّالِبِ.",
+          "ar": "كِتَابُ الطَّالِبِ"
+        },
+        {
+          "text": "Keeping the tanween on the first noun (كِتَابٌ الطَّالِبِ). Use a plain damma: كِتَابُ الطَّالِبِ.",
+          "ar": "كِتَابُ الطَّالِبِ"
+        },
+        {
+          "text": "Reversing the order. The owner comes second: كِتَابُ الطَّالِبِ, not الطَّالِبِ كِتَابُ.",
+          "ar": "كِتَابُ الطَّالِبِ"
+        },
+        {
+          "text": "Adding ال to a noun that already has an ending for “my/your/his…”. Say كِتَابِي, not الْكِتَابِي.",
+          "ar": "كِتَابِي"
+        }
+      ],
+      "check": [
+        {
+          "prompt": "Warm-up: In كِتَابُ الطَّالِبِ, who owns the book?",
+          "choices": [
+            "الطَّالِبِ",
+            "كِتَابُ",
+            "Nobody",
+            "Both words"
+          ],
+          "answerIndex": 0,
+          "explain": "The second noun, الطَّالِبِ, is the owner. The first noun, كِتَابُ, is the thing owned."
+        },
+        {
+          "prompt": "Warm-up: Which phrase means “the student’s book”?",
+          "choices": [
+            "الطَّالِبِ كِتَابُ",
+            "كِتَابٌ الطَّالِبِ",
+            "الْكِتَابُ الطَّالِبِ",
+            "كِتَابُ الطَّالِبِ"
+          ],
+          "answerIndex": 3,
+          "explain": "Owned thing first without ال or tanween, then the owner with ال and a kasra."
+        },
+        {
+          "prompt": "Practice: What ending does the second noun take in an idafa?",
+          "choices": [
+            "tanween damma (ـٌ)",
+            "fatha (ـَ)",
+            "kasra (ـِ)",
+            "sukun (ـْ)"
+          ],
+          "answerIndex": 2,
+          "explain": "The second noun takes the “of” ending, a kasra: الطَّالِبِ."
+        },
+        {
+          "prompt": "Practice: How do you say “my book”?",
+          "choices": [
+            "كِتَابُهُ",
+            "كِتَابِي",
+            "كِتَابُنَا",
+            "كِتَابُكَ"
+          ],
+          "answerIndex": 1,
+          "explain": "ـِي is “my”: كِتَابِي. ـهُ is “his”, ـنَا is “our” and ـكَ is “your (to a man)”."
+        },
+        {
+          "prompt": "Practice: What does بَيْتُ الْمُعَلِّمِ mean?",
+          "choices": [
+            "the house is a teacher",
+            "the teacher’s house",
+            "a big house",
+            "the teacher is in the house"
+          ],
+          "answerIndex": 1,
+          "explain": "It is an idafa: the house (owned) of the teacher (owner)."
+        },
+        {
+          "prompt": "Challenge: Which phrase correctly means “the girl’s school” (مَدْرَسَةٌ + الْبِنْتُ)?",
+          "choices": [
+            "مَدْرَسَةُ الْبِنْتِ",
+            "مَدْرَسَةٌ الْبِنْتِ",
+            "مَدْرَسَةُ الْبِنْتُ",
+            "الْمَدْرَسَةُ الْبِنْتِ"
+          ],
+          "answerIndex": 0,
+          "explain": "The first noun loses ال and tanween (damma), and the second noun takes ال and a kasra: مَدْرَسَةُ الْبِنْتِ."
+        },
+        {
+          "prompt": "Challenge: What does كِتَابُهَا mean?",
+          "choices": [
+            "his book",
+            "my book",
+            "our book",
+            "her book"
+          ],
+          "answerIndex": 3,
+          "explain": "ـهَا is “her”, so كِتَابُهَا is “her book”. ـهُ (with a damma) is “his”."
+        },
+        {
+          "prompt": "Review (lesson 4): Which sentence correctly means “The student’s book is new”?",
+          "choices": [
+            "كِتَابُ الطَّالِبِ جَدِيدَةٌ",
+            "الْكِتَابُ الطَّالِبِ جَدِيدٌ",
+            "كِتَابُ الطَّالِبِ جَدِيدٌ",
+            "كِتَابٌ الطَّالِبِ جَدِيدٌ"
+          ],
+          "answerIndex": 2,
+          "explain": "كِتَابٌ is masculine, so the predicate adjective is masculine and indefinite: جَدِيدٌ. The idafa itself is written كِتَابُ الطَّالِبِ."
+        }
+      ]
+    },
+    {
+      "id": "gram-questions",
+      "slug": "arabic-question-words",
+      "title": "Arabic question words",
+      "summary": "Learn the eight question words مَنْ, مَا, مَاذَا, أَيْنَ, مَتَى, لِمَاذَا, كَيْفَ and كَمْ, where they go in a sentence, and how to ask yes/no questions with هَلْ.",
+      "prerequisites": [
+        "gram-nominal"
+      ],
+      "explanation": [
+        {
+          "heading": "The eight question words",
+          "text": "مَنْ (man) — who\nمَا (mā) — what\nمَاذَا (mādhā) — what\nأَيْنَ (ayna) — where\nمَتَى (matā) — when\nلِمَاذَا (limādhā) — why\nكَيْفَ (kayfa) — how\nكَمْ (kam) — how many, how much"
+        },
+        {
+          "heading": "Word order",
+          "text": "The question word comes first, then the rest of the sentence: أَيْنَ الْمَطْعَمُ؟ (“Where is the restaurant?”). Because there is no word for “is” (lesson 2), the question word is followed directly by the noun. In writing, Arabic uses a reversed question mark: ؟"
+        },
+        {
+          "heading": "مَا and مَاذَا",
+          "text": "Both mean “what”. As a simple guide for beginners, use مَا before a noun or a pronoun (مَا هَٰذَا؟ “What is this?”, مَا لَوْنُ الْبَابِ؟ “What colour is the door?”) and مَاذَا before a verb (مَاذَا تَشْرَبُ؟ “What do you drink?”; verbs are the subject of lesson 7). Real usage is more flexible than this guide, but it keeps you accurate while you are learning."
+        },
+        {
+          "heading": "كَمْ and بِكَمْ",
+          "text": "كَمْ asks “how many” or “how much”: كَمْ عُمْرُكَ؟ is literally “how much is your age?”, that is, “How old are you?”. To ask a price, add بِـ (“for”): بِكَمْ هَٰذَا الْقَمِيصُ؟ “How much is this shirt?”. When you count things with كَمْ, the counted noun takes a special form that is not covered in this course yet."
+        },
+        {
+          "heading": "Yes/no questions with هَلْ",
+          "text": "To ask a question that can be answered “yes” or “no”, begin with هَلْ: هَلْ أَنْتَ طَالِبٌ؟ (“Are you a student?”). It is not one of the eight question words, but you will meet it everywhere."
+        },
+        {
+          "heading": "Guided practice: ask “Where is the restaurant?”",
+          "text": "Step 1 — Decide what you want to know. A place needs أَيْنَ.\nStep 2 — Put the question word first: أَيْنَ.\nStep 3 — Add the noun you are asking about, with ال: الْمَطْعَمُ.\nStep 4 — Finish with the Arabic question mark: أَيْنَ الْمَطْعَمُ؟ (ayna l-maṭʿamu?)\nTo answer a question with مَنْ, name the person: مَنْ هُوَ؟ هُوَ أَحْمَدُ. (“Who is he? He is Ahmad.”)"
+        },
+        {
+          "heading": "Lesson review",
+          "text": "• مَنْ = who, مَا / مَاذَا = what, أَيْنَ = where, مَتَى = when, لِمَاذَا = why, كَيْفَ = how, كَمْ = how many / how much.\n• The question word comes first.\n• Beginners: مَا before nouns, مَاذَا before verbs.\n• هَلْ begins a yes/no question."
+        }
+      ],
+      "examples": [
+        {
+          "ar": "مَنْ هُوَ؟",
+          "translit": "man huwa?",
+          "en": "Who is he?",
+          "vocabRefs": [
+            "ppl-he"
+          ]
+        },
+        {
+          "ar": "مَنْ أَنْتَ؟",
+          "translit": "man anta?",
+          "en": "Who are you? (to a man)",
+          "vocabRefs": [
+            "ppl-you-m"
+          ]
+        },
+        {
+          "ar": "مَا هَٰذَا؟",
+          "translit": "mā hādhā?",
+          "en": "What is this?"
+        },
+        {
+          "ar": "مَا لَوْنُ الْبَابِ؟",
+          "translit": "mā lawnu l-bābi?",
+          "en": "What colour is the door? (literally “what is the colour of the door?”)"
+        },
+        {
+          "ar": "مَاذَا تَشْرَبُ؟",
+          "translit": "mādhā tashrabu?",
+          "en": "What do you drink? (to a man; the verb is explained in lesson 7)"
+        },
+        {
+          "ar": "أَيْنَ الْمَطْعَمُ؟",
+          "translit": "ayna l-maṭʿamu?",
+          "en": "Where is the restaurant?"
+        },
+        {
+          "ar": "مَتَى الدَّرْسُ؟",
+          "translit": "matā d-darsu?",
+          "en": "When is the lesson?",
+          "vocabRefs": [
+            "sch-lesson"
+          ]
+        },
+        {
+          "ar": "لِمَاذَا أَنْتَ هُنَا؟",
+          "translit": "limādhā anta hunā?",
+          "en": "Why are you here? (to a man)",
+          "vocabRefs": [
+            "ppl-you-m"
+          ]
+        },
+        {
+          "ar": "كَيْفَ الطَّقْسُ الْيَوْمَ؟",
+          "translit": "kayfa ṭ-ṭaqsu l-yawma?",
+          "en": "How is the weather today?"
+        },
+        {
+          "ar": "كَمْ عُمْرُكَ؟",
+          "translit": "kam ʿumruka?",
+          "en": "How old are you? (to a man; literally “how much is your age?”)"
+        },
+        {
+          "ar": "بِكَمْ هَٰذَا الْقَمِيصُ؟",
+          "translit": "bikam hādhā l-qamīṣu?",
+          "en": "How much is this shirt? (asking a price)"
+        },
+        {
+          "ar": "هَلْ أَنْتَ طَالِبٌ؟",
+          "translit": "hal anta ṭālibun?",
+          "en": "Are you a student? (to a man)",
+          "vocabRefs": [
+            "ppl-you-m",
+            "sch-student-m"
+          ]
+        }
+      ],
+      "mistakes": [
+        {
+          "text": "Mixing up كَيْفَ (“how”) and كَمْ (“how many / how much”). كَيْفَ الطَّقْسُ؟ asks how the weather is; كَمْ عُمْرُكَ؟ asks how old you are.",
+          "ar": "كَيْفَ الطَّقْسُ؟"
+        },
+        {
+          "text": "Using مَاذَا before a noun at this level. Prefer مَا before a noun or pronoun: مَا هَٰذَا؟",
+          "ar": "مَا هَٰذَا؟"
+        },
+        {
+          "text": "Putting the question word at the end, as English sometimes does (“You are where?”). In your own questions put it first: أَيْنَ أَنْتَ؟",
+          "ar": "أَيْنَ أَنْتَ؟"
+        },
+        {
+          "text": "Using the ordinary question mark “?” in Arabic text. Arabic writes the reversed mark: ؟",
+          "ar": "مَنْ هُوَ؟"
+        }
+      ],
+      "check": [
+        {
+          "prompt": "Warm-up: Which question word means “where”?",
+          "choices": [
+            "مَتَى",
+            "مَنْ",
+            "كَيْفَ",
+            "أَيْنَ"
+          ],
+          "answerIndex": 3,
+          "explain": "أَيْنَ (ayna) is “where”. مَتَى is “when”, كَيْفَ is “how” and مَنْ is “who”."
+        },
+        {
+          "prompt": "Warm-up: Which word means “who”?",
+          "choices": [
+            "مَا",
+            "كَمْ",
+            "مَنْ",
+            "لِمَاذَا"
+          ],
+          "answerIndex": 2,
+          "explain": "مَنْ (man) is “who”. كَمْ is “how many / how much”, مَا is “what” and لِمَاذَا is “why”."
+        },
+        {
+          "prompt": "Practice: Which question means “When is the lesson?”",
+          "choices": [
+            "أَيْنَ الدَّرْسُ؟",
+            "مَتَى الدَّرْسُ؟",
+            "لِمَاذَا الدَّرْسُ؟",
+            "كَيْفَ الدَّرْسُ؟"
+          ],
+          "answerIndex": 1,
+          "explain": "مَتَى (matā) is “when”; the noun follows directly with no word for “is”."
+        },
+        {
+          "prompt": "Practice: Which question means “How is the weather today?”",
+          "choices": [
+            "كَيْفَ الطَّقْسُ الْيَوْمَ؟",
+            "أَيْنَ الطَّقْسُ الْيَوْمَ؟",
+            "مَتَى الطَّقْسُ الْيَوْمَ؟",
+            "لِمَاذَا الطَّقْسُ الْيَوْمَ؟"
+          ],
+          "answerIndex": 0,
+          "explain": "كَيْفَ is “how”, so كَيْفَ الطَّقْسُ الْيَوْمَ؟ asks how the weather is today. أَيْنَ asks where, مَتَى asks when and لِمَاذَا asks why."
+        },
+        {
+          "prompt": "Practice: Which question asks the PRICE of a shirt?",
+          "choices": [
+            "بِكَمْ هَٰذَا الْقَمِيصُ؟",
+            "لِمَاذَا هَٰذَا الْقَمِيصُ؟",
+            "مَنْ هَٰذَا الْقَمِيصُ؟",
+            "أَيْنَ هَٰذَا الْقَمِيصُ؟"
+          ],
+          "answerIndex": 0,
+          "explain": "بِكَمْ هَٰذَا الْقَمِيصُ؟ means “How much is this shirt?”. بِـ (“for”) plus كَمْ asks for a price."
+        },
+        {
+          "prompt": "Challenge: Complete the question: ___ لَوْنُ الْبَابِ؟ (“What colour is the door?”)",
+          "choices": [
+            "أَيْنَ",
+            "مَتَى",
+            "كَمْ",
+            "مَا"
+          ],
+          "answerIndex": 3,
+          "explain": "Before a noun (لَوْنُ, “colour”) use مَا: مَا لَوْنُ الْبَابِ؟ The other words mean “where”, “when” and “how many”."
+        },
+        {
+          "prompt": "Challenge: Which question asks for a REASON?",
+          "choices": [
+            "مَتَى أَنْتَ هُنَا؟",
+            "أَيْنَ أَنْتَ؟",
+            "لِمَاذَا أَنْتَ هُنَا؟",
+            "كَمْ أَنْتَ هُنَا؟"
+          ],
+          "answerIndex": 2,
+          "explain": "لِمَاذَا (limādhā) is “why”: لِمَاذَا أَنْتَ هُنَا؟ means “Why are you here?”."
+        },
+        {
+          "prompt": "Review (lesson 5): What does أَيْنَ كِتَابُكَ؟ mean?",
+          "choices": [
+            "Who is your book?",
+            "Where is your book?",
+            "When is your book?",
+            "What is your book?"
+          ],
+          "answerIndex": 1,
+          "explain": "أَيْنَ is “where” and كِتَابُكَ is “your book” (the ending ـكَ means “your”). No word for “is” is needed."
+        },
+        {
+          "prompt": "Review (lesson 2): A woman is asked مَنْ أَنْتِ؟ Which answer is correct?",
+          "choices": [
+            "أَنَا مُهَنْدِسٌ",
+            "أَنَا مُهَنْدِسَةٌ",
+            "هُوَ مُهَنْدِسٌ",
+            "أَنْتِ مُهَنْدِسَةٌ"
+          ],
+          "answerIndex": 1,
+          "explain": "She answers about herself with أَنَا, and a woman is مُهَنْدِسَةٌ: أَنَا مُهَنْدِسَةٌ."
+        }
+      ]
+    },
+    {
+      "id": "gram-present",
+      "slug": "present-tense-verbs",
+      "title": "Present-tense verbs",
+      "summary": "Learn how the Arabic present tense is built from prefixes, using كَتَبَ, ذَهَبَ and شَرِبَ with أَنَا, أَنْتَ, أَنْتِ, هُوَ, هِيَ and نَحْنُ.",
+      "prerequisites": [
+        "gram-nominal"
+      ],
+      "explanation": [
+        {
+          "heading": "How the present tense works",
+          "text": "The Arabic present tense (الْمُضَارِعُ) is made by adding a prefix to a verb stem, and sometimes an ending. The prefix shows who is doing the action. One form covers both “I write” and “I am writing”.\nDictionaries list a verb by its “he did” form (كَتَبَ, “he wrote”), so be careful: that form is the past tense, not the present."
+        },
+        {
+          "heading": "The pattern for كَتَبَ (“to write”)",
+          "text": "The stem is ـكْتُبـ (-ktub-):\nأَنَا أَكْتُبُ — I write (prefix أَـ)\nأَنْتَ تَكْتُبُ — you write, to a man (prefix تَـ)\nأَنْتِ تَكْتُبِينَ — you write, to a woman (prefix تَـ and ending ـِينَ)\nهُوَ يَكْتُبُ — he writes (prefix يَـ)\nهِيَ تَكْتُبُ — she writes (prefix تَـ)\nنَحْنُ نَكْتُبُ — we write (prefix نَـ)\nThe forms for “you (to a man)” and “she” look the same. The pronoun, or the situation, tells you which one is meant."
+        },
+        {
+          "heading": "The stem vowel",
+          "text": "In these verbs the first stem letter has a sukun, and the vowel on the middle letter depends on the verb. You learn it with each verb: كَتَبَ → يَكْتُبُ (damma), ذَهَبَ → يَذْهَبُ (fatha), شَرِبَ → يَشْرَبُ (fatha). The prefixes and the ending ـِينَ are the same for all three."
+        },
+        {
+          "heading": "Endings and pronouns",
+          "text": "In a normal statement the present-tense verb ends in a damma (ـُ), as in أَكْتُبُ. The only special ending in this lesson is ـِينَ for “you (to a woman)”. Real Arabic often drops the pronoun, because أَكْتُبُ already means “I write”; it is kept here so you can see who is acting."
+        },
+        {
+          "heading": "Objects and prepositions",
+          "text": "A direct object takes a fatha ending: أَنَا أَكْتُبُ الدَّرْسَ (“I write the lesson”). A noun after a preposition such as إِلَى (“to”) takes a kasra: أَذْهَبُ إِلَى الْمَدْرَسَةِ (“I go to school”). Prepositions are explained in lesson 8."
+        },
+        {
+          "heading": "Verb-first sentences",
+          "text": "Arabic sentences often begin with the verb: يَكْتُبُ الطَّالِبُ الدَّرْسَ (“The student writes the lesson”). The verb comes first, so it uses the singular “he” form (يَكْتُبُ), and the subject follows with a damma (الطَّالِبُ). This is a verbal sentence (الْجُمْلَةُ الْفِعْلِيَّةُ), in contrast to the nominal sentences of lesson 2.\nThe order pronoun + verb that you practise in this lesson (أَنَا أَكْتُبُ) is also correct and keeps the person easy to see."
+        },
+        {
+          "heading": "Guided practice: build “She drinks the tea”",
+          "text": "Step 1 — The verb is شَرِبَ (“he drank”); its present stem is ـشْرَبـ.\nStep 2 — “She” is هِيَ, so the prefix is تَـ: تَشْرَبُ.\nStep 3 — Add the object with ال and a fatha: الشَّايَ. ش is a sun letter, so it has a shadda.\nStep 4 — Together: هِيَ تَشْرَبُ الشَّايَ (hiya tashrabu sh-shāya)."
+        },
+        {
+          "heading": "Lesson review",
+          "text": "• The prefixes are: أَـ (I), تَـ (you, she), يَـ (he), نَـ (we); “you (to a woman)” also takes ـِينَ.\n• The same pattern works for كَتَبَ, ذَهَبَ and شَرِبَ; only the stem vowel differs.\n• The dictionary form (كَتَبَ) means “he wrote”, not “he writes”.\n• A direct object takes a fatha: الدَّرْسَ."
+        }
+      ],
+      "examples": [
+        {
+          "ar": "أَنَا أَكْتُبُ",
+          "translit": "anā aktubu",
+          "en": "I write.",
+          "vocabRefs": [
+            "ppl-i"
+          ]
+        },
+        {
+          "ar": "أَنْتَ تَكْتُبُ",
+          "translit": "anta taktubu",
+          "en": "You write (to a man).",
+          "vocabRefs": [
+            "ppl-you-m"
+          ]
+        },
+        {
+          "ar": "أَنْتِ تَكْتُبِينَ",
+          "translit": "anti taktubīna",
+          "en": "You write (to a woman).",
+          "vocabRefs": [
+            "ppl-you-f"
+          ]
+        },
+        {
+          "ar": "هُوَ يَكْتُبُ",
+          "translit": "huwa yaktubu",
+          "en": "He writes.",
+          "vocabRefs": [
+            "ppl-he"
+          ]
+        },
+        {
+          "ar": "هِيَ تَكْتُبُ",
+          "translit": "hiya taktubu",
+          "en": "She writes.",
+          "vocabRefs": [
+            "ppl-she"
+          ]
+        },
+        {
+          "ar": "نَحْنُ نَكْتُبُ",
+          "translit": "naḥnu naktubu",
+          "en": "We write.",
+          "vocabRefs": [
+            "ppl-we"
+          ]
+        },
+        {
+          "ar": "أَنَا أَذْهَبُ إِلَى الْمَدْرَسَةِ",
+          "translit": "anā adhhabu ilā l-madrasati",
+          "en": "I go to school.",
+          "vocabRefs": [
+            "ppl-i",
+            "plc-school"
+          ]
+        },
+        {
+          "ar": "هِيَ تَشْرَبُ الشَّايَ",
+          "translit": "hiya tashrabu sh-shāya",
+          "en": "She drinks the tea.",
+          "vocabRefs": [
+            "ppl-she",
+            "food-tea"
+          ]
+        },
+        {
+          "ar": "هُوَ يَشْرَبُ الْقَهْوَةَ",
+          "translit": "huwa yashrabu l-qahwata",
+          "en": "He drinks the coffee.",
+          "vocabRefs": [
+            "ppl-he",
+            "food-coffee"
+          ]
+        },
+        {
+          "ar": "نَحْنُ نَذْهَبُ إِلَى الْبَيْتِ",
+          "translit": "naḥnu nadhhabu ilā l-bayti",
+          "en": "We go home (to the house).",
+          "vocabRefs": [
+            "ppl-we",
+            "home-house"
+          ]
+        },
+        {
+          "ar": "أَنْتِ تَكْتُبِينَ الدَّرْسَ",
+          "translit": "anti taktubīna d-darsa",
+          "en": "You write the lesson (to a woman).",
+          "vocabRefs": [
+            "ppl-you-f",
+            "sch-lesson"
+          ]
+        },
+        {
+          "ar": "يَكْتُبُ الطَّالِبُ الدَّرْسَ",
+          "translit": "yaktubu ṭ-ṭālibu d-darsa",
+          "en": "The student writes the lesson (a verb-first sentence).",
+          "vocabRefs": [
+            "sch-student-m",
+            "sch-lesson"
+          ]
+        }
+      ],
+      "mistakes": [
+        {
+          "text": "Using the dictionary form for the present. كَتَبَ means “he wrote”; for “he writes” say يَكْتُبُ.",
+          "ar": "يَكْتُبُ"
+        },
+        {
+          "text": "Using the same prefix for “I” and “he”. “I” takes أَـ and “he” takes يَـ: أَكْتُبُ, يَكْتُبُ.",
+          "ar": "أَكْتُبُ"
+        },
+        {
+          "text": "Forgetting the ending ـِينَ for “you (to a woman)”. Say أَنْتِ تَكْتُبِينَ, not أَنْتِ تَكْتُبُ.",
+          "ar": "تَكْتُبِينَ"
+        },
+        {
+          "text": "Thinking تَكْتُبُ has only one meaning. It can be “you (to a man) write” or “she writes”; the pronoun tells you which.",
+          "ar": "تَكْتُبُ"
+        }
+      ],
+      "check": [
+        {
+          "prompt": "Warm-up: Which prefix means “I” in the present tense?",
+          "choices": [
+            "يَـ",
+            "نَـ",
+            "أَـ",
+            "تَـ"
+          ],
+          "answerIndex": 2,
+          "explain": "أَـ is the prefix for “I”: أَكْتُبُ. يَـ is “he”, تَـ is “you” or “she” and نَـ is “we”."
+        },
+        {
+          "prompt": "Warm-up: Which form means “he writes”?",
+          "choices": [
+            "أَكْتُبُ",
+            "يَكْتُبُ",
+            "نَكْتُبُ",
+            "كَتَبَ"
+          ],
+          "answerIndex": 1,
+          "explain": "يَكْتُبُ (yaktubu) is “he writes”. كَتَبَ is the past “he wrote”."
+        },
+        {
+          "prompt": "Practice: Which form means “you (to a woman) write”?",
+          "choices": [
+            "تَكْتُبِينَ",
+            "تَكْتُبُ",
+            "يَكْتُبِينَ",
+            "أَكْتُبِينَ"
+          ],
+          "answerIndex": 0,
+          "explain": "“You (to a woman)” takes the prefix تَـ and the ending ـِينَ: تَكْتُبِينَ."
+        },
+        {
+          "prompt": "Practice: Which form means “we go”?",
+          "choices": [
+            "تَذْهَبُ",
+            "أَذْهَبُ",
+            "يَذْهَبُ",
+            "نَذْهَبُ"
+          ],
+          "answerIndex": 3,
+          "explain": "“We” takes the prefix نَـ: نَذْهَبُ (nadhhabu). The prefix أَـ is “I”, يَـ is “he” and تَـ is “you” or “she”."
+        },
+        {
+          "prompt": "Practice: Complete the sentence: هِيَ ___ الشَّايَ. (“She drinks the tea.”)",
+          "choices": [
+            "أَشْرَبُ",
+            "نَشْرَبُ",
+            "يَشْرَبُ",
+            "تَشْرَبُ"
+          ],
+          "answerIndex": 3,
+          "explain": "“She” takes the prefix تَـ: هِيَ تَشْرَبُ الشَّايَ. يَشْرَبُ would be “he drinks”, أَشْرَبُ “I drink” and نَشْرَبُ “we drink”."
+        },
+        {
+          "prompt": "Challenge: What can تَكْتُبُ mean?",
+          "choices": [
+            "only “she writes”",
+            "only “you (to a man) write”",
+            "“you (to a man) write” or “she writes”",
+            "“I write”"
+          ],
+          "answerIndex": 2,
+          "explain": "The prefix تَـ is used for both “you (to a man)” and “she”; the pronoun or the situation tells you which."
+        },
+        {
+          "prompt": "Challenge: What does أَنَا أَذْهَبُ إِلَى الْمَدْرَسَةِ mean?",
+          "choices": [
+            "She goes to school.",
+            "I go to school.",
+            "We go to school.",
+            "I wrote at school."
+          ],
+          "answerIndex": 1,
+          "explain": "أَنَا is “I”, أَذْهَبُ is “I go” and إِلَى الْمَدْرَسَةِ is “to the school”."
+        },
+        {
+          "prompt": "Review (lesson 2): Which sentence contains a present-tense verb?",
+          "choices": [
+            "هِيَ تَكْتُبُ",
+            "هِيَ مُعَلِّمَةٌ",
+            "هُوَ طَبِيبٌ",
+            "أَنَا مُهَنْدِسٌ"
+          ],
+          "answerIndex": 0,
+          "explain": "Only هِيَ تَكْتُبُ has a verb (تَكْتُبُ, “writes”). The other sentences are nominal sentences with no verb."
+        },
+        {
+          "prompt": "Review (lesson 6): Someone asks you مَاذَا تَشْرَبُ؟ Which answer fits? (You are a man.)",
+          "choices": [
+            "أَشْرَبُ الْقَهْوَةَ",
+            "هِيَ الْقَهْوَةُ",
+            "تَشْرَبِينَ الْقَهْوَةَ",
+            "يَشْرَبُ الْقَهْوَةَ"
+          ],
+          "answerIndex": 0,
+          "explain": "You answer about yourself, so “I drink the coffee”: أَشْرَبُ الْقَهْوَةَ (prefix أَـ)."
+        }
+      ]
+    },
+    {
+      "id": "gram-negation",
+      "slug": "negation-prepositions",
+      "title": "Basic negation and prepositions",
+      "summary": "Learn to say “not” with لَا (for verbs) and لَيْسَ (for “am/is/are not”), and to use the common prepositions فِي, عَلَى, مِنْ, إِلَى and مَعَ.",
+      "prerequisites": [
+        "gram-nominal",
+        "gram-present"
+      ],
+      "explanation": [
+        {
+          "heading": "لَا with present-tense verbs",
+          "text": "To negate a present-tense verb, put لَا in front of it. The verb does not change: أَكْتُبُ (“I write”) becomes لَا أَكْتُبُ (“I do not write”), and يَذْهَبُ becomes لَا يَذْهَبُ. On its own, لَا also means “no”."
+        },
+        {
+          "heading": "لَيْسَ for “am / is / are not”",
+          "text": "Nominal sentences (lesson 2) have no verb, so لَا is not used to negate them. Use لَيْسَ (“is not”) instead. It changes for the person, like a verb:\nلَسْتُ — I am not\nلَسْتَ — you are not (to a man)\nلَسْتِ — you are not (to a woman)\nلَيْسَ — he is not\nلَيْسَتْ — she is not\nلَسْنَا — we are not"
+        },
+        {
+          "heading": "The ending after لَيْسَ",
+          "text": "After لَيْسَ, the word that says what the subject is (or is like) takes a fatha ending, usually written as tanween fatha with an alif: أَنَا مُهَنْدِسٌ becomes لَسْتُ مُهَنْدِسًا. If the word ends in ة, the tanween sits on the ة with no alif: هِيَ لَيْسَتْ مُعَلِّمَةً. When you name the subject, it keeps its damma: لَيْسَ الْبَيْتُ كَبِيرًا (“The house is not big”)."
+        },
+        {
+          "heading": "Prepositions",
+          "text": "Prepositions are short words that go before a noun:\nفِي — in, at\nعَلَى — on\nمِنْ — from\nإِلَى — to\nمَعَ — with\nThe noun after a preposition takes the kasra ending (ـِ): فِي الْبَيْتِ (“in the house”). Before ال, the word مِنْ is pronounced and written مِنَ: مِنَ الْمَدِينَةِ (“from the city”)."
+        },
+        {
+          "heading": "Do not mix them up",
+          "text": "Use لَا with present-tense verbs and لَيْسَ for “am/is/are not” sentences that have no verb. Do not say أَنَا لَا مُهَنْدِسٌ. (More advanced Arabic can also put لَيْسَ before a verb, as in لَسْتُ أَدْرِي, “I do not know”. Do not worry about that yet: with verbs, start with لَا.)\nArabic has other negation words that you will meet later, such as لَمْ and لَنْ, which are used with past and future meanings and change the ending of the verb. Prepositions also combine with pronoun endings (for example فِيهِ, “in it”); these forms are not covered here."
+        },
+        {
+          "heading": "Guided practice: negate “We are students” and “I drink coffee”",
+          "text": "Step 1 — “We are students” has no verb, so use لَيْسَ. For “we” it is لَسْنَا.\nStep 2 — The word after it takes a fatha: طُلَّابٌ becomes طُلَّابًا.\nStep 3 — Together: نَحْنُ لَسْنَا طُلَّابًا (naḥnu lasnā ṭullāban).\nStep 4 — “I drink coffee” has a verb, so use لَا: أَشْرَبُ الْقَهْوَةَ becomes لَا أَشْرَبُ الْقَهْوَةَ (lā ashrabu l-qahwata)."
+        },
+        {
+          "heading": "Lesson review",
+          "text": "• لَا + present-tense verb = “do not …”.\n• لَيْسَ (لَسْتُ, لَسْتَ, لَسْتِ, لَيْسَ, لَيْسَتْ, لَسْنَا) = “am/is/are not”; the word after it ends in a fatha.\n• Prepositions: فِي in, عَلَى on, مِنْ from, إِلَى to, مَعَ with.\n• The noun after a preposition ends in a kasra."
+        }
+      ],
+      "examples": [
+        {
+          "ar": "لَا أَكْتُبُ الدَّرْسَ",
+          "translit": "lā aktubu d-darsa",
+          "en": "I do not write the lesson.",
+          "vocabRefs": [
+            "sch-lesson"
+          ]
+        },
+        {
+          "ar": "هُوَ لَا يَذْهَبُ إِلَى الْمَدْرَسَةِ",
+          "translit": "huwa lā yadhhabu ilā l-madrasati",
+          "en": "He does not go to school.",
+          "vocabRefs": [
+            "ppl-he",
+            "plc-school"
+          ]
+        },
+        {
+          "ar": "لَسْتُ مُهَنْدِسًا",
+          "translit": "lastu muhandisan",
+          "en": "I am not an engineer (said by a man)."
+        },
+        {
+          "ar": "أَنْتِ لَسْتِ مُعَلِّمَةً",
+          "translit": "anti lasti muʿallimatan",
+          "en": "You are not a teacher (to a woman).",
+          "vocabRefs": [
+            "ppl-you-f",
+            "sch-teacher-f"
+          ]
+        },
+        {
+          "ar": "هِيَ لَيْسَتْ طَبِيبَةً",
+          "translit": "hiya laysat ṭabībatan",
+          "en": "She is not a doctor.",
+          "vocabRefs": [
+            "ppl-she"
+          ]
+        },
+        {
+          "ar": "لَيْسَ الْبَيْتُ كَبِيرًا",
+          "translit": "laysa l-baytu kabīran",
+          "en": "The house is not big.",
+          "vocabRefs": [
+            "home-house",
+            "core-big"
+          ]
+        },
+        {
+          "ar": "نَحْنُ لَسْنَا طُلَّابًا",
+          "translit": "naḥnu lasnā ṭullāban",
+          "en": "We are not students.",
+          "vocabRefs": [
+            "ppl-we"
+          ]
+        },
+        {
+          "ar": "لَا، شُكْرًا",
+          "translit": "lā, shukran",
+          "en": "No, thank you."
+        },
+        {
+          "ar": "أَنَا فِي الْمَدْرَسَةِ",
+          "translit": "anā fī l-madrasati",
+          "en": "I am at school (in the school).",
+          "vocabRefs": [
+            "ppl-i",
+            "plc-school"
+          ]
+        },
+        {
+          "ar": "الْكِتَابُ عَلَى الطَّاوِلَةِ",
+          "translit": "al-kitābu ʿalā ṭ-ṭāwilati",
+          "en": "The book is on the table.",
+          "vocabRefs": [
+            "sch-book",
+            "home-table"
+          ]
+        },
+        {
+          "ar": "هُوَ مِنَ الْمَدِينَةِ",
+          "translit": "huwa mina l-madīnati",
+          "en": "He is from the city.",
+          "vocabRefs": [
+            "ppl-he",
+            "plc-city"
+          ]
+        },
+        {
+          "ar": "هِيَ تَذْهَبُ إِلَى الْبَيْتِ",
+          "translit": "hiya tadhhabu ilā l-bayti",
+          "en": "She goes home (to the house).",
+          "vocabRefs": [
+            "ppl-she",
+            "home-house"
+          ]
+        },
+        {
+          "ar": "أَنَا مَعَ الْمُعَلِّمِ",
+          "translit": "anā maʿa l-muʿallimi",
+          "en": "I am with the teacher.",
+          "vocabRefs": [
+            "ppl-i",
+            "sch-teacher-m"
+          ]
+        }
+      ],
+      "mistakes": [
+        {
+          "text": "Using لَا with a noun sentence (أَنَا لَا مُهَنْدِسٌ). Use لَيْسَ: لَسْتُ مُهَنْدِسًا.",
+          "ar": "لَسْتُ مُهَنْدِسًا"
+        },
+        {
+          "text": "Forgetting the fatha after لَيْسَ (لَسْتُ مُهَنْدِسٌ). The word that follows ends in a fatha: مُهَنْدِسًا.",
+          "ar": "لَسْتُ مُهَنْدِسًا"
+        },
+        {
+          "text": "Using the masculine form for “she is not”. Say هِيَ لَيْسَتْ, not هِيَ لَيْسَ.",
+          "ar": "هِيَ لَيْسَتْ طَبِيبَةً"
+        },
+        {
+          "text": "Forgetting the kasra after a preposition (فِي الْبَيْتُ). Write فِي الْبَيْتِ.",
+          "ar": "فِي الْبَيْتِ"
+        }
+      ],
+      "check": [
+        {
+          "prompt": "Warm-up: Which preposition means “in”?",
+          "choices": [
+            "عَلَى",
+            "فِي",
+            "مِنْ",
+            "مَعَ"
+          ],
+          "answerIndex": 1,
+          "explain": "فِي (fī) is “in” or “at”. عَلَى is “on”, مِنْ is “from” and مَعَ is “with”."
+        },
+        {
+          "prompt": "Warm-up: How do you say “I do not write”?",
+          "choices": [
+            "لَا أَكْتُبُ",
+            "لَيْسَتْ أَكْتُبُ",
+            "أَكْتُبُ لَا",
+            "أَنَا لَا كَاتِبٌ"
+          ],
+          "answerIndex": 0,
+          "explain": "A present-tense verb is negated by putting لَا in front of it: لَا أَكْتُبُ. The other choices have the wrong form or the wrong word order."
+        },
+        {
+          "prompt": "Practice: Which sentence means “I am not an engineer” (said by a man)?",
+          "choices": [
+            "أَنَا لَا مُهَنْدِسٌ",
+            "لَيْسَ أَنَا مُهَنْدِسًا",
+            "لَسْتُ مُهَنْدِسٌ",
+            "لَسْتُ مُهَنْدِسًا"
+          ],
+          "answerIndex": 3,
+          "explain": "A sentence without a verb is negated with لَيْسَ. For “I” it is لَسْتُ, and the word after it ends in a fatha: طَالِبًا."
+        },
+        {
+          "prompt": "Practice: Which sentence means “She is not a doctor”?",
+          "choices": [
+            "هِيَ لَيْسَ طَبِيبَةً",
+            "هِيَ لَا طَبِيبَةٌ",
+            "هِيَ لَيْسَتْ طَبِيبَةً",
+            "هِيَ لَسْتِ طَبِيبَةً"
+          ],
+          "answerIndex": 2,
+          "explain": "For “she”, لَيْسَ becomes لَيْسَتْ. The word after it takes a fatha; with ة the tanween sits on the ة: طَبِيبَةً."
+        },
+        {
+          "prompt": "Practice: How do you say “The book is on the table”?",
+          "choices": [
+            "الْكِتَابُ فِي الطَّاوِلَةِ",
+            "الْكِتَابُ مِنَ الطَّاوِلَةِ",
+            "الْكِتَابُ عَلَى الطَّاوِلَةِ",
+            "الْكِتَابُ مَعَ الطَّاوِلَةِ"
+          ],
+          "answerIndex": 2,
+          "explain": "عَلَى means “on”. The noun after it takes a kasra: الطَّاوِلَةِ."
+        },
+        {
+          "prompt": "Challenge: What ending does a noun take after a preposition?",
+          "choices": [
+            "damma (ـُ)",
+            "kasra (ـِ)",
+            "fatha (ـَ)",
+            "no ending"
+          ],
+          "answerIndex": 1,
+          "explain": "A noun after a preposition ends in a kasra: فِي الْبَيْتِ, عَلَى الطَّاوِلَةِ, إِلَى الْمَدْرَسَةِ."
+        },
+        {
+          "prompt": "Challenge: Which sentence means “He does not go to school”?",
+          "choices": [
+            "هُوَ لَا يَذْهَبُ إِلَى الْمَدْرَسَةِ",
+            "هُوَ لَيْسَتْ يَذْهَبُ إِلَى الْمَدْرَسَةِ",
+            "هُوَ لَسْتُ يَذْهَبُ إِلَى الْمَدْرَسَةِ",
+            "هُوَ لَا يَذْهَبَانِ إِلَى الْمَدْرَسَةِ"
+          ],
+          "answerIndex": 0,
+          "explain": "يَذْهَبُ is a present-tense verb, so put لَا in front of it. The other choices use a wrong form of لَيْسَ or a verb form that does not match “he”."
+        },
+        {
+          "prompt": "Review (lesson 7): Which sentence means “We do not drink coffee”?",
+          "choices": [
+            "نَحْنُ لَا يَشْرَبُونَ الْقَهْوَةَ",
+            "نَحْنُ لَا تَشْرَبُ الْقَهْوَةَ",
+            "نَحْنُ لَا أَشْرَبُ الْقَهْوَةَ",
+            "نَحْنُ لَا نَشْرَبُ الْقَهْوَةَ"
+          ],
+          "answerIndex": 3,
+          "explain": "“We” takes the prefix نَـ: نَشْرَبُ. Put لَا in front to negate it. The other choices use the prefixes for “you/she”, “I” or “they”."
+        },
+        {
+          "prompt": "Review (lessons 4 and 5): Which sentence means “The student’s book is not new”?",
+          "choices": [
+            "كِتَابُ الطَّالِبِ لَا جَدِيدٌ",
+            "كِتَابُ الطَّالِبِ لَيْسَتْ جَدِيدًا",
+            "كِتَابُ الطَّالِبِ لَيْسَ جَدِيدٌ",
+            "كِتَابُ الطَّالِبِ لَيْسَ جَدِيدًا"
+          ],
+          "answerIndex": 3,
+          "explain": "كِتَابُ الطَّالِبِ is masculine, so use لَيْسَ (not لَيْسَتْ), and the predicate takes a fatha: جَدِيدًا."
+        }
+      ]
+    }
+  ]
+}

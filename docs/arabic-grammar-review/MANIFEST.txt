@@ -1,0 +1,31 @@
+Arabic grammar review package — MANIFEST
+
+STATUS: UNREVIEWED.
+Nothing in this package has been reviewed, approved or verified by a qualified Arabic teacher. The eight lessons are draft content: they are not in the live
+course catalogue (assets/js/learn/grammar.js keeps RAW = []), no grammar page has been generated, and nothing is published.
+All teacher decision, proposed correction and reviewer comment fields are blank. Every automated check in the package is STRUCTURE ONLY.
+
+Hash rule: SHA-256 of the file text with CRLF line endings normalised to LF, so the hashes are identical on Windows and Linux checkouts.
+Generator: docs/arabic-grammar-review/build-grammar-review.mjs (deterministic: no timestamps, fixed order). Check freshness with: node docs/arabic-grammar-review/build-grammar-review.mjs --check
+
+Drafts: 8 lessons, 258 review items (8 lesson-summary; 57 explanation; 96 example; 31 common-mistake; 66 mini-check), 53 flagged by the author.
+
+== Files (the drafts and everything generated from them) ==
+7558e2b08187266a7909472b72007257adbb1165564726730beb1833ce334f66  docs/arabic-grammar-review/grammar-drafts.json
+763c9115b25451bddb73644c67b1617bcf98f30706899b07e7de7b56998ba487  docs/arabic-grammar-review/grammar-review-items.csv
+aa5ce7b3350bdefe7bd40b398a4649460130bde345784dc7d34dfb9b01841ef8  docs/arabic-grammar-review/grammar-review-sheet.md
+358ce5b8f4cf231d5c9ff04bfa12401fcf63678644694373f6ab9349bb013b08  docs/arabic-grammar-review/REVIEWER-GUIDE.md
+4627024faed91769d66a68136459e76585a571b81ecdb11db4699bf8663b56c7  docs/arabic-grammar-review/build-grammar-review.mjs
+
+== Draft lesson records (SHA-256 of each record as compact JSON, keys in file order) ==
+93851a578fc5ea6b33565cd3053277da7b9be6873dd88bbc76efc19f6d3c9a7f  gram-article  definite-article-sun-moon-letters
+c7d0c875652cf20b6fe77377212cb78944d0ee36e820fc419ffa675b68ff0180  gram-nominal  nominal-sentences-pronouns
+b4220203f73ca409b800a1546cc93a7af88e1a8a2089f831c6a9c71f44578730  gram-gender  masculine-feminine-gender
+e431b2b0f1c850d5f68cdd89ae3671b3ae952afc462489b7db03caa5bdd3ac39  gram-adjectives  adjective-agreement
+5a705d2f694541c1e51dfd81bdecd4ed0eda2df60ba4381911ec92dc7ab2b58d  gram-possession  possessive-idafa
+d99dbc87b22d8573fb020812d669f1d6d105d5eef5ae041f0e7c3aa51186d5f4  gram-questions  arabic-question-words
+63fee68acbab6f4417d650142fa4d865c12af423d2513ef254dc645d0e33d9a4  gram-present  present-tense-verbs
+74e0fc97d553ff70ed63ddc2fef97a6f6efcc33c380d2686f09cb833976cfb15  gram-negation  negation-prepositions
+
+== Validated against (structure only; informational) ==
+2a42f903abad3fc78a0bdf68ce61209532680877cd84f53c6f4c78557670972e  assets/js/learn/grammar.js
